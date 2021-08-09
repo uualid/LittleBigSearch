@@ -1,7 +1,7 @@
 # LittleBigSearch
 A tool to search LittleBigArchive levels.
 
-![](images/LBSearch.png)
+![](LBSearch.png)
 
 # How do I use this?
 

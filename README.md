@@ -10,10 +10,10 @@ if you don't have any level archive you can get the one you like from [LittleBig
 **when you open LittleBigSearch**
 
 1. press the browse button and locate your **\LBP2 Levels Archive\PS3\SAVEDATA** or LBP1.. 3... now you can search for your level in the search bar.
-2. when you find the level you want click on it and that will copy the path for you to find it.
-3. take the level folder name from the path ex: BCUS98245LEVEL5CAD9BFA and use it in the search box of the archive directory to copy it.
-4. copy the levels you want and paste them in your **\RPCS3\dev_hdd0\home\00000001\savedata**.
-5. start LBP and go to your moon, press ***Square*** on any empty spot -> ***import***. 
+2. when you find the level you want click on it and that will copy the path for you.
+3. take the level folder name from the path ex: BCUS98245LEVEL5CAD9BFA and use it in the search box of the archive directory.
+5. copy the levels you want and paste them in your **\RPCS3\dev_hdd0\home\00000001\savedata**.
+6. start LBP and go to your moon, press ***Square*** on any empty spot -> ***import***. 
 
 
 

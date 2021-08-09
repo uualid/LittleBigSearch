@@ -1,7 +1,6 @@
-# LittleBigSearch
-A tool to search LittleBigArchive levels.
-
 ![](LBSearch.png)
+
+A tool to search LittleBigArchive levels.
 
 # How do I use this?
 
@@ -15,6 +14,8 @@ if you don't have any level archive you can get the one you like from [LittleBig
 3. take the level folder name from the path ex: BCUS98245LEVEL5CAD9BFA and use it in the search box of the archive directory to copy it.
 4. copy the levels you want and paste them in your **\RPCS3\dev_hdd0\home\00000001\savedata**.
 5. start LBP and go to your moon, press ***Square*** on any empty spot -> ***import***. 
+
+![](Screenshot_12.png.png)
 
 
 # How can I trust this

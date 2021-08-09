@@ -4,8 +4,12 @@ A tool to search LittleBigArchive levels.
 # How do I use this?
 
 [Here](https://www.youtube.com/watch?v=ZrQJU4NGE-A) is a video demonstrating how to use this tool.
+if you don't have any level archive you can get the one you like from [LittleBigArchive](http://littlebigarchive.com/)
 
-1. if you don't have any levels archive you can get the one you like from [LittleBigArchive](http://littlebigarchive.com/)
-2. when you open LittleBigSearch press the browse button and locate your **\LBP2 Levels Archive\PS3\SAVEDATA** or LBP1 or 3...
-3. when you find the level you want click on it and that will give you the path to find it.
-4. cut the level folder name from the full path 
+**when you open LittleBigSearch**
+
+1. press the browse button and locate your **\LBP2 Levels Archive\PS3\SAVEDATA** or LBP1.. 3...
+2. when you find the level you want click on it and that will copy the path for you to find it.
+3. take the level folder name from the path ex: BCUS98245LEVEL5CAD9BFA and use it to get your level from the archive.
+4. copy the levels you want and paste them in your **\RPCS3\dev_hdd0\home\00000001\savedata**.
+5. start LBP and go to your moon, press ***Square*** -> ***import***. 

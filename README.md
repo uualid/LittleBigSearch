@@ -1,6 +1,8 @@
 # LittleBigSearch
 A tool to search LittleBigArchive levels.
 
+![](images/LBSearch.png)
+
 # How do I use this?
 
 [Here](https://www.youtube.com/watch?v=ZrQJU4NGE-A) is a video demonstrating how to use this tool.

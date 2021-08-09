@@ -15,7 +15,10 @@ if you don't have any level archive you can get the one you like from [LittleBig
 4. copy the levels you want and paste them in your **\RPCS3\dev_hdd0\home\00000001\savedata**.
 5. start LBP and go to your moon, press ***Square*** on any empty spot -> ***import***. 
 
+
+
 ![](Screenshot_12.png)
+
 
 
 # How can I trust this

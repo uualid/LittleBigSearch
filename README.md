@@ -9,7 +9,7 @@ if you don't have any level archive you can get the one you like from [LittleBig
 **when you open LittleBigSearch**
 
 1. Press the settings button.
-2. Select your Levels archive from the **Browse (Arvhive) button**. ex: C:\Users\YourUserName\Desktop\PS3\LBPLEVELs\LBP2 Levels Archive\PS3\SAVEDATA.
+2. Select your Levels archive from the **Browse (Arvhive) button**. ex: C:\Users\YourUserName\Desktop\LBPLEVELs\LBP2 Levels Archive\PS3\SAVEDATA.
 3. Select your RPCS3 savedata folder from **Browse (RPCS3 Savedata)** button. ex: C:\Users\YourUserName\Desktop\RPCS3\dev_hdd0\home\00000001\savedata.
 5. Pick any level you want by pressing on the level cell, the app will move the level folder to your RPCS3 savedata automatically.
 6. start LBP and go to your moon, press ***Square*** on any empty spot -> ***import***. 
@@ -18,7 +18,7 @@ if you don't have any level archive you can get the one you like from [LittleBig
 
 `• You can use this app for LittleBigPlanet 1, 2 and 3.`
 
-`• The first search can sometimes take longer time`
+`• The first search will take longer time`
 
 ![](images/LBS1.1.gif)
 
@@ -30,4 +30,4 @@ This app was originally a command line tool created to find my own LBP2 levels i
 
 **But windows defender is telling me this app is dangerous**
 
-The app used to bind enter key with the search button so its more convenient to search.. and that was a dangerous crime according to windows defender. Windows defender though I used this app as a [Keylogger](https://en.wikipedia.org/wiki/Keystroke_logging) so I had to remove the bind. It shouldn't tell you about it now, this is just in case someone is having it, I'm actully struggling to understand Windows defender. if Windows told you this app is from an unknonw publisher you can just press ***show more details*** than press run anyways.
+The app used to bind enter key with the search button so its more convenient to search.. and that was a dangerous crime according to windows defender. Windows defender though I used this app as a [Keylogger](https://en.wikipedia.org/wiki/Keystroke_logging) so I had to remove the bind. It shouldn't tell you about it now, this is just in case someone is having it. I'm actully struggling to understand Windows defender. if Windows told you this app is from an unknonw publisher you can just press ***show more details*** than press run anyways.

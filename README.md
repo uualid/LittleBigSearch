@@ -18,7 +18,7 @@ if you don't have any level archive you can get the one you like from [LittleBig
 
 `• You can use this app for LittleBigPlanet 1, 2 and 3.`
 
-`• The first search can sometimes take lomger time`
+`• The first search can sometimes take longer time`
 
 ![](images/LBS1.1.gif)
 

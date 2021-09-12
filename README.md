@@ -15,6 +15,7 @@ if you don't have any level archive you can get the one you like from [LittleBig
 6. start LBP and go to your moon, press ***Square*** on any empty spot -> ***import***. 
 
 `NOTES:` 
+
 `• You can use this app for LittleBigPlanet 1, 2 and 3.`
 `• The first search can sometimes take lomger time`
 

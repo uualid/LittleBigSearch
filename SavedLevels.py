@@ -14,3 +14,9 @@ class SavedLevels():
         
         self.window = tk.Toplevel(background= GlobalVars.backgroudnColorLight)
         self.window.title("RPCS3 savedata levels")
+        
+        self.window.protocol("WM_DELETE_WINDOW", self.onClose)
+
+    def onClose(self):
+        self.closeDelegate()
+        self.window.destroy()

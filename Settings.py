@@ -6,7 +6,7 @@ from   tkinter    import filedialog
 class Settings ():
     
     def __init__(self, duplicatesStatus, currentArchivePath, currentRPCS3Path, includeDescriptionStatus,
-                duplicatesDelegate, archiveDelegate, RPCS3Delegate, closeDelegate, includeDescriptionDelegate):
+                duplicatesDelegate, archiveDelegate, RPCS3Delegate, closeDelegate, includeDescriptionDelegate, master):
         super().__init__()
         
         #___ Delegates __________
@@ -19,6 +19,8 @@ class Settings ():
         
         self.window = tk.Toplevel(background= GlobalVars.backgroudnColorLight)
         self.window.title("Settings")
+        self.window.transient(master)
+
 
         self.settingsCanvas = tk.Canvas(master= self.window,
                                 height = 50,
@@ -76,7 +78,7 @@ class Settings ():
         self.RPCSBrowseBtn.grid(column=0, row=1, pady=(20, 0))
         #_______
         self.dupStatus = tk.BooleanVar()
-        self.dupStatus.set(True if duplicatesStatus == False else True)
+        self.dupStatus.set(True if duplicatesStatus == False else False)
         self.allowDuplicateschkBox = tk.Checkbutton(self.window,
                                              text='Clear duplicate levels',
                                              onvalue=1,
@@ -93,7 +95,7 @@ class Settings ():
         self.searchTitleOnlyStatus = tk.BooleanVar()
         self.searchTitleOnlyStatus.set(includeDescriptionStatus)
         self.onlySearchTitleChkBox = tk.Checkbutton(self.window,
-                                             text='Include level description when searching (unchecked is more accurate)',
+                                             text='Include level description when searching (unchecked = more accurate titles)',
                                              onvalue=1,
                                              variable= self.searchTitleOnlyStatus,
                                              background= GlobalVars.backgroundColorDark,
@@ -113,8 +115,6 @@ class Settings ():
     def setupLabels(self, levelArchive, RPCS3savedata):
         self.archiveLabelStr.set("Select the level archive folder for LittleBigPlanet 1, 2 or 3") if levelArchive == '' else self.archiveLabelStr.set(levelArchive)
         self.RPCSLabelStr.set("Select an RPCS3 savedata folder") if RPCS3savedata == '' else self.RPCSLabelStr.set(RPCS3savedata)
-
-        self.window.lift()
         
     def toggleDupplicatesCheckBox(self):
         self.toggleDuplicatesDelegate()

@@ -1,5 +1,5 @@
 import tkinter           as tk
-import os, shutil,threading, ttkthemes
+import os, shutil,threading, ttkthemes, time
 from   genericpath       import exists
 from   tkinter           import Button, Frame, ttk
 from   tkinter.constants import VERTICAL
@@ -15,16 +15,20 @@ class LittleBigSearchGUI():
         
         self.archivePath = ''
         self.RPCS3Path   = ''
-        
+        self.stopSearchAnimation = False
+
         self.scrollerCanvas  = tk.Canvas()
         self.scrollerFrame   = Frame()
+        
         self.levelParser     = LevelParser()
         self.matchedLevels   = matchedLevels
         
         self.settings = 0
-        self.savedLevels = 0
         self.isDuplicatesAllowed = False
         self.includeDescription  = True
+
+        self.savedLevels = 0
+        
         
         self.master = master
         self.master.title("LittleBigSearch by @SackBiscuit v1.1.0")
@@ -133,8 +137,11 @@ class LittleBigSearchGUI():
     def toggleIncludeDescriptionProtocol(self):
         self.includeDescription = True if self.includeDescription == False else False
 
-    def windowClosedProtocol(self):
+    def settingsClosedProtocol(self):
         self.settings = 0
+
+    def savedLevelClosedProtocol(self):
+        self.savedLevels = 0
 
     def archivePathProtocol(self, path):
         self.archivePath = path
@@ -150,8 +157,9 @@ class LittleBigSearchGUI():
             return
 
         if self.savedLevels == 0:
-            self.savedLevels = SavedLevels(RPCS3Path     = self.RPCS3Path, 
-                                           closeDelegate = self.windowClosedProtocol)
+            self.savedLevels = SavedLevels(master        = self.master, 
+                                           RPCS3Path     = self.RPCS3Path,
+                                           closeDelegate = self.savedLevelClosedProtocol)
         else:
             self.savedLevels.window.lift()
 
@@ -159,7 +167,7 @@ class LittleBigSearchGUI():
 
     def openSettings(self):
         if self.settings == 0:
-            self.settings = Settings(closeDelegate             = self.windowClosedProtocol,
+            self.settings = Settings(closeDelegate             = self.settingsClosedProtocol,
                                     duplicatesDelegate         = self.toggleDuplicatesProtocol,
                                     includeDescriptionDelegate = self.toggleIncludeDescriptionProtocol,
                                     archiveDelegate            = self.archivePathProtocol,
@@ -167,7 +175,8 @@ class LittleBigSearchGUI():
                                     currentArchivePath         = self.archivePath,
                                     currentRPCS3Path           = self.RPCS3Path,
                                     includeDescriptionStatus   = self.includeDescription,  
-                                    duplicatesStatus           = self.isDuplicatesAllowed)
+                                    duplicatesStatus           = self.isDuplicatesAllowed,
+                                    master=self.master)
         else: 
             self.settings.window.lift()
 

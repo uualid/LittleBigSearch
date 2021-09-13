@@ -5,10 +5,10 @@ from   tkinter           import Button, Frame, ttk
 from   tkinter.constants import VERTICAL
 from   functools         import partial
 from   PIL               import Image, ImageTk
-from   tkinter           import filedialog
 from   SFOParser         import LevelParser, ParserReturns
 from   Settings          import Settings
-from GlobalVars          import GlobalVars
+from   GlobalVars        import GlobalVars
+from   SavedLevels       import SavedLevels
 
 class LittleBigSearchGUI():
     def __init__(self, master: tk.Tk, matchedLevels = []) -> None:
@@ -22,6 +22,7 @@ class LittleBigSearchGUI():
         self.matchedLevels   = matchedLevels
         
         self.settings = 0
+        self.savedLevels = 0
         self.isDuplicatesAllowed = False
         self.includeDescription  = True
         
@@ -58,8 +59,17 @@ class LittleBigSearchGUI():
                                     command=lambda: self.openSettings(),
                                     bg=GlobalVars.logoBlue, 
                                     activebackground= GlobalVars.logoBlue,
-                                    fg = "white", height=1, width= 15, bd=0)
-        self.settingButton.grid(columnspan=3, column=0, row=1, pady=10)
+                                    fg = "white", height=1, width= 13, bd=0)
+        self.settingButton.grid(columnspan=3, column=0, row=1, pady=10, padx= (0,105))
+
+        # ____
+        
+        self.SavedLevelsButton = tk.Button( text="Saved Levels",
+                                    command=lambda: self.openSavedLevels(),
+                                    bg=GlobalVars.logoBlue, 
+                                    activebackground= GlobalVars.logoBlue,
+                                    fg = "white", height=1, width= 13, bd=0)
+        self.SavedLevelsButton.grid(columnspan=3, column=0, row=1, pady=10, padx= (105,0))
 
         # ____ 
 
@@ -77,7 +87,7 @@ class LittleBigSearchGUI():
                                 bg= GlobalVars.logoBlue, 
                                 fg= "white", 
                                 activebackground = GlobalVars.logoBlue,
-                                height=1, width= 15)
+                                height=1, width= 20)
 
         searchButton.grid(column=1, row=4, pady=10)
 
@@ -94,20 +104,20 @@ class LittleBigSearchGUI():
 
     def LBSsearch(self, term, path):
         if self.RPCS3Path.__contains__("/") == False:
-            self.editErrorLabel("Please select an RPCS3 savedata folder from settings", "red")
+            self.sendError("Please select an RPCS3 savedata folder from settings", "red")
             return
 
-        self.editErrorLabel("Searching...")
+        self.sendError("Searching...")
         # this event will be called from background thread to use the main thread.
         self.master.bind("<<event1>>", self.showResult)
         self.levelParser.search(self.searchCallBack, term, path, includeDescription= self.includeDescription)
     
     def searchCallBack(self, response):
         if response == ParserReturns.noResult:
-            self.editErrorLabel("No result", "red")
+            self.sendError("No result", "red")
 
         elif response == ParserReturns.wrongPath:
-            self.editErrorLabel("Please select a levels directory from the settings", "red")
+            self.sendError("Please select a levels directory from the settings", "red")
         
         else:
             self.matchedLevels = response
@@ -120,10 +130,10 @@ class LittleBigSearchGUI():
     def toggleDuplicatesProtocol(self):
         self.isDuplicatesAllowed = True if self.isDuplicatesAllowed == False else False
 
-    def includeLevelDescriptionProtocol(self):
+    def toggleIncludeDescriptionProtocol(self):
         self.includeDescription = True if self.includeDescription == False else False
 
-    def settingsClosedProtocol(self):
+    def windowClosedProtocol(self):
         self.settings = 0
 
     def archivePathProtocol(self, path):
@@ -132,15 +142,28 @@ class LittleBigSearchGUI():
     def RPCS3PathProtocol(self, path):
         self.RPCS3Path = path
 
+    # Saved levels _______________________________________________________________________________________________________________________________________
+
+    def openSavedLevels(self):
+        if self.RPCS3Path == '':
+            self.sendError("Please select an RPCS3 savedata folder", "red")
+            return
+
+        if self.savedLevels == 0:
+            self.savedLevels = SavedLevels(RPCS3Path     = self.RPCS3Path, 
+                                           closeDelegate = self.windowClosedProtocol)
+        else:
+            self.savedLevels.window.lift()
+
     #_________________________________
 
     def openSettings(self):
         if self.settings == 0:
-            self.settings = Settings(closeDelegate             = self.settingsClosedProtocol,
+            self.settings = Settings(closeDelegate             = self.windowClosedProtocol,
                                     duplicatesDelegate         = self.toggleDuplicatesProtocol,
+                                    includeDescriptionDelegate = self.toggleIncludeDescriptionProtocol,
                                     archiveDelegate            = self.archivePathProtocol,
                                     RPCS3Delegate              = self.RPCS3PathProtocol,
-                                    includeDescriptionDelegate = self.includeLevelDescriptionProtocol,
                                     currentArchivePath         = self.archivePath,
                                     currentRPCS3Path           = self.RPCS3Path,
                                     includeDescriptionStatus   = self.includeDescription,  
@@ -155,26 +178,26 @@ class LittleBigSearchGUI():
         destination = self.RPCS3Path
         destDir = os.path.join(destination,os.path.basename(source))
         if exists(destDir) == False:
-            self.editErrorLabel("Level folder was added to RPCS3 savedata", "green")
+            self.sendError("Level folder was added to RPCS3 savedata", "green")
             shutil.copytree(source, destDir)
         else:
-            self.editErrorLabel("Level folder was removed from RPCS3 savedata")
+            self.sendError("Level folder was removed from RPCS3 savedata")
             shutil.rmtree(destDir)
     
     def _on_mouse_wheel(self, event):
         global canvasScroll
-        self.editErrorLabel("")
+        self.sendError("")
         self.scrollerCanvas.yview_scroll(-1 * int((event.delta / 120)), "units")
         self.scrollerCanvas.bind_all("<MouseWheel>", self._on_mouse_wheel)
 
-    def editErrorLabel(self, message = "", color = "white"):
+    def sendError(self, message = "", color = "white"):
         self.errorLabel.configure(fg=color)
         self.errorText.set(message)        
 
     # builds result scroller view _______________________________________________________________________________________________________________________________
     
     def showResult(self, evt):
-        self.editErrorLabel("")
+        self.sendError("")
         # destroy the old scroll view
         self.scrollerFrame.destroy()
         

@@ -1,7 +1,5 @@
 import os
 import tkinter    as tk
-from   tkinter    import ttk
-from typing_extensions import IntVar
 from   GlobalVars import GlobalVars
 from   tkinter    import filedialog
 

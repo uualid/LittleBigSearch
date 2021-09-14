@@ -6,7 +6,7 @@ from   tkinter.constants import VERTICAL
 from   functools         import partial
 from   PIL               import Image, ImageTk
 from   SFOParser         import LevelParser, ParserReturns
-from   Settings.Settings import Options
+from   Settings.Options  import Options
 from   helpers.Utilities         import GlobalVars
 from   SavedLevels       import SavedLevels
 

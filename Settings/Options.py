@@ -1,4 +1,4 @@
-import os
+import os, json
 import tkinter    as tk
 from   helpers.Utilities import GlobalVars
 from   tkinter    import filedialog
@@ -23,13 +23,13 @@ class Options():
 
 
         self.settingsCanvas = tk.Canvas(master= self.window,
-                                height = 50,
+                                height = 20,
                                 width  = 850 ,
                                 bg=GlobalVars.backgroudnColorLight, 
                                 borderwidth=0,
                                 highlightthickness=0)
 
-        self.settingsCanvas.grid(columnspan=3, row= 3)
+        self.settingsCanvas.grid(columnspan=3, row= 4)
 
         self.archiveLabelStr = tk.StringVar()
         self.archiveLabel = tk.Button(self.window,
@@ -107,6 +107,15 @@ class Options():
         self.onlySearchTitleChkBox.grid(column=1, row=2, pady=20)
         #______
 
+        self.saveSettings = tk.Button(self.window, 
+                                    text             = "Save",
+                                    command          = lambda: self.saveSettingsAsJSON(),
+                                    bg               = GlobalVars.logoBlue, 
+                                    activebackground = GlobalVars.logoBlue,
+                                    fg = "white", height=1, width= 20, bd=0)
+        self.saveSettings.grid(column=0, row=3)
+        
+        #______
         self.setupLabels(levelArchive=currentArchivePath, RPCS3savedata= currentRPCS3Path)
         self.window.protocol("WM_DELETE_WINDOW", self.onClose)
 
@@ -132,10 +141,32 @@ class Options():
             labelStr.set(selectedFolder)
             delegate(path = selectedFolder)
             
-    
     def openFile(self, path):
         try:
             path = os.path.realpath(path)
             os.startfile(path)
         except:
             print("Failed to open folder")
+    
+    # save setting to json file _________________________________________________________________________________________________ 
+
+    def saveSettingsAsJSON(self):
+        if self.archiveLabelStr.get().__contains__("/") == False or self.RPCSLabelStr.get().__contains__("/") == False:
+            ############# add error notification later ####################
+            print("failed")
+            return
+        
+        archivePath        = self.archiveLabelStr.get()
+        RPCS3Path          = self.RPCSLabelStr.get()
+        clearDupLevels     = "True" if self.dupStatus == False else "False"
+        includeDescription = "True" if self.searchTitleOnlyStatus == True else "False"
+
+        settingsDict = {"archive": archivePath , "RPCS3" : RPCS3Path, "ClearDups": clearDupLevels, "includeDescription" : includeDescription}
+        jsonString   = json.dumps(settingsDict)
+        jsonFile     = open("Settings/SavedSettings.json", "w")
+        jsonFile.write(jsonString)
+        jsonFile.close()
+        
+    @staticmethod
+    def getSettingsFromJSON():
+        pass

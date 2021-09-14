@@ -7,8 +7,9 @@ from   functools         import partial
 from   PIL               import Image, ImageTk
 from   SFOParser         import LevelParser, ParserReturns
 from   Settings.Options  import Options
-from   helpers.Utilities         import GlobalVars
+from   helpers.Utilities import GlobalVars
 from   SavedLevels       import SavedLevels
+from   os                import path
 
 class LittleBigSearchGUI():
     def __init__(self, master: tk.Tk, matchedLevels = []) -> None:
@@ -103,6 +104,22 @@ class LittleBigSearchGUI():
                             activebackground=GlobalVars.logoBlue)
         self.errorText.set("")
         self.errorLabel.grid(column=1, row=5, ipadx=30)
+        
+        self.fetchSettingsFromJSON()
+        
+    # settings __________________________________________________________________________________________________________________________________________
+    
+    def fetchSettingCallBack(self, archive, RPCS3, dupsStatus, includeDescription):
+        self.archivePath = archive
+        self.RPCS3Path   = RPCS3
+        self.isDuplicatesAllowed = dupsStatus
+        self.includeDescription = includeDescription
+    
+    def fetchSettingsFromJSON(self):
+        if path.exists("SavedSettings.json"):
+            Options.getSettingsFromJSON(self.fetchSettingCallBack)
+        else:
+            print("No saved settings.")
 
     # search method _____________________________________________________________________________________________________________________________________
 

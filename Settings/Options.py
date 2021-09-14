@@ -33,77 +33,77 @@ class Options():
 
         self.archiveLabelStr = tk.StringVar()
         self.archiveLabel = tk.Button(self.window,
-                                    textvariable=self.archiveLabelStr,
-                                    bg=GlobalVars.backgroudnColorLight,
-                                    cursor= "hand2",
-                                    activebackground= GlobalVars.logoBlue,
-                                    command=lambda: self.openFile(self.archiveLabelStr.get()),
-                                    fg="White",
-                                    bd =0,
-                                    font=('Helvatical bold',10))
+                                    textvariable     = self.archiveLabelStr,
+                                    bg               = GlobalVars.backgroudnColorLight,
+                                    cursor           = "hand2",
+                                    activebackground = GlobalVars.logoBlue,
+                                    command          = lambda: self.openFile(self.archiveLabelStr.get()),
+                                    fg               = "White",
+                                    bd               = 0,
+                                    font             = ('Helvatical bold',10))
                                     
         self.archiveLabel.grid(columnspan=1, column=1, row=0, pady=(20, 0))
 
         self.archiveBrowseBtn = tk.Button(self.window,
-                                    text="Browse (Archive)",
-                                    activebackground= GlobalVars.logoBlue,
-                                    command=lambda: self.openFileBrowser(self.archiveLabelStr, 
-                                                                        title="Select LittleBigPlanet level archive", 
-                                                                        delegate= self.archiveDelegate),
-                                    bg=GlobalVars.logoBlue,
-                                    fg = "white", height=1, width= 20, bd=0)
+                                    text             ="Browse (Archive)",
+                                    activebackground = GlobalVars.logoBlue,
+                                    command          = lambda: self.openFileBrowser(self.archiveLabelStr, 
+                                                                                   title    = "Select LittleBigPlanet level archive", 
+                                                                                   delegate = self.archiveDelegate),
+                                    bg               = GlobalVars.logoBlue,
+                                    fg               = "white", height=1, width= 20, bd=0)
         self.archiveBrowseBtn.grid(columnspan=1, column=0, row=0, pady=(20, 0))
         #________
         
         self.RPCSLabelStr = tk.StringVar()
         self.RPCSLabel = tk.Button(self.window,
-                                    textvariable=self.RPCSLabelStr,
-                                    bg=GlobalVars.backgroudnColorLight,
-                                    command=lambda: self.openFile(self.RPCSLabelStr.get()),
-                                    cursor= "hand2",
-                                    fg="White",
-                                    bd = 0,
-                                    activebackground= GlobalVars.logoBlue,
+                                    textvariable     = self.RPCSLabelStr,
+                                    bg               = GlobalVars.backgroudnColorLight,
+                                    command          = lambda: self.openFile(self.RPCSLabelStr.get()),
+                                    cursor           = "hand2",
+                                    fg               = "White",
+                                    bd               = 0,
+                                    activebackground = GlobalVars.logoBlue,
                                     font=('Helvatical bold',10))
         self.RPCSLabel.grid(columnspan=1, column=1, row=1, sticky= "we", pady=(20, 0))
 
         self.RPCSBrowseBtn = tk.Button(self.window, 
-                                    text="Browse (RPCS3 Savedata)",
-                                    command=lambda: self.openFileBrowser(self.RPCSLabelStr, 
-                                                                        title="Select RPCS3 savedata folder",
-                                                                        delegate= self.RPCS3Delegate),
-                                    bg= GlobalVars.logoBlue, 
-                                    activebackground= GlobalVars.logoBlue,
+                                    text    = "Browse (RPCS3 Savedata)",
+                                    command = lambda: self.openFileBrowser(self.RPCSLabelStr, 
+                                                                          title="Select RPCS3 savedata folder",
+                                                                          delegate= self.RPCS3Delegate),
+                                    bg               = GlobalVars.logoBlue, 
+                                    activebackground = GlobalVars.logoBlue,
                                     fg = "white", height=1, width= 20, bd=0)
         self.RPCSBrowseBtn.grid(column=0, row=1, pady=(20, 0))
         #_______
         self.dupStatus = tk.BooleanVar()
         self.dupStatus.set(True if duplicatesStatus == False else False)
         self.allowDuplicateschkBox = tk.Checkbutton(self.window,
-                                             text='Clear duplicate levels',
-                                             onvalue=1,
-                                             variable= self.dupStatus,
-                                             background= GlobalVars.backgroundColorDark,
-                                             fg= "white",
-                                             offvalue=0,
-                                             activebackground= GlobalVars.logoBlue,
-                                             selectcolor="#000000",
-                                             command=self.toggleDupplicatesCheckBox)
+                                             text              = 'Clear duplicate levels',
+                                             onvalue           = 1,
+                                             variable          = self.dupStatus,
+                                             background        = GlobalVars.backgroundColorDark,
+                                             fg                = "white",
+                                             offvalue          = 0,
+                                             activebackground  = GlobalVars.logoBlue,
+                                             selectcolor       = "#000000",
+                                             command           = self.toggleDupplicatesCheckBox)
         self.allowDuplicateschkBox.grid(column=0, row=2, pady=20)
         #______
 
-        self.searchTitleOnlyStatus = tk.BooleanVar()
-        self.searchTitleOnlyStatus.set(includeDescriptionStatus)
+        self.includeDescriptionStatus = tk.BooleanVar()
+        self.includeDescriptionStatus.set(includeDescriptionStatus)
         self.onlySearchTitleChkBox = tk.Checkbutton(self.window,
-                                             text='Include level description when searching (unchecked = more accurate titles)',
-                                             onvalue=1,
-                                             variable= self.searchTitleOnlyStatus,
-                                             background= GlobalVars.backgroundColorDark,
-                                             fg= "white",
-                                             offvalue=0,
-                                             activebackground= GlobalVars.logoBlue,
-                                             selectcolor="#000000",
-                                             command=self.toggleIncludeDescription)
+                                             text               = 'Include level description when searching (unchecked = more accurate titles)',
+                                             onvalue            = 1,
+                                             variable           = self.includeDescriptionStatus,
+                                             background         = GlobalVars.backgroundColorDark,
+                                             fg                 = "white",
+                                             offvalue           = 0,
+                                             activebackground   = GlobalVars.logoBlue,
+                                             selectcolor        = "#000000",
+                                             command            = self.toggleIncludeDescription)
         self.onlySearchTitleChkBox.grid(column=1, row=2, pady=20)
         #______
 
@@ -158,15 +158,21 @@ class Options():
         
         archivePath        = self.archiveLabelStr.get()
         RPCS3Path          = self.RPCSLabelStr.get()
-        clearDupLevels     = "True" if self.dupStatus == False else "False"
-        includeDescription = "True" if self.searchTitleOnlyStatus == True else "False"
+        clearDupLevels     = "True" if self.dupStatus.get() == True else "False"
+        includeDescription = "True" if self.includeDescriptionStatus.get() == True else "False"
 
         settingsDict = {"archive": archivePath , "RPCS3" : RPCS3Path, "ClearDups": clearDupLevels, "includeDescription" : includeDescription}
         jsonString   = json.dumps(settingsDict)
-        jsonFile     = open("Settings/SavedSettings.json", "w")
+        jsonFile     = open("SavedSettings.json", "w")
         jsonFile.write(jsonString)
         jsonFile.close()
         
     @staticmethod
-    def getSettingsFromJSON():
-        pass
+    def getSettingsFromJSON(callBack):
+        file = open("SavedSettings.json", "r")
+        data = json.loads(file.read())
+
+        callBack(archive           = data['archive'],
+                RPCS3              = data['RPCS3'], 
+                dupsStatus         = True if data['ClearDups'] == "False" else False,
+                includeDescription = True if data['includeDescription'] == "True" else False)

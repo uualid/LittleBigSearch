@@ -196,11 +196,16 @@ class LittleBigSearchGUI():
         # refresh Saved levels automatically
         if self.savedLevels != 0:
             self.savedLevels.refresh()
-    
+
+    def _bound_to_mousewheel(self, event):
+        self.scrollerCanvas.bind_all("<MouseWheel>", self._on_mouse_wheel)
+
+    def _unbound_to_mousewheel(self, event):
+        self.scrollerCanvas.unbind_all("<MouseWheel>")
+
     def _on_mouse_wheel(self, event):
         self.sendError("")
         self.scrollerCanvas.yview_scroll(-1 * int((event.delta / 120)), "units")
-        self.scrollerCanvas.bind_all("<MouseWheel>", self._on_mouse_wheel)
 
     def sendError(self, message = "", color = "white"):
         self.errorLabel.configure(fg=color)
@@ -230,7 +235,10 @@ class LittleBigSearchGUI():
         self.scrollerCanvas.configure(yscrollcommand=myScrollBar.set, bg=GlobalVars.backgroundColorDark)
         self.scrollerCanvas.bind('<Configure>', lambda e: self.scrollerCanvas.configure(scrollregion= self.scrollerCanvas.bbox("all")))
         
-        self.canvas.bind_all("<MouseWheel>", self._on_mouse_wheel)
+        # self.canvas.bind_all("<MouseWheel>", self._on_mouse_wheel)
+        
+        self.scrollerCanvas.bind('<Enter>', self._bound_to_mousewheel)
+        self.scrollerCanvas.bind('<Leave>', self._unbound_to_mousewheel)
 
         scrollFrame2 = Frame(self.scrollerCanvas, 
                             background= GlobalVars.backgroundColorDark,

@@ -34,7 +34,16 @@ class SavedLevels():
                                 bg=GlobalVars.backgroudnColorLight, 
                                 borderwidth=0,
                                 highlightthickness=0)
-        self.canvas.grid(columnspan=3, row= 3)
+        self.canvas.grid(columnspan=3)
+
+        #____
+        self.refreshButton = tk.Button(master        = self.window,
+                                    text             ="Refresh",
+                                    command          = lambda: self.refresh(),
+                                    bg               = GlobalVars.logoBlue,
+                                    activebackground = GlobalVars.logoBlue,
+                                    fg = "white", height=1, width= 13, bd=0)
+        self.refreshButton.grid(column=1, row=0)
 
         self.window.protocol("WM_DELETE_WINDOW", self.onClose)
         threadWork = threading.Thread(target= self.fetchSavedLevels, args= ()) 
@@ -69,14 +78,16 @@ class SavedLevels():
 
     def moveFolder(self, path):
         pass
-
+    
+    def refresh(self):
+        threading.Thread(target= self.fetchSavedLevels, args= ()).start() 
+        
     # window closing protocol ______________________________________________________________
     def onClose(self):
         self.closeDelegate()
         self.window.destroy()
 
     def showResult(self, evt):
-        
         # destroy the old scroll view
         self.scrollerFrame.destroy()
         

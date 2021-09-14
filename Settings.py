@@ -1,6 +1,6 @@
 import os
 import tkinter    as tk
-from   GlobalVars import GlobalVars
+from   Utilities import GlobalVars
 from   tkinter    import filedialog
 
 class Settings ():

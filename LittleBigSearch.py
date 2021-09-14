@@ -1,5 +1,5 @@
 import tkinter           as tk
-import os, shutil,threading, ttkthemes, time
+import os, shutil,threading, ttkthemes
 from   genericpath       import exists
 from   tkinter           import Button, Frame, ttk
 from   tkinter.constants import VERTICAL
@@ -7,7 +7,7 @@ from   functools         import partial
 from   PIL               import Image, ImageTk
 from   SFOParser         import LevelParser, ParserReturns
 from   Settings          import Settings
-from   GlobalVars        import GlobalVars
+from   Utilities        import GlobalVars
 from   SavedLevels       import SavedLevels
 
 class LittleBigSearchGUI():
@@ -194,7 +194,6 @@ class LittleBigSearchGUI():
             shutil.rmtree(destDir)
     
     def _on_mouse_wheel(self, event):
-        global canvasScroll
         self.sendError("")
         self.scrollerCanvas.yview_scroll(-1 * int((event.delta / 120)), "units")
         self.scrollerCanvas.bind_all("<MouseWheel>", self._on_mouse_wheel)

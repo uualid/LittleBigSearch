@@ -48,15 +48,22 @@ class LevelParser:
     def clean(SFOstring):
             #For some reason after getting the level string from the SFO, I get alot of machine code with it.
         return SFOstring.replace('\x00', '')
+    
+    @staticmethod
+    def getLevelTitle(SFOContent, levelFolder):
+        startIndex = LevelParser.SFOStartIndex(SFOContent, levelFolder) 
+        endIndex   = LevelParser.SFOEndIndex(SFOContent)
+        title      = LevelParser.clean( f'{SFOContent[startIndex : endIndex]}')
+        
+        return title
 
     #__ Main search method __________________________________________________________________________________
-
-    def search(self, callback, term, path, includeDescription):
+    def search(self, callBack, term, path, includeDescription):
             # Empty the array for the next search.
         matchedLevels = []
 
         if path.__contains__("/") == False:
-            callback(ParserReturns.wrongPath)
+            callBack(ParserReturns.wrongPath)
             return
 
         for levelFolder in os.listdir(path):
@@ -71,9 +78,8 @@ class LevelParser:
                     SFOContent = openSFO.read()
                     
                     if includeDescription == False:
-                        startIndex = LevelParser.SFOStartIndex(SFOContent, levelFolder) 
-                        endIndex   = LevelParser.SFOEndIndex(SFOContent)
-                        title      = LevelParser.clean( f'{SFOContent[startIndex : endIndex]}')
+
+                        title = LevelParser.getLevelTitle(SFOContent, levelFolder)
 
                         if title.lower().__contains__(term.lower()):
                             newMatchLevel = Level(title = title,
@@ -83,17 +89,47 @@ class LevelParser:
 
                     elif SFOContent.lower().__contains__(term.lower()):
                         
-                        startIndex = LevelParser.SFOStartIndex(SFOContent, levelFolder) 
-                        endIndex   = LevelParser.SFOEndIndex(SFOContent)
-                        title      = LevelParser.clean( f'{SFOContent[startIndex : endIndex]}')
+                        title = LevelParser.getLevelTitle(SFOContent, levelFolder)
 
                         newMatchLevel = Level(title = title,
                                               path  = f'{path}/{levelFolder}',
                                               image = f'{path}/{levelFolder}/ICON0.PNG')
                         matchedLevels.append(newMatchLevel)    
         
-        callback(LevelParser.checkIfThereIsNoMatch(matchedLevels))
-
+        callBack(LevelParser.checkIfThereIsNoMatch(matchedLevels))
+    
     #__________________________________________________________________________________________________________
+
+    # Fetches anything that resemble a level module.
+
+    ###############################################
+    ### Only used to fetch RPCS3 stored levels  ###
+    ###############################################
+
+    def fetchLevelsFrom(self, path, callBack):
+        levels = []
+        
+        if path.__contains__("/") == False:
+            callBack(ParserReturns.wrongPath)
+            return
+        
+        for levelFolder in os.listdir(path):
+            if levelFolder.__contains__("."):
+                    #Skips files, only folders.
+                continue
+            
+            for levelfile in os.listdir(path + "/" + levelFolder):
+                    if levelfile.endswith(".SFO"):
+
+                        openSFO = open(path + "/" + levelFolder + "/" + levelfile, 'r', encoding="utf-8", errors="ignore")
+                        SFOContent = openSFO.read()
+
+                        title = LevelParser.getLevelTitle(SFOContent, levelFolder)
+
+                        newLevel = Level(title = title,
+                                        path  = f'{path}/{levelFolder}',
+                                        image = f'{path}/{levelFolder}/ICON0.PNG')
+                        levels.append(newLevel)
+        callBack(LevelParser.checkIfThereIsNoMatch(levels))
 
     

@@ -7,7 +7,7 @@ from   functools         import partial
 from   PIL               import Image, ImageTk
 from   SFOParser         import LevelParser, ParserReturns
 from   Settings          import Settings
-from   Utilities        import GlobalVars
+from   Utilities         import GlobalVars
 from   SavedLevels       import SavedLevels
 
 class LittleBigSearchGUI():

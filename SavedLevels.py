@@ -1,3 +1,4 @@
+import threading
 import tkinter           as tk
 from   Utilities         import GlobalVars
 from   tkinter           import Frame, ttk, Button
@@ -36,15 +37,16 @@ class SavedLevels():
         self.canvas.grid(columnspan=3, row= 3)
 
         self.window.protocol("WM_DELETE_WINDOW", self.onClose)
-        self.fetchSavedLevels(path= self.RPCS3Path)
+        threadWork = threading.Thread(target= self.fetchSavedLevels, args= ()) 
+        threadWork.start()
 
 
     # fetch levels from RPCS3 savedata _____________________________________________________
     
-    def fetchSavedLevels(self, path):
+    def fetchSavedLevels(self):
         # this event will be called from background thread to use the main thread.
         self.window.bind("<<event1>>", self.showResult)
-        self.LevelParser.fetchLevelsFrom(path=path, callBack= self.fetchCallBack)
+        self.LevelParser.fetchLevelsFrom(path=self.RPCS3Path, callBack= self.fetchCallBack)
     
     def fetchCallBack(self, response):
         if response == ParserReturns.noResult:
@@ -74,6 +76,7 @@ class SavedLevels():
         self.window.destroy()
 
     def showResult(self, evt):
+        
         # destroy the old scroll view
         self.scrollerFrame.destroy()
         

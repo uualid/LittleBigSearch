@@ -192,6 +192,10 @@ class LittleBigSearchGUI():
         else:
             self.sendError("Level folder was removed from RPCS3 savedata")
             shutil.rmtree(destDir)
+        
+        # refresh Saved levels automatically
+        if self.savedLevels != 0:
+            self.savedLevels.refresh()
     
     def _on_mouse_wheel(self, event):
         self.sendError("")

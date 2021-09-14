@@ -1,6 +1,6 @@
 import threading
 import tkinter           as tk
-from   Utilities         import GlobalVars
+from   helpers.Utilities         import GlobalVars
 from   tkinter           import Frame, ttk, Button
 from   tkinter.constants import VERTICAL
 from   PIL               import Image, ImageTk

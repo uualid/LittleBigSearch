@@ -1,4 +1,4 @@
-from LevelModule import Level
+from Modules.LevelModule import Level
 import enum, os
 
 class ParserReturns(enum.Enum):

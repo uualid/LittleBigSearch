@@ -6,8 +6,8 @@ from   tkinter.constants import VERTICAL
 from   functools         import partial
 from   PIL               import Image, ImageTk
 from   SFOParser         import LevelParser, ParserReturns
-from   Settings          import Settings
-from   Utilities         import GlobalVars
+from   Settings.Settings import Options
+from   helpers.Utilities         import GlobalVars
 from   SavedLevels       import SavedLevels
 
 class LittleBigSearchGUI():
@@ -31,7 +31,7 @@ class LittleBigSearchGUI():
         
         
         self.master = master
-        self.master.title("LittleBigSearch by @SackBiscuit v1.1.0")
+        self.master.title("LittleBigSearch by @SackBiscuit v1.1.1")
         self.master.iconbitmap(default="images/icon.ico")
         self.master.configure(bg= GlobalVars.backgroundColorDark)
 
@@ -167,7 +167,7 @@ class LittleBigSearchGUI():
 
     def openSettings(self):
         if self.settings == 0:
-            self.settings = Settings(closeDelegate             = self.settingsClosedProtocol,
+            self.settings = Options(closeDelegate             = self.settingsClosedProtocol,
                                     duplicatesDelegate         = self.toggleDuplicatesProtocol,
                                     includeDescriptionDelegate = self.toggleIncludeDescriptionProtocol,
                                     archiveDelegate            = self.archivePathProtocol,
@@ -234,8 +234,6 @@ class LittleBigSearchGUI():
 
         self.scrollerCanvas.configure(yscrollcommand=myScrollBar.set, bg=GlobalVars.backgroundColorDark)
         self.scrollerCanvas.bind('<Configure>', lambda e: self.scrollerCanvas.configure(scrollregion= self.scrollerCanvas.bbox("all")))
-        
-        # self.canvas.bind_all("<MouseWheel>", self._on_mouse_wheel)
         
         self.scrollerCanvas.bind('<Enter>', self._bound_to_mousewheel)
         self.scrollerCanvas.bind('<Leave>', self._unbound_to_mousewheel)

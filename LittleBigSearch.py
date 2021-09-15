@@ -282,12 +282,14 @@ class LittleBigSearchGUI():
             levelImage_resize.grid(row = index, column=0)
             
             levelInfoButton = Button(scrollFrame2,
-                                    text= labelText + "\n" + level.path, anchor="e",
-                                    bd=0, command= partial(self.moveFolder, level.path),
-                                    cursor= "hand2",
-                                    bg= GlobalVars.backgroundColorDark,
-                                    activebackground=GlobalVars.logoBlue,
-                                    fg="white",font=('Helvatical bold',10)) 
+                                    text             = labelText + "\n" + level.path, anchor="e",
+                                    bd               = 0, 
+                                    command          = partial(self.moveFolder, level.path),
+                                    cursor           = "hand2",
+                                    bg               = GlobalVars.backgroundColorDark,
+                                    activebackground = GlobalVars.logoBlue,
+                                    fg               = "white",
+                                    font             = ('Helvatical bold',10)) 
 
             levelInfoButton.grid(row = index, column=1 , padx= 20, pady=10)
 

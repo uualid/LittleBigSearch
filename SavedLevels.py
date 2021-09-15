@@ -1,11 +1,12 @@
-import threading
+import threading, os,shutil
 import tkinter           as tk
-from   helpers.Utilities         import GlobalVars
+from   helpers.Utilities import GlobalVars
 from   tkinter           import Frame, ttk, Button
 from   tkinter.constants import VERTICAL
 from   PIL               import Image, ImageTk
 from   functools         import partial
 from   SFOParser         import LevelParser, ParserReturns
+from   genericpath       import exists
 
 class SavedLevels():
     def __init__(self,master, RPCS3Path, closeDelegate, savedLevels = []):
@@ -30,7 +31,7 @@ class SavedLevels():
         
         self.canvas = tk.Canvas(master= self.window,
                                 height = 100,
-                                width  = 850 ,
+                                width  = 900 ,
                                 bg=GlobalVars.backgroudnColorLight, 
                                 borderwidth=0,
                                 highlightthickness=0)
@@ -60,6 +61,8 @@ class SavedLevels():
     def fetchCallBack(self, response):
         if response == ParserReturns.noResult:
             # self.sendError("No result", "red")
+            # No result = empty levels in RPCS3 so destroy the scroller frame.
+            self.scrollerFrame.destroy()
             pass
 
         elif response == ParserReturns.wrongPath:
@@ -81,12 +84,19 @@ class SavedLevels():
     def _on_mouse_wheel(self, event):
         self.scrollerCanvas.yview_scroll(-1 * int((event.delta / 120)), "units")
 
-    def moveFolder(self, path):
-        pass
+    # level managing _______________________________________________________________________
     
+    def removeFolder(self, source):
+        destination = self.RPCS3Path
+        destDir = os.path.join(destination,os.path.basename(source))
+        if exists(destDir) == True:
+            # self.sendError("The Level folder was removed")
+            shutil.rmtree(destDir)
+            self.refresh()
+
     def refresh(self):
-        threading.Thread(target= self.fetchSavedLevels, args= ()).start() 
-        
+        threading.Thread(target= self.fetchSavedLevels, args= ()).start()
+
     # window closing protocol ______________________________________________________________
     def onClose(self):
         self.closeDelegate()
@@ -95,6 +105,10 @@ class SavedLevels():
     def showResult(self, evt):
         # destroy the old scroll view
         self.scrollerFrame.destroy()
+        
+        if self.savedLevels == []:
+            ### notification later here ## 
+            return
         
         # build new one
         self.scrollFrame1 = Frame(self.window,
@@ -149,11 +163,23 @@ class SavedLevels():
             levelImage_resize.grid(row = index, column=0)
             
             levelInfoButton = Button(scrollFrame2,
-                                    text= labelText + "\n" + level.path, anchor="e",
-                                    bd=0, command= partial(self.moveFolder, level.path),
-                                    cursor= "hand2",
-                                    bg= GlobalVars.backgroundColorDark,
-                                    activebackground=GlobalVars.logoBlue,
-                                    fg="white",font=('Helvatical bold',10)) 
+                                    text    = labelText + "\n" + level.path, anchor="e",
+                                    bd      = 0, 
+                                    command = partial(self.removeFolder, level.path),
+                                    cursor  = "hand2",
+                                    bg      = GlobalVars.backgroundColorDark,
+                                    activebackground = GlobalVars.logoBlue,
+                                    fg               = "white",
+                                    font             = ('Helvatical bold',10))
+            levelInfoButton.grid(row = index, column=1 , padx= 20, pady=(0, 20))
 
-            levelInfoButton.grid(row = index, column=1 , padx= 20, pady=10)
+            removeLevelButton = tk.Button(scrollFrame2,
+                                         text             ="Remove",
+                                         command          = partial(self.removeFolder, level.path),
+                                         bg               = "red",
+                                         activebackground = GlobalVars.logoBlue,
+                                         fg               = "white",
+                                         height           = 1,
+                                         width            = 13,
+                                         bd               = 0)
+            removeLevelButton.grid(row = index, column=1, pady=(50, 0))

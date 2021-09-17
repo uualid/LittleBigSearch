@@ -20,6 +20,8 @@ if you don't have any level archive you can get the one you like from [LittleBig
 
 `• The first search will take longer time`
 
+`• Keep the application in it's folder, create a shortcut for the exe if you need a fast access to it.`
+
 ![](images/LBS1.1.1.gif)
 
 

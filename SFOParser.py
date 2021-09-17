@@ -1,9 +1,12 @@
+from genericpath import exists
 from Modules.LevelModule import Level
 import enum, os
 
 class ParserReturns(enum.Enum):
     noResult   = 1
-    wrongPath  = 2
+    noPath     = 2
+    wrongPath  = 3
+    
 
 #  ______________________ LevelParser _______________________________________________________________________________________________________
 
@@ -61,9 +64,12 @@ class LevelParser:
     def search(self, callBack, term, path, includeDescription):
             # Empty the array for the next search.
         matchedLevels = []
+        if exists(path) == False:
+            callBack(ParserReturns.wrongPath)
+            return
 
         if path.__contains__("/") == False:
-            callBack(ParserReturns.wrongPath)
+            callBack(ParserReturns.noPath)
             return
 
         for levelFolder in os.listdir(path):
@@ -109,8 +115,12 @@ class LevelParser:
     def fetchLevelsFrom(self, path, callBack):
         levels = []
         
+        if exists(path) == False:
+            callable(ParserReturns.wrongPath)
+            return
+
         if path.__contains__("/") == False:
-            callBack(ParserReturns.wrongPath)
+            callBack(ParserReturns.noPath)
             return
         
         for levelFolder in os.listdir(path):

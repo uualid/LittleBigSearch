@@ -1,13 +1,13 @@
 import tkinter           as tk
 import os, shutil,threading, ttkthemes
 from   genericpath       import exists
-from   tkinter           import Button, Frame, ttk
-from   tkinter.constants import VERTICAL
+from   tkinter           import Button, Frame, Widget, ttk
+from   tkinter.constants import ANCHOR, VERTICAL
 from   functools         import partial
 from   PIL               import Image, ImageTk
 from   SFOParser         import LevelParser, ParserReturns
 from   Settings.Options  import Options
-from   helpers.Utilities import GlobalVars
+import helpers.Utilities as     helpers
 from   SavedLevels       import SavedLevels
 from   os                import path
 
@@ -19,7 +19,7 @@ class LittleBigSearchGUI():
         self.stopSearchAnimation = False
 
         self.scrollerCanvas  = tk.Canvas()
-        self.scrollerFrame   = Frame()
+        self.levelScroller   = Frame()
         
         self.levelParser     = LevelParser()
         self.matchedLevels   = matchedLevels
@@ -34,7 +34,7 @@ class LittleBigSearchGUI():
         self.master = master
         self.master.title("LittleBigSearch by @SackBiscuit v1.1.1")
         self.master.iconbitmap(default="images/icon.ico")
-        self.master.configure(bg= GlobalVars.backgroundColorDark)
+        self.master.configure(bg= helpers.GlobalVars.BGColorDark)
 
         ttkthemes.themed_style.ThemedStyle(theme="adapta")
 
@@ -43,7 +43,7 @@ class LittleBigSearchGUI():
         self.canvas = tk.Canvas(master,
                                 height = 150,
                                 width  = 900 ,
-                                bg=GlobalVars.backgroudnColorLight, 
+                                bg=helpers.GlobalVars.BGColorLight, 
                                 borderwidth=0,
                                 highlightthickness=0)
 
@@ -54,54 +54,56 @@ class LittleBigSearchGUI():
         self.logoResize = self.logo.resize(( 500, 112 ))
         self.logo = ImageTk.PhotoImage(image= self.logoResize)
 
-        self.logoLabel = tk.Label(image= self.logo, bg= GlobalVars.backgroudnColorLight)
+        self.logoLabel = tk.Label(image= self.logo, bg= helpers.GlobalVars.BGColorLight)
         self.logoLabel.image = self.logo
         self.logoLabel.grid(column=1, row=0)
         
         # ____ 
         
-        self.settingButton = tk.Button( text="Settings",
-                                    command=lambda: self.openSettings(),
-                                    bg=GlobalVars.logoBlue, 
-                                    activebackground= GlobalVars.logoBlue,
-                                    fg = "white", height=1, width= 13, bd=0)
+        self.settingButton = tk.Button(text             = "Settings",
+                                       command          = lambda: self.openSettings(),
+                                       bg               = helpers.GlobalVars.logoBlue, 
+                                       activebackground = helpers.GlobalVars.logoBlue,
+                                       fg               = "white",
+                                       height           = 1, 
+                                       width            = 13,
+                                       bd               = 0)
         self.settingButton.grid(columnspan=3, column=0, row=1, pady=10, padx= (0,105))
-
         # ____
-        
-        self.SavedLevelsButton = tk.Button( text="Saved Levels",
-                                    command=lambda: self.openSavedLevels(),
-                                    bg=GlobalVars.logoBlue, 
-                                    activebackground= GlobalVars.logoBlue,
-                                    fg = "white", height=1, width= 13, bd=0)
+        self.SavedLevelsButton = tk.Button(text            = "Saved Levels",
+                                          command          = lambda: self.openSavedLevels(),
+                                          bg               = helpers.GlobalVars.logoBlue, 
+                                          activebackground = helpers.GlobalVars.logoBlue,
+                                          fg               = "white", 
+                                          height           = 1,
+                                          width            = 13,
+                                          bd               = 0)
         self.SavedLevelsButton.grid(columnspan=3, column=0, row=1, pady=10, padx= (105,0))
-
         # ____ 
-
-        searchLabel = tk.Label(text= "The Search will look for level name, creator ID or any keyword in the level Description",
-                                bg=GlobalVars.backgroundColorDark,
-                                fg="White",
-                                font=('Helvatical bold',10))
+        searchLabel = tk.Label(text  = "The Search will look for level name, creator ID or any keyword in the level Description",
+                               bg    = helpers.GlobalVars.BGColorDark,
+                               fg    = "White",
+                               font  = ('Helvatical bold',10))
         searchLabel.grid(columnspan=3, column=0, row=2)
         searchTextField = tk.Entry(bd= 0, font=15, bg="black", fg="white")
         searchTextField.grid(columnspan=3, row=3, column=0, ipadx= 250)
 
-        searchButton = tk.Button(text="Search",
-                                command= lambda: threading.Thread(target= self.LBSsearch, args= (searchTextField.get(), self.archivePath) ).start(),
-                                bd=0,
-                                bg= GlobalVars.logoBlue, 
-                                fg= "white", 
-                                activebackground = GlobalVars.logoBlue,
-                                height=1, width= 20)
-
+        searchButton = tk.Button(text             = "Search",
+                                command           = lambda: threading.Thread(target= self.LBSsearch, args= (searchTextField.get(), self.archivePath)).start(),
+                                bd                = 0,
+                                bg                = helpers.GlobalVars.logoBlue, 
+                                fg                = "white", 
+                                activebackground  = helpers.GlobalVars.logoBlue,
+                                height            = 1,
+                                width             = 20)
         searchButton.grid(column=1, row=4, pady=10)
 
 
         self.errorText  = tk.StringVar()
-        self.errorLabel = Button(textvariable= self.errorText,
-                            bd=0,
-                            bg=GlobalVars.backgroundColorDark,
-                            activebackground=GlobalVars.logoBlue)
+        self.errorLabel = Button(textvariable    = self.errorText,
+                                bd               = 0,
+                                bg               = helpers.GlobalVars.BGColorDark,
+                                activebackground = helpers.GlobalVars.logoBlue)
         self.errorText.set("")
         self.errorLabel.grid(column=1, row=5, ipadx=30)
         
@@ -137,8 +139,11 @@ class LittleBigSearchGUI():
         if response == ParserReturns.noResult:
             self.sendError("No result", "red")
 
-        elif response == ParserReturns.wrongPath:
+        elif response == ParserReturns.noPath:
             self.sendError("Please select a levels directory from the settings", "red")
+        
+        elif response == ParserReturns.wrongPath:
+            self.sendError("Couldn't find the level archive directory", "red")
         
         else:
             self.matchedLevels = response
@@ -184,7 +189,7 @@ class LittleBigSearchGUI():
 
     def openSettings(self):
         if self.settings == 0:
-            self.settings = Options(closeDelegate             = self.settingsClosedProtocol,
+            self.settings = Options(closeDelegate              = self.settingsClosedProtocol,
                                     duplicatesDelegate         = self.toggleDuplicatesProtocol,
                                     includeDescriptionDelegate = self.toggleIncludeDescriptionProtocol,
                                     archiveDelegate            = self.archivePathProtocol,
@@ -233,66 +238,67 @@ class LittleBigSearchGUI():
     def showResult(self, evt):
         self.sendError("")
         # destroy the old scroll view
-        self.scrollerFrame.destroy()
+        self.levelScroller.destroy()
         
         # build new one
-        self.scrollFrame1 = Frame(self.master,
-                            highlightbackground  =GlobalVars.backgroundColorDark,
-                            highlightcolor       =GlobalVars.backgroundColorDark)
+        self.mainFrame = Frame(self.master,
+                               highlightbackground  = helpers.GlobalVars.BGColorDark,
+                               highlightcolor       = helpers.GlobalVars.BGColorDark)
 
-        self.scrollFrame1.grid(columnspan=3, column=0)
+        self.mainFrame.grid(columnspan=3, column=0)
 
-        self.scrollerCanvas = tk.Canvas(self.scrollFrame1,bg=GlobalVars.backgroundColorDark, borderwidth=0, highlightthickness=0)
+        self.scrollerCanvas = tk.Canvas(self.mainFrame,bg=helpers.GlobalVars.BGColorDark, borderwidth=0, highlightthickness=0)
         self.scrollerCanvas.grid(row=0, column=0, ipadx= 250, ipady=150)
-
-        myScrollBar = ttk.Scrollbar(self.scrollFrame1, orient=VERTICAL, command=self.scrollerCanvas.yview)
-        myScrollBar.grid(row=0, column=1, sticky='ns')
         
 
-        self.scrollerCanvas.configure(yscrollcommand=myScrollBar.set, bg=GlobalVars.backgroundColorDark)
+        ScrollBar = ttk.Scrollbar(self.mainFrame, orient=VERTICAL, command=self.scrollerCanvas.yview)
+        ScrollBar.grid(row=0, column=1, sticky='ns')
+        
+
+        self.scrollerCanvas.configure(yscrollcommand=ScrollBar.set, bg=helpers.GlobalVars.BGColorDark)
         self.scrollerCanvas.bind('<Configure>', lambda e: self.scrollerCanvas.configure(scrollregion= self.scrollerCanvas.bbox("all")))
         
         self.scrollerCanvas.bind('<Enter>', self._bound_to_mousewheel)
         self.scrollerCanvas.bind('<Leave>', self._unbound_to_mousewheel)
 
-        scrollFrame2 = Frame(self.scrollerCanvas, 
-                            background= GlobalVars.backgroundColorDark,
-                            highlightbackground=GlobalVars.backgroundColorDark,
-                            highlightcolor=GlobalVars.backgroundColorDark)
-
-        self.scrollerCanvas.create_window((0,0), window=scrollFrame2, anchor="nw")
-
-        self.scrollerFrame = self.scrollFrame1
-
-            # Loop and build level cells for the scrollable frame
+        scrollerFrame = Frame(self.scrollerCanvas,
+                             background          = helpers.GlobalVars.BGColorDark,
+                             highlightbackground = helpers.GlobalVars.BGColorDark,
+                             highlightcolor      = helpers.GlobalVars.BGColorDark)
+        
+        self.scrollerCanvas.create_window((0,0), window=scrollerFrame, anchor="nw")
+        
+        self.levelScroller = self.mainFrame
         
         matchedLevelsWithSettings = self.matchedLevels if self.isDuplicatesAllowed == True else set(self.matchedLevels)
-        
+            # Loop and build level cells for the scrollable frame
         for index, level in enumerate(matchedLevelsWithSettings):
 
-            labelText = f'{level.title}' 
+            labelText = f'{level.title}'
 
             levellogo = Image.open(level.image)
 
             levelImage_resize = levellogo.resize(( 120, 75 ))
             levellogo = ImageTk.PhotoImage(levelImage_resize)
 
-            levelImage_resize = tk.Label(scrollFrame2, image=levellogo, bg=GlobalVars.backgroundColorDark)
+            levelImage_resize = tk.Label(scrollerFrame, image=levellogo, bg=helpers.GlobalVars.BGColorDark)
             levelImage_resize.image = levellogo
-            levelImage_resize.grid(row = index, column=0)
+
+            levelPath = f'...{level.path[-80:]}' if len(level.path) > 90 else level.path  
+            imagePadx = helpers.Utilities.getPadding(len(levelPath))
+            levelImage_resize.grid(row = index, column=0, padx=imagePadx)
             
-            levelInfoButton = Button(scrollFrame2,
-                                    text             = labelText + "\n" + level.path, anchor="e",
+            levelInfoButton = Button(scrollerFrame,
+                                    text             = labelText + "\n" + levelPath, anchor="e",
                                     bd               = 0, 
                                     command          = partial(self.moveFolder, level.path),
                                     cursor           = "hand2",
-                                    bg               = GlobalVars.backgroundColorDark,
-                                    activebackground = GlobalVars.logoBlue,
+                                    bg               = helpers.GlobalVars.BGColorDark,
+                                    activebackground = helpers.GlobalVars.logoBlue,
                                     fg               = "white",
                                     font             = ('Helvatical bold',10)) 
-
-            levelInfoButton.grid(row = index, column=1 , padx= 20, pady=10)
-
+            levelInfoButton.grid(row = index, column=1)
+            
 
     
 root   = tk.Tk()

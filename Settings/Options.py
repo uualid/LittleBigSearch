@@ -1,6 +1,6 @@
 import os, json
 import tkinter    as tk
-from   helpers.Utilities import GlobalVars
+import helpers.Utilities as helpers
 from   tkinter    import filedialog
 
 class Options():
@@ -17,7 +17,7 @@ class Options():
         self.includeDescriptionDelegate = includeDescriptionDelegate
         #________________________
         
-        self.window = tk.Toplevel(background= GlobalVars.backgroudnColorLight)
+        self.window = tk.Toplevel(background= helpers.GlobalVars.BGColorLight)
         self.window.title("Settings")
         self.window.transient(master)
 
@@ -25,7 +25,7 @@ class Options():
         self.settingsCanvas = tk.Canvas(master= self.window,
                                 height = 20,
                                 width  = 850 ,
-                                bg=GlobalVars.backgroudnColorLight, 
+                                bg=helpers.GlobalVars.BGColorLight, 
                                 borderwidth=0,
                                 highlightthickness=0)
 
@@ -34,10 +34,10 @@ class Options():
         self.archiveLabelStr = tk.StringVar()
         self.archiveLabel = tk.Button(self.window,
                                     textvariable     = self.archiveLabelStr,
-                                    bg               = GlobalVars.backgroudnColorLight,
+                                    bg               = helpers.GlobalVars.BGColorLight,
                                     cursor           = "hand2",
-                                    activebackground = GlobalVars.logoBlue,
-                                    command          = lambda: self.openFile(self.archiveLabelStr.get()),
+                                    activebackground = helpers.GlobalVars.logoBlue,
+                                    command          = lambda: helpers.Utilities.openFile(self.archiveLabelStr.get()),
                                     fg               = "White",
                                     bd               = 0,
                                     font             = ('Helvatical bold',10))
@@ -46,11 +46,11 @@ class Options():
 
         self.archiveBrowseBtn = tk.Button(self.window,
                                     text             ="Browse (Archive)",
-                                    activebackground = GlobalVars.logoBlue,
+                                    activebackground = helpers.GlobalVars.logoBlue,
                                     command          = lambda: self.openFileBrowser(self.archiveLabelStr, 
                                                                                    title    = "Select LittleBigPlanet level archive", 
                                                                                    delegate = self.archiveDelegate),
-                                    bg               = GlobalVars.logoBlue,
+                                    bg               = helpers.GlobalVars.logoBlue,
                                     fg               = "white", height=1, width= 20, bd=0)
         self.archiveBrowseBtn.grid(columnspan=1, column=0, row=0, pady=(20, 0))
         #________
@@ -58,12 +58,12 @@ class Options():
         self.RPCSLabelStr = tk.StringVar()
         self.RPCSLabel = tk.Button(self.window,
                                     textvariable     = self.RPCSLabelStr,
-                                    bg               = GlobalVars.backgroudnColorLight,
-                                    command          = lambda: self.openFile(self.RPCSLabelStr.get()),
+                                    bg               = helpers.GlobalVars.BGColorLight,
+                                    command          = lambda: helpers.Utilities.openFile(self.RPCSLabelStr.get()),
                                     cursor           = "hand2",
                                     fg               = "White",
                                     bd               = 0,
-                                    activebackground = GlobalVars.logoBlue,
+                                    activebackground = helpers.GlobalVars.logoBlue,
                                     font=('Helvatical bold',10))
         self.RPCSLabel.grid(columnspan=1, column=1, row=1, sticky= "we", pady=(20, 0))
 
@@ -72,8 +72,8 @@ class Options():
                                     command = lambda: self.openFileBrowser(self.RPCSLabelStr, 
                                                                           title="Select RPCS3 savedata folder",
                                                                           delegate= self.RPCS3Delegate),
-                                    bg               = GlobalVars.logoBlue, 
-                                    activebackground = GlobalVars.logoBlue,
+                                    bg               = helpers.GlobalVars.logoBlue, 
+                                    activebackground = helpers.GlobalVars.logoBlue,
                                     fg = "white", height=1, width= 20, bd=0)
         self.RPCSBrowseBtn.grid(column=0, row=1, pady=(20, 0))
         #_______
@@ -83,10 +83,10 @@ class Options():
                                              text              = 'Clear duplicate levels',
                                              onvalue           = 1,
                                              variable          = self.dupStatus,
-                                             background        = GlobalVars.backgroundColorDark,
+                                             background        = helpers.GlobalVars.BGColorDark,
                                              fg                = "white",
                                              offvalue          = 0,
-                                             activebackground  = GlobalVars.logoBlue,
+                                             activebackground  = helpers.GlobalVars.logoBlue,
                                              selectcolor       = "#000000",
                                              command           = self.toggleDupplicatesCheckBox)
         self.allowDuplicateschkBox.grid(column=0, row=2, pady=20)
@@ -98,10 +98,10 @@ class Options():
                                              text               = 'Include level description when searching (unchecked = more accurate titles)',
                                              onvalue            = 1,
                                              variable           = self.includeDescriptionStatus,
-                                             background         = GlobalVars.backgroundColorDark,
+                                             background         = helpers.GlobalVars.BGColorDark,
                                              fg                 = "white",
                                              offvalue           = 0,
-                                             activebackground   = GlobalVars.logoBlue,
+                                             activebackground   = helpers.GlobalVars.logoBlue,
                                              selectcolor        = "#000000",
                                              command            = self.toggleIncludeDescription)
         self.onlySearchTitleChkBox.grid(column=1, row=2, pady=20)
@@ -110,8 +110,8 @@ class Options():
         self.saveSettings = tk.Button(self.window, 
                                     text             = "Save",
                                     command          = lambda: self.saveSettingsAsJSON(),
-                                    bg               = GlobalVars.logoBlue, 
-                                    activebackground = GlobalVars.logoBlue,
+                                    bg               = helpers.GlobalVars.logoBlue, 
+                                    activebackground = helpers.GlobalVars.logoBlue,
                                     fg = "white", height=1, width= 20, bd=0)
         self.saveSettings.grid(column=0, row=3)
         
@@ -141,13 +141,6 @@ class Options():
             labelStr.set(selectedFolder)
             delegate(path = selectedFolder)
             
-    def openFile(self, path):
-        try:
-            path = os.path.realpath(path)
-            os.startfile(path)
-        except:
-            print("Failed to open folder")
-    
     # save setting to json file _________________________________________________________________________________________________ 
 
     def saveSettingsAsJSON(self):

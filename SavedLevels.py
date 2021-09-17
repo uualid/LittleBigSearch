@@ -1,12 +1,12 @@
 import threading, os,shutil
 import tkinter           as tk
-from   helpers.Utilities import GlobalVars
 from   tkinter           import Frame, ttk, Button
 from   tkinter.constants import VERTICAL
 from   PIL               import Image, ImageTk
 from   functools         import partial
 from   SFOParser         import LevelParser, ParserReturns
 from   genericpath       import exists
+import helpers.Utilities as helpers
 
 class SavedLevels():
     def __init__(self,master, RPCS3Path, closeDelegate, savedLevels = []):
@@ -25,14 +25,14 @@ class SavedLevels():
         self.LevelParser     = LevelParser()
         #____________________________________
 
-        self.window = tk.Toplevel(background= GlobalVars.backgroudnColorLight)
+        self.window = tk.Toplevel(background= helpers.GlobalVars.BGColorLight)
         self.window.title("RPCS3 savedata levels")
         self.window.transient(master)
         
         self.canvas = tk.Canvas(master= self.window,
                                 height = 100,
                                 width  = 900 ,
-                                bg=GlobalVars.backgroudnColorLight, 
+                                bg=helpers.GlobalVars.BGColorLight, 
                                 borderwidth=0,
                                 highlightthickness=0)
         self.canvas.grid(columnspan=3)
@@ -41,10 +41,10 @@ class SavedLevels():
         self.refreshButton = tk.Button(master        = self.window,
                                     text             ="Refresh",
                                     command          = lambda: self.refresh(),
-                                    bg               = GlobalVars.logoBlue,
-                                    activebackground = GlobalVars.logoBlue,
+                                    bg               = helpers.GlobalVars.logoBlue,
+                                    activebackground = helpers.GlobalVars.logoBlue,
                                     fg = "white", height=1, width= 13, bd=0)
-        self.refreshButton.grid(column=1, row=0)
+        self.refreshButton.grid(column=0, row=0)
 
         self.window.protocol("WM_DELETE_WINDOW", self.onClose)
         threadWork = threading.Thread(target= self.fetchSavedLevels, args= ()) 
@@ -65,7 +65,7 @@ class SavedLevels():
             self.scrollerFrame.destroy()
             pass
 
-        elif response == ParserReturns.wrongPath:
+        elif response == ParserReturns.noPath:
             # self.sendError("Please select a levels directory from the settings", "red")
             pass
         else:
@@ -112,13 +112,13 @@ class SavedLevels():
         
         # build new one
         self.scrollFrame1 = Frame(self.window,
-                                  highlightbackground = GlobalVars.backgroundColorDark,
-                                  highlightcolor      = GlobalVars.backgroundColorDark)
+                                  highlightbackground = helpers.GlobalVars.BGColorDark,
+                                  highlightcolor      = helpers.GlobalVars.BGColorDark)
 
         self.scrollFrame1.grid(columnspan=3, column=0)
 
         self.scrollerCanvas = tk.Canvas(self.scrollFrame1,
-                                        bg=GlobalVars.backgroundColorDark,
+                                        bg=helpers.GlobalVars.BGColorDark,
                                         borderwidth=0,
                                         highlightthickness=0)
 
@@ -129,7 +129,7 @@ class SavedLevels():
                                     command=self.scrollerCanvas.yview)
 
         myScrollBar.grid(row=0, column=1, sticky='ns')
-        self.scrollerCanvas.configure(yscrollcommand = myScrollBar.set, bg = GlobalVars.backgroundColorDark)
+        self.scrollerCanvas.configure(yscrollcommand = myScrollBar.set, bg = helpers.GlobalVars.BGColorDark)
 
         self.scrollerCanvas.bind('<Configure>', lambda e: self.scrollerCanvas.configure(scrollregion= self.scrollerCanvas.bbox("all")))
         
@@ -137,9 +137,9 @@ class SavedLevels():
         self.scrollerCanvas.bind('<Leave>', self._unbound_to_mousewheel)
 
         scrollFrame2 = Frame(self.scrollerCanvas, 
-                            background          = GlobalVars.backgroundColorDark,
-                            highlightbackground = GlobalVars.backgroundColorDark,
-                            highlightcolor      = GlobalVars.backgroundColorDark)
+                            background          = helpers.GlobalVars.BGColorDark,
+                            highlightbackground = helpers.GlobalVars.BGColorDark,
+                            highlightcolor      = helpers.GlobalVars.BGColorDark)
 
         self.scrollerCanvas.create_window((0,0), window=scrollFrame2, anchor="nw")
         self.scrollerFrame = self.scrollFrame1
@@ -158,17 +158,20 @@ class SavedLevels():
 
             levelImage_resize = tk.Label(scrollFrame2, 
                                         image=levellogo,
-                                        bg=GlobalVars.backgroundColorDark)
+                                        bg=helpers.GlobalVars.BGColorDark)
             levelImage_resize.image = levellogo
-            levelImage_resize.grid(row = index, column=0)
+            
+            levelPath = f'...{level.path[-80:]}' if len(level.path) > 90 else level.path
+            imagePadx = helpers.Utilities.getPadding(len(levelPath))
+            levelImage_resize.grid(row = index, column=0, padx=imagePadx)
             
             levelInfoButton = Button(scrollFrame2,
-                                    text    = labelText + "\n" + level.path, anchor="e",
+                                    text    = labelText + "\n" + levelPath, anchor="e",
                                     bd      = 0, 
-                                    command = partial(self.removeFolder, level.path),
+                                    command = partial(helpers.Utilities.openFile, level.path),
                                     cursor  = "hand2",
-                                    bg      = GlobalVars.backgroundColorDark,
-                                    activebackground = GlobalVars.logoBlue,
+                                    bg      = helpers.GlobalVars.BGColorDark,
+                                    activebackground = helpers.GlobalVars.logoBlue,
                                     fg               = "white",
                                     font             = ('Helvatical bold',10))
             levelInfoButton.grid(row = index, column=1 , padx= 20, pady=(0, 20))
@@ -177,7 +180,7 @@ class SavedLevels():
                                          text             ="Remove",
                                          command          = partial(self.removeFolder, level.path),
                                          bg               = "red",
-                                         activebackground = GlobalVars.logoBlue,
+                                         activebackground = helpers.GlobalVars.logoBlue,
                                          fg               = "white",
                                          height           = 1,
                                          width            = 13,

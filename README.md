@@ -6,6 +6,10 @@ A tool to search LittleBigArchive levels.
 
 if you don't have any level archive you can get the one you like from [LittleBigArchive](http://littlebigarchive.com/)
 
+`IMPORTANT:` 
+
+`• Make sure to install python 3.8.0 or later to be able to use the app.`
+
 **when you open LittleBigSearch**
 
 1. Press the settings button.

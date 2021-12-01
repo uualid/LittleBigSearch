@@ -9,12 +9,8 @@ from   genericpath       import exists
 import helpers.Utilities as helpers
 
 class SavedLevels():
-    def __init__(self,master, RPCS3Path, closeDelegate, savedLevels = []):
+    def __init__(self,master, RPCS3Path, savedLevels = []):
         super().__init__()
-        
-        #___ Delegates ______________________
-        self.closeDelegate  = closeDelegate
-        #____________________________________
 
         self.RPCS3Path = RPCS3Path
         #____________________________________
@@ -99,7 +95,6 @@ class SavedLevels():
 
     # window closing protocol ______________________________________________________________
     def onClose(self):
-        self.closeDelegate()
         self.window.destroy()
 
     def showResult(self, evt):

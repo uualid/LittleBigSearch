@@ -6,11 +6,11 @@ from   tkinter    import filedialog
 class Options():
     
     def __init__(self, duplicatesStatus, currentArchivePath, currentRPCS3Path, includeDescriptionStatus,
-                duplicatesDelegate, archiveDelegate, RPCS3Delegate, closeDelegate, includeDescriptionDelegate, master):
+                duplicatesDelegate, archiveDelegate, RPCS3Delegate, includeDescriptionDelegate, master):
         super().__init__()
         
         #___ Delegates __________
-        self.closeDelegate              = closeDelegate
+        
         self.toggleDuplicatesDelegate   = duplicatesDelegate
         self.archiveDelegate            = archiveDelegate
         self.RPCS3Delegate              = RPCS3Delegate
@@ -132,7 +132,6 @@ class Options():
         self.includeDescriptionDelegate()
 
     def onClose(self):
-        self.closeDelegate()
         self.window.destroy()
 
     def openFileBrowser(self, labelStr, title, delegate):

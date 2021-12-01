@@ -12,7 +12,9 @@ from   SavedLevels       import SavedLevels
 from   os                import path
 
 class LittleBigSearchGUI():
-    def __init__(self, master: tk.Tk, matchedLevels = []) -> None:
+    def __init__(self, master: tk.Tk, matchedLevels = [], settings = 0, savedLevels = 0) -> None:
+        
+        
         
         self.archivePath = ''
         self.RPCS3Path   = ''
@@ -24,12 +26,8 @@ class LittleBigSearchGUI():
         self.levelParser     = LevelParser()
         self.matchedLevels   = matchedLevels
         
-        self.settings = 0
         self.isDuplicatesAllowed = False
         self.includeDescription  = True
-
-        self.savedLevels = 0
-        
         
         self.master = master
         self.master.title("LittleBigSearch by @SackBiscuit v1.1.1")
@@ -159,12 +157,6 @@ class LittleBigSearchGUI():
     def toggleIncludeDescriptionProtocol(self):
         self.includeDescription = True if self.includeDescription == False else False
 
-    def settingsClosedProtocol(self):
-        self.settings = 0
-
-    def savedLevelClosedProtocol(self):
-        self.savedLevels = 0
-
     def archivePathProtocol(self, path):
         self.archivePath = path
     
@@ -178,20 +170,20 @@ class LittleBigSearchGUI():
             self.sendError("Please select an RPCS3 savedata folder", "red")
             return
 
-        if self.savedLevels == 0:
-            self.savedLevels = SavedLevels(master        = self.master, 
-                                           RPCS3Path     = self.RPCS3Path,
-                                           closeDelegate = self.savedLevelClosedProtocol)
-        else:
+        try:
             self.savedLevels.window.lift()
+        except:
+            self.savedLevels = SavedLevels(master        = self.master, 
+                                           RPCS3Path     = self.RPCS3Path)
 
     #_________________________________
 
     def openSettings(self):
-        if self.settings == 0:
-            self.settings = Options(closeDelegate              = self.settingsClosedProtocol,
+        try:
+            self.settings.window.lift()
+        except: 
+            self.settings = Options(includeDescriptionDelegate = self.toggleIncludeDescriptionProtocol,
                                     duplicatesDelegate         = self.toggleDuplicatesProtocol,
-                                    includeDescriptionDelegate = self.toggleIncludeDescriptionProtocol,
                                     archiveDelegate            = self.archivePathProtocol,
                                     RPCS3Delegate              = self.RPCS3PathProtocol,
                                     currentArchivePath         = self.archivePath,
@@ -199,10 +191,8 @@ class LittleBigSearchGUI():
                                     includeDescriptionStatus   = self.includeDescription,  
                                     duplicatesStatus           = self.isDuplicatesAllowed,
                                     master=self.master)
-        else: 
-            self.settings.window.lift()
-
-
+            
+            
     # Helper methods _____________________________________________________________________________________________________________________________________
 
     def moveFolder(self, source):
@@ -216,8 +206,10 @@ class LittleBigSearchGUI():
             shutil.rmtree(destDir)
         
         # refresh Saved levels automatically
-        if self.savedLevels != 0:
+        try:
             self.savedLevels.refresh()
+        except:
+            print("DEBUG: Cant refresh")
 
     def _bound_to_mousewheel(self, event):
         self.scrollerCanvas.bind_all("<MouseWheel>", self._on_mouse_wheel)

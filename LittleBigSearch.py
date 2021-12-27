@@ -143,8 +143,9 @@ class LittleBigSearchGUI():
         elif response == ParserReturns.wrongPath:
             self.sendError("Couldn't find the level archive directory", "red")
         
-        else:
+        else: #if levels were found.
             self.matchedLevels = response
+            splitMachedLevels = list(helpers.Utilities.splitLevelsToLists(levels = self.matchedLevels))
             # Calls showResult on the main thread.
             self.master.event_generate("<<event1>>")
 
@@ -167,7 +168,7 @@ class LittleBigSearchGUI():
 
     def openSavedLevels(self):
         if self.RPCS3Path == '':
-            self.sendError("Please select an RPCS3 savedata folder", "red")
+            self.sendError("Please select a destination folder", "red")
             return
 
         try:
@@ -199,10 +200,10 @@ class LittleBigSearchGUI():
         destination = self.RPCS3Path
         destDir = os.path.join(destination,os.path.basename(source))
         if exists(destDir) == False:
-            self.sendError("Level folder was added to RPCS3 savedata", "green")
+            self.sendError("Level folder was copied to the destination folder.", "green")
             shutil.copytree(source, destDir)
         else:
-            self.sendError("Level folder was removed from RPCS3 savedata")
+            self.sendError("Level folder was removed from the destination folder")
             shutil.rmtree(destDir)
         
         # refresh Saved levels automatically

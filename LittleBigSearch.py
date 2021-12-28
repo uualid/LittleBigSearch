@@ -1,16 +1,16 @@
-from math import exp
+
 import tkinter           as tk
 import os, shutil,threading, ttkthemes
 from   genericpath       import exists
-from   tkinter           import Button, Frame, Widget, ttk
-from   tkinter.constants import ANCHOR, VERTICAL
+from   tkinter           import Button, Frame, ttk
+from   tkinter.constants import VERTICAL
 from   functools         import partial
 from   PIL               import Image, ImageTk
 from   SFOParser         import LevelParser, ParserReturns
 from   Settings.Options  import Options
 import helpers.Utilities as     helpers
 from   SavedLevels       import SavedLevels
-from   os                import curdir, path
+from   os                import path
 
 class LittleBigSearchGUI():
     def __init__(self, master: tk.Tk, matchedLevels = [], settings = 0, savedLevels = 0) -> None:
@@ -25,13 +25,14 @@ class LittleBigSearchGUI():
         self.matchedLevels   = matchedLevels
         self.currentPage     = 0
         self.hasMoreThanOnePage = False
+        self.isSearching        = False
         
 
         self.isDuplicatesAllowed = False
         self.includeDescription  = True
         
         self.master = master
-        self.master.title("LittleBigSearch by @SackBiscuit v1.1.1")
+        self.master.title("LittleBigSearch by @SackBiscuit v1.1.3")
         self.master.iconbitmap(default="images/icon.ico")
         self.master.configure(bg= helpers.GlobalVars.BGColorDark)
 
@@ -59,97 +60,47 @@ class LittleBigSearchGUI():
         
         # ____ 
         
-        self.settingButton = tk.Button(text             = "Settings",
-                                       command          = lambda: self.openSettings(),
-                                       bg               = helpers.GlobalVars.logoBlue, 
-                                       activebackground = helpers.GlobalVars.logoBlue,
-                                       fg               = "white",
-                                       height           = 1, 
-                                       width            = 13,
-                                       bd               = 0)
+        self.settingButton = helpers.Utilities.makeButton(text="Settings", command= self.openSettings, buttonColor= helpers.GlobalVars.logoBlue)
+        self.settingButton.config(height=1, width=13)
         self.settingButton.grid(columnspan=3, column=0, row=1, pady=10, padx= (0,105))
+        
         # ____
-        self.SavedLevelsButton = tk.Button(text            = "Saved Levels",
-                                          command          = lambda: self.openSavedLevels(),
-                                          bg               = helpers.GlobalVars.logoBlue, 
-                                          activebackground = helpers.GlobalVars.logoBlue,
-                                          fg               = "white", 
-                                          height           = 1,
-                                          width            = 13,
-                                          bd               = 0)
+        self.SavedLevelsButton = helpers.Utilities.makeButton(text="Saved Levels", command= self.openSavedLevels, buttonColor= helpers.GlobalVars.logoBlue)
+        self.SavedLevelsButton.config(height=1, width=13)
         self.SavedLevelsButton.grid(columnspan=3, column=0, row=1, pady=10, padx= (105,0))
         # ____ 
         searchLabel = tk.Label(text  = "The Search will look for level name, creator ID or any keyword in the level Description",
                                bg    = helpers.GlobalVars.BGColorDark,
                                fg    = "White",
                                font  = ('Helvatical bold',10))
+
         searchLabel.grid(columnspan=3, column=0, row=2)
         searchTextField = tk.Entry(bd= 0, font=15, bg="black", fg="white")
         searchTextField.grid(columnspan=3, row=3, column=0, ipadx= 250)
 
-        searchButton = tk.Button(text             = "Search",
-                                command           = lambda: threading.Thread(target= self.LBSsearch, args= (searchTextField.get(), self.archivePath)).start(),
-                                bd                = 0,
-                                bg                = helpers.GlobalVars.logoBlue, 
-                                fg                = "white", 
-                                activebackground  = helpers.GlobalVars.logoBlue,
-                                height            = 1,
-                                width             = 20)
+        searchButton = helpers.Utilities.makeButton(text="Search", buttonColor= helpers.GlobalVars.logoBlue)
+        searchButton.configure(height = 1, width = 20, command = lambda: threading.Thread(target= self.LBSsearch, args= (searchTextField.get(), self.archivePath)).start())
         searchButton.grid(column=1, row=4, pady=10)
 
 
         self.errorText  = tk.StringVar()
-        self.errorLabel = Button(textvariable    = self.errorText,
-                                bd               = 0,
-                                bg               = helpers.GlobalVars.BGColorDark,
-                                activebackground = helpers.GlobalVars.logoBlue)
+        self.errorLabel = helpers.Utilities.makeLabel(self.errorText)
         self.errorText.set("")
         self.errorLabel.grid(column=1, row=5, ipadx=30, pady=(0,10))
 
         #--- Pagination
         
-        self.pageLeft = Button(text              = "<",
-                                bd               = 0,
-                                fg               = "white",
-                                command          = lambda: self.nextLeftPage(),
-                                bg               = helpers.GlobalVars.BGColorLight,
-                                activebackground = helpers.GlobalVars.logoBlue)
-        
-        self.pageFarLeft = Button(text           = "<<",
-                                bd               = 0,
-                                fg               = "white",
-                                command          = lambda: self.farLeftPage(),
-                                bg               = helpers.GlobalVars.BGColorLight,
-                                activebackground = helpers.GlobalVars.logoBlue)
-        
-        # _______
-        self.pageRight = Button(text             = ">",
-                                bd               = 0,
-                                fg               = "white",
-                                command          = lambda: self.nextRightPage(),
-                                bg               = helpers.GlobalVars.BGColorLight,
-                                activebackground = helpers.GlobalVars.logoBlue)
-        
-        self.pageFarRight = Button(text             = ">>",
-                                bd               = 0,
-                                fg               = "white",
-                                command          = lambda: self.farRightPage(),
-                                bg               = helpers.GlobalVars.BGColorLight,
-                                activebackground = helpers.GlobalVars.logoBlue)
+        self.pageLeft     = helpers.Utilities.makeButton(text="<", command= self.nextLeftPage)
+        self.pageFarLeft  = helpers.Utilities.makeButton(text="<<", command= self.farLeftPage)        
+        self.pageRight    = helpers.Utilities.makeButton(text=">", command= self.nextRightPage)
+        self.pageFarRight = helpers.Utilities.makeButton(text=">>", command= self.farRightPage)
         
         # _________
         self.pageNumText  = tk.StringVar()
-        self.pageNumbers = tk.Button(textvariable =  self.pageNumText,
-                                    bd            =0,
-                                    bg            = helpers.GlobalVars.BGColorDark,
-                                    fg            = "White",
-                                    font          = ('Helvatical bold',10))
+        self.pageNumbers = helpers.Utilities.makeLabel(self.pageNumText)
+        
         self.levelCounterTxt  = tk.StringVar()
-        self.levelCounter     = tk.Button(textvariable =  self.levelCounterTxt,
-                                          bd            =0,
-                                          bg            = helpers.GlobalVars.BGColorDark,
-                                          fg            = "White",
-                                          font          = ('Helvatical bold',10))
+        self.levelCounter     = helpers.Utilities.makeLabel(self.levelCounterTxt)
         
         #____________________________
         
@@ -173,13 +124,14 @@ class LittleBigSearchGUI():
 
     def LBSsearch(self, term, path):
         if self.RPCS3Path.__contains__("/") == False:
-            self.sendError("Please select an RPCS3 savedata folder from settings", "red")
+            self.sendError("Please select a destination folder", "red")
             return
         self.currentPage = 0
         self.sendError("Searching...")
         # this event will be called from background thread to use the main thread.
         self.master.bind("<<event1>>", self.updatePage)
         self.levelParser.search(self.searchCallBack, term, path, includeDescription= self.includeDescription)
+        self.isSearching = True
     
     def searchCallBack(self, response):
         if response == ParserReturns.noResult:
@@ -273,7 +225,7 @@ class LittleBigSearchGUI():
     def sendError(self, message = "", color = "white"):
         self.errorLabel.configure(fg=color)
         self.errorText.set(message)        
-
+    
     # Pagination __________________________________________________________________________________________________________________________________________________
     
     def nextRightPage(self):
@@ -292,15 +244,15 @@ class LittleBigSearchGUI():
 
     def farRightPage(self):
         if self.hasMoreThanOnePage == False: return
-        if self.currentPage == len(self.matchedLevels) -1:
-            return
+        if self.currentPage == len(self.matchedLevels) -1: return
+        
         self.currentPage = len(self.matchedLevels) -1
         self.updatePage(evt="")
 
     def farLeftPage(self):
         if self.hasMoreThanOnePage == False: return
-        if self.currentPage == 0:
-            return
+        if self.currentPage == 0: return
+        
         self.currentPage = 0
         self.updatePage(evt="")
     
@@ -396,6 +348,11 @@ class LittleBigSearchGUI():
                                     fg               = "white",
                                     font             = ('Helvatical bold',10)) 
             levelInfoButton.grid(row = index, column=1)
+        
+        # reset to page one after searching
+        if self.isSearching == True:
+            self.isSearching == False
+            self.currentPage = 0
             
 #___________________________________________________________________________________________________________________________________________________________
     

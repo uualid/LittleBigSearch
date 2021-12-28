@@ -277,25 +277,29 @@ class LittleBigSearchGUI():
     # Pagination __________________________________________________________________________________________________________________________________________________
     
     def nextRightPage(self):
-        if self.currentPage == len(self.matchedLevels) - 1 and self.hasMoreThanOnePage == False:
-            return
+        if self.hasMoreThanOnePage == False: return
+        if self.currentPage == len(self.matchedLevels) - 1: return
+        
         self.currentPage += 1
         self.updatePage(evt="")
 
     def nextLeftPage(self):
-        if self.currentPage == 0 and self.hasMoreThanOnePage == False:
-            return
+        if self.hasMoreThanOnePage == False: return
+        if self.currentPage == 0: return
+        
         self.currentPage -= 1
         self.updatePage(evt="")
 
     def farRightPage(self):
-        if self.currentPage == len(self.matchedLevels) -1 and self.hasMoreThanOnePage == False:
+        if self.hasMoreThanOnePage == False: return
+        if self.currentPage == len(self.matchedLevels) -1:
             return
         self.currentPage = len(self.matchedLevels) -1
         self.updatePage(evt="")
 
     def farLeftPage(self):
-        if self.currentPage == 0 and self.hasMoreThanOnePage == False:
+        if self.hasMoreThanOnePage == False: return
+        if self.currentPage == 0:
             return
         self.currentPage = 0
         self.updatePage(evt="")

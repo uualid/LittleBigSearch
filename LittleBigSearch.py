@@ -1,3 +1,4 @@
+from math import exp
 import tkinter           as tk
 import os, shutil,threading, ttkthemes
 from   genericpath       import exists
@@ -9,23 +10,23 @@ from   SFOParser         import LevelParser, ParserReturns
 from   Settings.Options  import Options
 import helpers.Utilities as     helpers
 from   SavedLevels       import SavedLevels
-from   os                import path
+from   os                import curdir, path
 
 class LittleBigSearchGUI():
     def __init__(self, master: tk.Tk, matchedLevels = [], settings = 0, savedLevels = 0) -> None:
         
-        
-        
         self.archivePath = ''
         self.RPCS3Path   = ''
-        self.stopSearchAnimation = False
-
+        
         self.scrollerCanvas  = tk.Canvas()
         self.levelScroller   = Frame()
         
         self.levelParser     = LevelParser()
         self.matchedLevels   = matchedLevels
+        self.currentPage     = 0
+        self.hasMoreThanOnePage = False
         
+
         self.isDuplicatesAllowed = False
         self.includeDescription  = True
         
@@ -103,7 +104,54 @@ class LittleBigSearchGUI():
                                 bg               = helpers.GlobalVars.BGColorDark,
                                 activebackground = helpers.GlobalVars.logoBlue)
         self.errorText.set("")
-        self.errorLabel.grid(column=1, row=5, ipadx=30)
+        self.errorLabel.grid(column=1, row=5, ipadx=30, pady=(0,10))
+
+        #--- Pagination
+        
+        self.pageLeft = Button(text              = "<",
+                                bd               = 0,
+                                fg               = "white",
+                                command          = lambda: self.nextLeftPage(),
+                                bg               = helpers.GlobalVars.BGColorLight,
+                                activebackground = helpers.GlobalVars.logoBlue)
+        
+        self.pageFarLeft = Button(text           = "<<",
+                                bd               = 0,
+                                fg               = "white",
+                                command          = lambda: self.farLeftPage(),
+                                bg               = helpers.GlobalVars.BGColorLight,
+                                activebackground = helpers.GlobalVars.logoBlue)
+        
+        # _______
+        self.pageRight = Button(text             = ">",
+                                bd               = 0,
+                                fg               = "white",
+                                command          = lambda: self.nextRightPage(),
+                                bg               = helpers.GlobalVars.BGColorLight,
+                                activebackground = helpers.GlobalVars.logoBlue)
+        
+        self.pageFarRight = Button(text             = ">>",
+                                bd               = 0,
+                                fg               = "white",
+                                command          = lambda: self.farRightPage(),
+                                bg               = helpers.GlobalVars.BGColorLight,
+                                activebackground = helpers.GlobalVars.logoBlue)
+        
+        # _________
+        self.pageNumText  = tk.StringVar()
+        self.pageNumbers = tk.Button(textvariable =  self.pageNumText,
+                                    bd            =0,
+                                    bg            = helpers.GlobalVars.BGColorDark,
+                                    fg            = "White",
+                                    font          = ('Helvatical bold',10))
+        self.levelCounterTxt  = tk.StringVar()
+        self.levelCounter     = tk.Button(textvariable =  self.levelCounterTxt,
+                                          bd            =0,
+                                          bg            = helpers.GlobalVars.BGColorDark,
+                                          fg            = "White",
+                                          font          = ('Helvatical bold',10))
+        
+        #____________________________
         
         self.fetchSettingsFromJSON()
         
@@ -127,10 +175,10 @@ class LittleBigSearchGUI():
         if self.RPCS3Path.__contains__("/") == False:
             self.sendError("Please select an RPCS3 savedata folder from settings", "red")
             return
-
+        self.currentPage = 0
         self.sendError("Searching...")
         # this event will be called from background thread to use the main thread.
-        self.master.bind("<<event1>>", self.showResult)
+        self.master.bind("<<event1>>", self.updatePage)
         self.levelParser.search(self.searchCallBack, term, path, includeDescription= self.includeDescription)
     
     def searchCallBack(self, response):
@@ -144,14 +192,14 @@ class LittleBigSearchGUI():
             self.sendError("Couldn't find the level archive directory", "red")
         
         else: #if levels were found.
-            self.matchedLevels = response
-            splitMachedLevels = list(helpers.Utilities.splitLevelsToLists(levels = self.matchedLevels))
+            levels = response if self.isDuplicatesAllowed == True else set(response)
+            self.matchedLevels = helpers.Utilities.splitLevelsToLists(levels = levels) if len(levels) > 50 else levels
+            self.showPagingButtons()
             # Calls showResult on the main thread.
             self.master.event_generate("<<event1>>")
 
-    # Settings and settings Protocols ____________________________________________________________________________________________________________________
+    # PROTOCOLS _________________________________________________________________________________________________________________________________________
 
-    #PROTOCOLS________________________
     def toggleDuplicatesProtocol(self):
         self.isDuplicatesAllowed = True if self.isDuplicatesAllowed == False else False
 
@@ -177,7 +225,7 @@ class LittleBigSearchGUI():
             self.savedLevels = SavedLevels(master        = self.master, 
                                            RPCS3Path     = self.RPCS3Path)
 
-    #_________________________________
+    # Settings ____________________________________________________________________________________________________________________________________________
 
     def openSettings(self):
         try:
@@ -210,7 +258,7 @@ class LittleBigSearchGUI():
         try:
             self.savedLevels.refresh()
         except:
-            print("DEBUG: Cant refresh")
+            print("DEBUG: Cant refresh. No window on the screen")
 
     def _bound_to_mousewheel(self, event):
         self.scrollerCanvas.bind_all("<MouseWheel>", self._on_mouse_wheel)
@@ -226,9 +274,60 @@ class LittleBigSearchGUI():
         self.errorLabel.configure(fg=color)
         self.errorText.set(message)        
 
-    # builds result scroller view _______________________________________________________________________________________________________________________________
+    # Pagination __________________________________________________________________________________________________________________________________________________
     
-    def showResult(self, evt):
+    def nextRightPage(self):
+        if self.currentPage == len(self.matchedLevels) - 1 and self.hasMoreThanOnePage == False:
+            return
+        self.currentPage += 1
+        self.updatePage(evt="")
+
+    def nextLeftPage(self):
+        if self.currentPage == 0 and self.hasMoreThanOnePage == False:
+            return
+        self.currentPage -= 1
+        self.updatePage(evt="")
+
+    def farRightPage(self):
+        if self.currentPage == len(self.matchedLevels) -1 and self.hasMoreThanOnePage == False:
+            return
+        self.currentPage = len(self.matchedLevels) -1
+        self.updatePage(evt="")
+
+    def farLeftPage(self):
+        if self.currentPage == 0 and self.hasMoreThanOnePage == False:
+            return
+        self.currentPage = 0
+        self.updatePage(evt="")
+    
+    def updatePage(self, evt):
+        
+        try: # if there is a 2D list
+            levelsCount = sum(len(levels) for levels in self.matchedLevels)
+            self.pageNumText.set(f'{self.currentPage + 1} of {len(self.matchedLevels)}')
+            self.hasMoreThanOnePage = True
+        except: # else if there's only one list
+            levelsCount = len(self.matchedLevels)
+            self.pageNumText.set('1')
+            self.hasMoreThanOnePage = False
+
+        levelsFound = "Levels" if levelsCount > 1 else "Level"
+        self.levelCounterTxt.set(f'{levelsCount} {levelsFound}')
+        self.showResult()
+    
+    def showPagingButtons(self):
+        self.pageLeft.grid(column=1, row=6, ipadx=15, pady=(0, 10), padx= (0, 150))
+        self.pageFarLeft.grid(column=1, row=6, ipadx=10, pady=(0, 10), padx= (0, 250))
+        
+        self.pageRight.grid(column=1, row=6, ipadx=15, pady=(0, 10), padx= (150, 0))
+        self.pageFarRight.grid(column=1, row=6, ipadx=10, pady=(0, 10), padx= (250, 0))
+
+        self.levelCounter.grid(column=1, row=6, ipadx=10, pady=(0, 10), padx= (400, 0))
+        self.pageNumbers.grid(column=1, row=6, ipadx=20, pady=(0, 10))
+        
+   # builds result scroller view _______________________________________________________________________________________________________________________________
+   
+    def showResult(self):
         self.sendError("")
         # destroy the old scroll view
         self.levelScroller.destroy()
@@ -263,9 +362,11 @@ class LittleBigSearchGUI():
         
         self.levelScroller = self.mainFrame
         
-        matchedLevelsWithSettings = self.matchedLevels if self.isDuplicatesAllowed == True else set(self.matchedLevels)
+        
+        matchedLevelsWithPage = self.matchedLevels[self.currentPage] if self.hasMoreThanOnePage == True else self.matchedLevels
+        
             # Loop and build level cells for the scrollable frame
-        for index, level in enumerate(matchedLevelsWithSettings):
+        for index, level in enumerate(matchedLevelsWithPage):
 
             labelText = f'{level.title}'
 
@@ -292,7 +393,7 @@ class LittleBigSearchGUI():
                                     font             = ('Helvatical bold',10)) 
             levelInfoButton.grid(row = index, column=1)
             
-
+#___________________________________________________________________________________________________________________________________________________________
     
 root   = tk.Tk()
 LBSGUI = LittleBigSearchGUI(master= root)

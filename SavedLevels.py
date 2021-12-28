@@ -22,7 +22,7 @@ class SavedLevels():
         #____________________________________
 
         self.window = tk.Toplevel(background= helpers.GlobalVars.BGColorLight)
-        self.window.title("RPCS3 savedata levels")
+        self.window.title("Destination Folder")
         self.window.transient(master)
         
         self.canvas = tk.Canvas(master= self.window,

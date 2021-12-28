@@ -45,7 +45,7 @@ class Options():
         self.archiveLabel.grid(columnspan=1, column=1, row=0, pady=(20, 0))
 
         self.archiveBrowseBtn = tk.Button(self.window,
-                                    text             ="Browse (Archive)",
+                                    text             ="Browse Archive",
                                     activebackground = helpers.GlobalVars.logoBlue,
                                     command          = lambda: self.openFileBrowser(self.archiveLabelStr, 
                                                                                    title    = "Select LittleBigPlanet level archive", 
@@ -68,9 +68,9 @@ class Options():
         self.RPCSLabel.grid(columnspan=1, column=1, row=1, sticky= "we", pady=(20, 0))
 
         self.RPCSBrowseBtn = tk.Button(self.window, 
-                                    text    = "Browse (RPCS3 Savedata)",
+                                    text    = "Select Destination",
                                     command = lambda: self.openFileBrowser(self.RPCSLabelStr, 
-                                                                          title="Select RPCS3 savedata folder",
+                                                                          title="Select destination folder. e.g. RPCS3 savedata",
                                                                           delegate= self.RPCS3Delegate),
                                     bg               = helpers.GlobalVars.logoBlue, 
                                     activebackground = helpers.GlobalVars.logoBlue,
@@ -122,8 +122,8 @@ class Options():
     # Helper methods _________________________________________________________________________________________________________  
 
     def setupLabels(self, levelArchive, RPCS3savedata):
-        self.archiveLabelStr.set("Select the level archive folder for LittleBigPlanet 1, 2 or 3") if levelArchive == '' else self.archiveLabelStr.set(levelArchive)
-        self.RPCSLabelStr.set("Select an RPCS3 savedata folder") if RPCS3savedata == '' else self.RPCSLabelStr.set(RPCS3savedata)
+        self.archiveLabelStr.set("Select an archive folder for LittleBigPlanet 1, 2 or 3") if levelArchive == '' else self.archiveLabelStr.set(levelArchive)
+        self.RPCSLabelStr.set("Select destination folder. e.g. RPCS3 savedata") if RPCS3savedata == '' else self.RPCSLabelStr.set(RPCS3savedata)
         
     def toggleDupplicatesCheckBox(self):
         self.toggleDuplicatesDelegate()

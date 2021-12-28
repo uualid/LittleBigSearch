@@ -1,6 +1,5 @@
 import os, math
 
-from numpy import ceil
 
 
 class GlobalVars:
@@ -30,8 +29,8 @@ class Utilities:
     @staticmethod
     def splitLevelsToLists(levels, splitSize = 50):
         #Splits the large levels list into smaller lists of 50 element each
-        
+        levels = list(levels)
         x = int(math.ceil(len(levels) / splitSize))
         k, m = divmod(len(levels), x)
-        return (levels[i*k+min(i, m):(i+1)*k+min(i+1, m)] for i in range(x))
+        return list( (levels[i*k+min(i, m):(i+1)*k+min(i+1, m)] for i in range(x)) )
         

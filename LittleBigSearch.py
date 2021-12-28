@@ -25,7 +25,6 @@ class LittleBigSearchGUI():
         self.matchedLevels   = matchedLevels
         self.currentPage     = 0
         self.hasMoreThanOnePage = False
-        self.isSearching        = False
         
 
         self.isDuplicatesAllowed = False
@@ -131,7 +130,7 @@ class LittleBigSearchGUI():
         # this event will be called from background thread to use the main thread.
         self.master.bind("<<event1>>", self.updatePage)
         self.levelParser.search(self.searchCallBack, term, path, includeDescription= self.includeDescription)
-        self.isSearching = True
+        
     
     def searchCallBack(self, response):
         if response == ParserReturns.noResult:
@@ -269,7 +268,7 @@ class LittleBigSearchGUI():
 
         levelsFound = "Levels" if levelsCount > 1 else "Level"
         self.levelCounterTxt.set(f'{levelsCount} {levelsFound}')
-        self.showResult()
+        self.showResult(isAfterSearch= False)
     
     def showPagingButtons(self):
         self.pageLeft.grid(column=1, row=6, ipadx=15, pady=(0, 10), padx= (0, 150))
@@ -283,7 +282,7 @@ class LittleBigSearchGUI():
         
    # builds result scroller view _______________________________________________________________________________________________________________________________
    
-    def showResult(self):
+    def showResult(self, isAfterSearch: bool= True):
         self.sendError("")
         # destroy the old scroll view
         self.levelScroller.destroy()
@@ -350,8 +349,7 @@ class LittleBigSearchGUI():
             levelInfoButton.grid(row = index, column=1)
         
         # reset to page one after searching
-        if self.isSearching == True:
-            self.isSearching == False
+        if isAfterSearch:
             self.currentPage = 0
             
 #___________________________________________________________________________________________________________________________________________________________

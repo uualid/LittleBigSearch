@@ -1,7 +1,7 @@
 import os, json
 import tkinter    as tk
 import helpers.Utilities as helpers
-from   tkinter    import filedialog
+from   tkinter    import Button, filedialog
 
 class Options():
     
@@ -114,6 +114,8 @@ class Options():
                                     activebackground = helpers.GlobalVars.logoBlue,
                                     fg = "white", height=1, width= 20, bd=0)
         self.saveSettings.grid(column=0, row=3)
+
+        self.saveSettingsLabel = Button
         
         #______
         self.setupLabels(levelArchive=currentArchivePath, RPCS3savedata= currentRPCS3Path)

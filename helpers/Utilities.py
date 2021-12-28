@@ -1,5 +1,5 @@
 import os, math
-
+import tkinter as tk
 
 
 class GlobalVars:
@@ -33,4 +33,25 @@ class Utilities:
         x = int(math.ceil(len(levels) / splitSize))
         k, m = divmod(len(levels), x)
         return list( (levels[i*k+min(i, m):(i+1)*k+min(i+1, m)] for i in range(x)) )
+    
+    @staticmethod
+    def makeLabel(textVar):
+        label = tk.Button(textvariable  = textVar,
+                          bd            = 0,
+                          bg            = GlobalVars.BGColorDark,
+                          fg            = "White",
+                          font          = ('Helvatical bold',10))
+        return label
+    
+    @staticmethod
+    def makeButton(text, command = 0, buttonColor = GlobalVars.BGColorLight):
+        btn = tk.Button(text             = text,
+                        bd               = 0,
+                        fg               = "white",
+                        cursor           = "hand2",
+                        bg               = buttonColor,
+                        activebackground = GlobalVars.logoBlue)
+        if command != 0:
+            btn.config(command= lambda: command())
+        return btn
         

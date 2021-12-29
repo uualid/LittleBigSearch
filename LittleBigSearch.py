@@ -1,6 +1,7 @@
 
 import tkinter           as tk
 import os, shutil,threading, ttkthemes
+from   tkinter.ttk       import Progressbar
 from   genericpath       import exists
 from   tkinter           import Button, Frame, ttk
 from   tkinter.constants import VERTICAL

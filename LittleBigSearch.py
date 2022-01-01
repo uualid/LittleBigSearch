@@ -1,9 +1,8 @@
 
 import tkinter           as tk
 import os, shutil,threading, ttkthemes
-from   tkinter.ttk       import Progressbar
 from   genericpath       import exists
-from   tkinter           import Button, Frame, ttk
+from   tkinter           import Button, Canvas, Frame, StringVar, ttk
 from   tkinter.constants import VERTICAL
 from   functools         import partial
 from   PIL               import Image, ImageTk
@@ -23,6 +22,7 @@ class LittleBigSearchGUI():
         self.levelScroller   = Frame()
         
         self.levelParser     = LevelParser()
+        self.isSearching     = False 
         self.matchedLevels   = matchedLevels
         self.currentPage     = 0
         self.hasMoreThanOnePage = False
@@ -47,10 +47,9 @@ class LittleBigSearchGUI():
                                 borderwidth=0,
                                 highlightthickness=0)
 
-        self.canvas.grid(columnspan=3, sticky="we")
+        self.canvas.grid(columnspan=3)
 
         self.logo = Image.open('images/LBSearch.png')
-
         self.logoResize = self.logo.resize(( 500, 112 ))
         self.logo = ImageTk.PhotoImage(image= self.logoResize)
 
@@ -101,7 +100,6 @@ class LittleBigSearchGUI():
         
         self.levelCounterTxt  = tk.StringVar()
         self.levelCounter     = helpers.Utilities.makeLabel(self.levelCounterTxt)
-        
         #____________________________
         
         self.fetchSettingsFromJSON()
@@ -123,16 +121,18 @@ class LittleBigSearchGUI():
     # search method _____________________________________________________________________________________________________________________________________
 
     def LBSsearch(self, term, path):
+        if self.isSearching:
+            return
         if self.RPCS3Path.__contains__("/") == False:
             self.sendError("Please select a destination folder", "red")
             return
         self.currentPage = 0
         self.sendError("Searching...")
+        self.isSearching = True
         # this event will be called from background thread to use the main thread.
         self.master.bind("<<event1>>", self.updatePage)
         self.levelParser.search(self.searchCallBack, term, path, includeDescription= self.includeDescription)
         
-    
     def searchCallBack(self, response):
         if response == ParserReturns.noResult:
             self.sendError("No result", "red")
@@ -149,6 +149,7 @@ class LittleBigSearchGUI():
             self.showPagingButtons()
             # Calls showResult on the main thread.
             self.master.event_generate("<<event1>>")
+        self.isSearching = False
 
     # PROTOCOLS _________________________________________________________________________________________________________________________________________
 
@@ -170,7 +171,6 @@ class LittleBigSearchGUI():
         if self.RPCS3Path == '':
             self.sendError("Please select a destination folder", "red")
             return
-
         try:
             self.savedLevels.window.lift()
         except:
@@ -289,34 +289,32 @@ class LittleBigSearchGUI():
         self.levelScroller.destroy()
         
         # build new one
-        self.mainFrame = Frame(self.master,
-                               highlightbackground  = helpers.GlobalVars.BGColorDark,
-                               highlightcolor       = helpers.GlobalVars.BGColorDark)
+        mainFrame = Frame(self.master,
+                          highlightbackground  = helpers.GlobalVars.BGColorDark,
+                          highlightcolor       = helpers.GlobalVars.BGColorDark)
+        mainFrame.grid(columnspan=3)
+        
+        self.scrollerCanvas = tk.Canvas(mainFrame,bg=helpers.GlobalVars.BGColorDark, borderwidth=0, highlightthickness=0, height=600, width=880)
+        self.scrollerCanvas.grid(row=0, column=0)
 
-        self.mainFrame.grid(columnspan=3, column=0)
-
-        self.scrollerCanvas = tk.Canvas(self.mainFrame,bg=helpers.GlobalVars.BGColorDark, borderwidth=0, highlightthickness=0)
-        self.scrollerCanvas.grid(row=0, column=0, ipadx= 250, ipady=150)
+        ScrollBar = ttk.Scrollbar(mainFrame, orient=VERTICAL, command=self.scrollerCanvas.yview)
+        ScrollBar.grid(row=0, column=3, sticky='ns')
         
 
-        ScrollBar = ttk.Scrollbar(self.mainFrame, orient=VERTICAL, command=self.scrollerCanvas.yview)
-        ScrollBar.grid(row=0, column=1, sticky='ns')
-        
-
-        self.scrollerCanvas.configure(yscrollcommand=ScrollBar.set, bg=helpers.GlobalVars.BGColorDark)
+        self.scrollerCanvas.configure(yscrollcommand=ScrollBar.set)
         self.scrollerCanvas.bind('<Configure>', lambda e: self.scrollerCanvas.configure(scrollregion= self.scrollerCanvas.bbox("all")))
         
         self.scrollerCanvas.bind('<Enter>', self._bound_to_mousewheel)
         self.scrollerCanvas.bind('<Leave>', self._unbound_to_mousewheel)
-
-        scrollerFrame = Frame(self.scrollerCanvas,
+    
+        scrollerFrame = Canvas(self.scrollerCanvas, 
                              background          = helpers.GlobalVars.BGColorDark,
                              highlightbackground = helpers.GlobalVars.BGColorDark,
                              highlightcolor      = helpers.GlobalVars.BGColorDark)
-        
+        scrollerFrame.grid(columnspan=3)
         self.scrollerCanvas.create_window((0,0), window=scrollerFrame, anchor="nw")
         
-        self.levelScroller = self.mainFrame
+        self.levelScroller = mainFrame
         
         
         matchedLevelsWithPage = self.matchedLevels[self.currentPage] if self.hasMoreThanOnePage == True else self.matchedLevels
@@ -334,20 +332,14 @@ class LittleBigSearchGUI():
             levelImage_resize = tk.Label(scrollerFrame, image=levellogo, bg=helpers.GlobalVars.BGColorDark)
             levelImage_resize.image = levellogo
 
+            #if the path for the folder is long take only part of it.
             levelPath = f'...{level.path[-80:]}' if len(level.path) > 90 else level.path  
-            imagePadx = helpers.Utilities.getPadding(len(levelPath))
-            levelImage_resize.grid(row = index, column=0, padx=imagePadx)
+            levelImage_resize.grid(row = index, column=0, sticky= "ew")
             
-            levelInfoButton = Button(scrollerFrame,
-                                    text             = labelText + "\n" + levelPath, anchor="e",
-                                    bd               = 0, 
-                                    command          = partial(self.moveFolder, level.path),
-                                    cursor           = "hand2",
-                                    bg               = helpers.GlobalVars.BGColorDark,
-                                    activebackground = helpers.GlobalVars.logoBlue,
-                                    fg               = "white",
-                                    font             = ('Helvatical bold',10)) 
-            levelInfoButton.grid(row = index, column=1)
+            levelInfoButton = helpers.Utilities.makeButton(master= scrollerFrame, text= labelText + "\n" + levelPath, command= partial(self.moveFolder, level.path))
+            levelInfoButton.configure(bg= helpers.GlobalVars.BGColorDark, width= 92)
+            
+            levelInfoButton.grid(row = index, column=1, columnspan= 2, sticky="ew")
         
         # reset to page one after searching
         if isAfterSearch:

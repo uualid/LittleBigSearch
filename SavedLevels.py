@@ -1,6 +1,6 @@
 import threading, os,shutil
 import tkinter           as tk
-from   tkinter           import Frame, ttk, Button
+from   tkinter           import Frame, ttk
 from   tkinter.constants import VERTICAL
 from   PIL               import Image, ImageTk
 from   functools         import partial

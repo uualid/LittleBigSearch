@@ -2,7 +2,7 @@
 import tkinter           as tk
 import os, shutil,threading, ttkthemes
 from   genericpath       import exists
-from   tkinter           import Button, Canvas, Frame, StringVar, ttk
+from   tkinter           import Canvas, Frame, ttk
 from   tkinter.constants import VERTICAL
 from   functools         import partial
 from   PIL               import Image, ImageTk

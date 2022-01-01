@@ -1,4 +1,4 @@
-import os, math, asyncio
+import os, math
 import tkinter as tk
 
 

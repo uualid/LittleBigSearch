@@ -34,13 +34,19 @@ class SavedLevels():
         self.canvas.grid(columnspan=3)
 
         #____
-        self.refreshButton = tk.Button(master        = self.window,
-                                    text             ="Refresh",
-                                    command          = lambda: self.refresh(),
-                                    bg               = helpers.GlobalVars.logoBlue,
-                                    activebackground = helpers.GlobalVars.logoBlue,
-                                    fg = "white", height=1, width= 13, bd=0)
-        self.refreshButton.grid(column=0, row=0)
+        self.refreshButton = helpers.Utilities.makeButton(master= self.window, 
+                                                          text= "Refresh", 
+                                                          command= lambda: self.refresh(), 
+                                                          buttonColor= helpers.GlobalVars.logoBlue)
+        self.refreshButton.configure(height=1, width=13)
+        self.refreshButton.grid(column=1, row=0, padx= (140, 0))
+
+        self.openDestFolder = helpers.Utilities.makeButton(master= self.window, 
+                                                          text= "Open folder", 
+                                                          command= lambda: helpers.Utilities.openFile(self.RPCS3Path), 
+                                                          buttonColor= helpers.GlobalVars.logoBlue)
+        self.openDestFolder.configure(height=1, width=13)
+        self.openDestFolder.grid(column=1, row=0, padx= (0, 70))
 
         self.window.protocol("WM_DELETE_WINDOW", self.onClose)
         threadWork = threading.Thread(target= self.fetchSavedLevels, args= ()) 

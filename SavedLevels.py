@@ -1,6 +1,6 @@
 import threading, os,shutil
 import tkinter           as tk
-from   tkinter           import Frame, ttk, Button
+from   tkinter           import Frame, ttk
 from   tkinter.constants import VERTICAL
 from   PIL               import Image, ImageTk
 from   functools         import partial
@@ -22,7 +22,7 @@ class SavedLevels():
         #____________________________________
 
         self.window = tk.Toplevel(background= helpers.GlobalVars.BGColorLight)
-        self.window.title("RPCS3 savedata levels")
+        self.window.title("Destination Folder")
         self.window.transient(master)
         
         self.canvas = tk.Canvas(master= self.window,
@@ -34,13 +34,19 @@ class SavedLevels():
         self.canvas.grid(columnspan=3)
 
         #____
-        self.refreshButton = tk.Button(master        = self.window,
-                                    text             ="Refresh",
-                                    command          = lambda: self.refresh(),
-                                    bg               = helpers.GlobalVars.logoBlue,
-                                    activebackground = helpers.GlobalVars.logoBlue,
-                                    fg = "white", height=1, width= 13, bd=0)
-        self.refreshButton.grid(column=0, row=0)
+        self.refreshButton = helpers.Utilities.makeButton(master= self.window, 
+                                                          text= "Refresh", 
+                                                          command= lambda: self.refresh(), 
+                                                          buttonColor= helpers.GlobalVars.logoBlue)
+        self.refreshButton.configure(height=1, width=13)
+        self.refreshButton.grid(column=1, row=0, padx= (140, 0))
+
+        self.openDestFolder = helpers.Utilities.makeButton(master= self.window, 
+                                                          text= "Open folder", 
+                                                          command= lambda: helpers.Utilities.openFile(self.RPCS3Path), 
+                                                          buttonColor= helpers.GlobalVars.logoBlue)
+        self.openDestFolder.configure(height=1, width=13)
+        self.openDestFolder.grid(column=1, row=0, padx= (0, 70))
 
         self.window.protocol("WM_DELETE_WINDOW", self.onClose)
         threadWork = threading.Thread(target= self.fetchSavedLevels, args= ()) 
@@ -157,18 +163,10 @@ class SavedLevels():
             levelImage_resize.image = levellogo
             
             levelPath = f'...{level.path[-80:]}' if len(level.path) > 90 else level.path
-            imagePadx = helpers.Utilities.getPadding(len(levelPath))
-            levelImage_resize.grid(row = index, column=0, padx=imagePadx)
+            levelImage_resize.grid(row = index, column=0)
             
-            levelInfoButton = Button(scrollFrame2,
-                                    text    = labelText + "\n" + levelPath, anchor="e",
-                                    bd      = 0, 
-                                    command = partial(helpers.Utilities.openFile, level.path),
-                                    cursor  = "hand2",
-                                    bg      = helpers.GlobalVars.BGColorDark,
-                                    activebackground = helpers.GlobalVars.logoBlue,
-                                    fg               = "white",
-                                    font             = ('Helvatical bold',10))
+            levelInfoButton = helpers.Utilities.makeButton(master= scrollFrame2, text= labelText + "\n" + levelPath, command= partial(helpers.Utilities.openFile, level.path))
+            levelInfoButton.configure(bg= helpers.GlobalVars.BGColorDark, width= 92)
             levelInfoButton.grid(row = index, column=1 , padx= 20, pady=(0, 20))
 
             removeLevelButton = tk.Button(scrollFrame2,

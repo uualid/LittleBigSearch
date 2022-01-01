@@ -61,15 +61,22 @@ class LevelParser:
         return title
 
     #__ Main search method __________________________________________________________________________________
-    def search(self, callBack, term, path, includeDescription):
-            # Empty the array for the next search.
-        matchedLevels = []
+    def guard(self, path, callBack):
         if exists(path) == False:
             callBack(ParserReturns.wrongPath)
-            return
+            return True
 
         if path.__contains__("/") == False:
             callBack(ParserReturns.noPath)
+            return True
+
+        return False
+    
+    def search(self, callBack, term, path, includeDescription):
+            # Empty the array for the next search.
+        matchedLevels = []
+        
+        if self.guard(path, callBack):
             return
 
         for levelFolder in os.listdir(path):

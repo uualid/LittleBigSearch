@@ -157,18 +157,10 @@ class SavedLevels():
             levelImage_resize.image = levellogo
             
             levelPath = f'...{level.path[-80:]}' if len(level.path) > 90 else level.path
-            imagePadx = helpers.Utilities.getPadding(len(levelPath))
-            levelImage_resize.grid(row = index, column=0, padx=imagePadx)
+            levelImage_resize.grid(row = index, column=0)
             
-            levelInfoButton = Button(scrollFrame2,
-                                    text    = labelText + "\n" + levelPath, anchor="e",
-                                    bd      = 0, 
-                                    command = partial(helpers.Utilities.openFile, level.path),
-                                    cursor  = "hand2",
-                                    bg      = helpers.GlobalVars.BGColorDark,
-                                    activebackground = helpers.GlobalVars.logoBlue,
-                                    fg               = "white",
-                                    font             = ('Helvatical bold',10))
+            levelInfoButton = helpers.Utilities.makeButton(master= scrollFrame2, text= labelText + "\n" + levelPath, command= partial(helpers.Utilities.openFile, level.path))
+            levelInfoButton.configure(bg= helpers.GlobalVars.BGColorDark, width= 92)
             levelInfoButton.grid(row = index, column=1 , padx= 20, pady=(0, 20))
 
             removeLevelButton = tk.Button(scrollFrame2,

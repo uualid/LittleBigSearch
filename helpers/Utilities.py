@@ -18,13 +18,6 @@ class Utilities:
         except:
             print("Failed to open folder")
     
-    #level info centre alignment. I hate tkinter
-    @staticmethod
-    def getPadding(charCount):
-        padding = charCount - 155
-        padding = abs(padding) + 25 if charCount < 60 else abs(padding)
-        padding = abs(padding) - 10 if charCount > 85 else padding
-        return (0, padding) 
     
     @staticmethod
     def splitLevelsToLists(levels, splitSize = 50):

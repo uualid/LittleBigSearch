@@ -49,7 +49,12 @@ class LittleBigSearchGUI():
                                 borderwidth=0,
                                 highlightthickness=0)
 
-        self.canvas.grid(columnspan=3)
+        self.canvas.grid(columnspan=3, sticky= "nsew")
+        
+        tk.Grid.columnconfigure(master, 0, weight = 1)
+        tk.Grid.columnconfigure(master, 1, weight = 1)       
+        tk.Grid.columnconfigure(master, 2, weight = 1)
+        tk.Grid.rowconfigure(master, 7, weight = 1)
 
         self.logo = Image.open('images/LBSearch.png')
         self.logoResize = self.logo.resize(( 500, 112 ))
@@ -297,13 +302,20 @@ class LittleBigSearchGUI():
         self.levelScroller.destroy()
         
         # build new one
-        mainFrame = Frame(self.master,
+        mainFrame = Frame(self.master, bg= helpers.GlobalVars.BGColorDark,
                           highlightbackground  = helpers.GlobalVars.BGColorDark,
                           highlightcolor       = helpers.GlobalVars.BGColorDark)
-        mainFrame.grid(columnspan=3)
+        
+        tk.Grid.columnconfigure(mainFrame, 0, weight=1)
+        tk.Grid.rowconfigure(mainFrame, 0, weight=1)
+        # tk.Grid.columnconfigure(mainFrame, 1, weight=1)
+
+        mainFrame.grid(columnspan=3, sticky="nsew")
+        
         
         self.scrollerCanvas = tk.Canvas(mainFrame,bg=helpers.GlobalVars.BGColorDark, borderwidth=0, highlightthickness=0, height=600, width=880)
-        self.scrollerCanvas.grid(row=0, column=0)
+        self.scrollerCanvas.grid(row=0, column=0, sticky= "ns")
+
 
         ScrollBar = ttk.Scrollbar(mainFrame, orient=VERTICAL, command=self.scrollerCanvas.yview)
         ScrollBar.grid(row=0, column=3, sticky='ns')
@@ -319,7 +331,8 @@ class LittleBigSearchGUI():
                              background          = helpers.GlobalVars.BGColorDark,
                              highlightbackground = helpers.GlobalVars.BGColorDark,
                              highlightcolor      = helpers.GlobalVars.BGColorDark)
-        scrollerFrame.grid(columnspan=3)
+        
+        scrollerFrame.grid(columnspan=3, sticky= "nsew")
         self.scrollerCanvas.create_window((0,0), window=scrollerFrame, anchor="nw")
         
         self.levelScroller = mainFrame
@@ -342,10 +355,10 @@ class LittleBigSearchGUI():
 
             #if the path for the folder is long take only part of it.
             levelPath = f'...{level.path[-80:]}' if len(level.path) > 90 else level.path  
-            levelImage_resize.grid(row = index, column=0, sticky= "ew")
+            levelImage_resize.grid(row = index, column=0, padx= (30,0))
             
             levelInfoButton = helpers.Utilities.makeButton(master= scrollerFrame, text= labelText + "\n" + levelPath, command= partial(self.moveFolder, level.path))
-            levelInfoButton.configure(bg= helpers.GlobalVars.BGColorDark, width= 92)
+            levelInfoButton.configure(bg= helpers.GlobalVars.BGColorDark, width= 84)
             
             levelInfoButton.grid(row = index, column=1, columnspan= 2, sticky="ew")
         

@@ -1,6 +1,6 @@
 
 import tkinter           as tk
-import os, shutil,threading, ttkthemes
+import os, shutil,threading, ttkthemes, time
 from   genericpath       import exists
 from   tkinter           import Canvas, Frame, ttk
 from   tkinter.constants import VERTICAL
@@ -27,6 +27,8 @@ class LittleBigSearchGUI():
         self.currentPage     = 0
         self.hasMoreThanOnePage = False
         
+        self.startTimer = 0
+        self.endTimer = 0
 
         self.isDuplicatesAllowed = False
         self.includeDescription  = True
@@ -126,6 +128,8 @@ class LittleBigSearchGUI():
         if self.RPCS3Path.__contains__("/") == False:
             self.sendError("Please select a destination folder", "red")
             return
+        self.startTimer = time.time()
+        
         self.currentPage = 0
         self.sendError("Searching...")
         self.isSearching = True
@@ -146,6 +150,9 @@ class LittleBigSearchGUI():
         else: #if levels were found.
             levels = response if self.isDuplicatesAllowed == True else set(response)
             self.matchedLevels = helpers.Utilities.splitLevelsToLists(levels = levels) if len(levels) > 50 else levels
+            self.endTimer = time.time()
+            print(f"{self.endTimer - self.startTimer},")
+            
             self.showPagingButtons()
             # Calls showResult on the main thread.
             self.master.event_generate("<<event1>>")

@@ -227,6 +227,7 @@ class LittleBigSearchGUI():
 
     def _on_mouse_wheel(self, event):
         self.sendError("")
+        self.master.update()
         self.scrollerCanvas.yview_scroll(-1 * int((event.delta / 120)), "units")
 
     def sendError(self, message = "", color = "white"):

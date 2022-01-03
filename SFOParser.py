@@ -96,15 +96,12 @@ class LevelParser:
 
                     if includeDescription == False:
                         if term in title.lower():
-                        # if title.lower().__contains__(term):
                             newMatchLevel = Level(title = title,
                                               path  = f'{path}/{levelFolder}',
                                               image = f'{path}/{levelFolder}/ICON0.PNG')
                             matchedLeveAppend(newMatchLevel)
                             
                     elif term in SFOContent.lower():
-                    # elif SFOContent.lower().__contains__(term):
-                        
                         newMatchLevel = Level(title = title,
                                               path  = f'{path}/{levelFolder}',
                                               image = f'{path}/{levelFolder}/ICON0.PNG')

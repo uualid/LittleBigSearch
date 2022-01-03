@@ -1,4 +1,4 @@
-![](images/LBSearch.png)
+![](images/LB_Search.png)
 
 A tool to search LittleBigArchive levels.
 

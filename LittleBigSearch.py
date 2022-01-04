@@ -2,22 +2,22 @@
 import tkinter           as tk
 import os, shutil,threading, ttkthemes, time
 from   genericpath       import exists
-from   tkinter           import Canvas, Frame, ttk
+from   tkinter           import Canvas, Frame, Label, TclError, ttk
 from   tkinter.constants import VERTICAL
 from   functools         import partial
 from   PIL               import Image, ImageTk
 from   SFOParser         import LevelParser, ParserReturns
-from   Settings.Options  import Options
 import helpers.Utilities as     helpers
+
 from   SavedLevels       import SavedLevels
-from   os                import path
+from   os                import error, path
+from Settings.OptionsManager import OptionsManager
 
 class LittleBigSearchGUI():
     def __init__(self, master: tk.Tk, matchedLevels = [], settings = 0, savedLevels = 0) -> None:
         
-        self.archivePath = ''
-        self.RPCS3Path   = ''
-        
+        self.options = OptionsManager()
+
         self.scrollerCanvas  = tk.Canvas()
         self.levelScroller   = Frame()
         
@@ -30,11 +30,12 @@ class LittleBigSearchGUI():
         self.startTimer = 0
         self.endTimer = 0
 
-        self.isDuplicatesAllowed = False
-        self.includeDescription  = True
+        self.last_frame = 0
+        self.framelist = []     
+        self.frame_index = 0 
         
         self.master = master
-        self.master.title("LittleBigSearch by @SackBiscuit v1.1.3")
+        self.master.title("By @SackBiscuit v1.1.3.2")
         self.master.iconbitmap(default="images/icon.ico")
         self.master.configure(bg= helpers.GlobalVars.BGColorDark)
 
@@ -51,13 +52,11 @@ class LittleBigSearchGUI():
 
         self.canvas.grid(columnspan=3, sticky= "nsew")
         
-        tk.Grid.columnconfigure(master, 0, weight = 1)
-        tk.Grid.columnconfigure(master, 1, weight = 1)       
-        tk.Grid.columnconfigure(master, 2, weight = 1)
+        tk.Grid.columnconfigure(master, (0,1,2) , weight = 1)
         tk.Grid.rowconfigure(master, 7, weight = 1)
 
-        self.logo = Image.open('images/LBSearch.png')
-        self.logoResize = self.logo.resize(( 500, 112 ))
+        self.logo = Image.open('images/UI/LB_Search.png')
+        self.logoResize = self.logo.resize(( 500, 122 ))
         self.logo = ImageTk.PhotoImage(image= self.logoResize)
 
         self.logoLabel = tk.Label(image= self.logo, bg= helpers.GlobalVars.BGColorLight)
@@ -66,14 +65,18 @@ class LittleBigSearchGUI():
         
         # ____ 
         
-        self.settingButton = helpers.Utilities.makeButton(text="Settings", command= self.openSettings, buttonColor= helpers.GlobalVars.logoBlue)
-        self.settingButton.config(height=1, width=13)
-        self.settingButton.grid(columnspan=3, column=0, row=1, pady=10, padx= (0,105))
+        self.settingsButton = helpers.Utilities.makeButton(text="Settings", buttonColor= helpers.GlobalVars.BGColorDark, activeColor= helpers.GlobalVars.BGColorDark)
+        self.settingsBtnImage = tk.PhotoImage(file="images/UI/settings.png")
+        self.settingsButton.configure(height = 28, width = 120, image= self.settingsBtnImage, command = self.openSettings)
+        self.settingsButton.grid(columnspan=3, column=0, row=1, pady=10, padx= (0,130))
         
         # ____
-        self.SavedLevelsButton = helpers.Utilities.makeButton(text="Saved Levels", command= self.openSavedLevels, buttonColor= helpers.GlobalVars.logoBlue)
-        self.SavedLevelsButton.config(height=1, width=13)
-        self.SavedLevelsButton.grid(columnspan=3, column=0, row=1, pady=10, padx= (105,0))
+
+
+        self.SavedLevelsButton = helpers.Utilities.makeButton(text = "Saved Levels", buttonColor= helpers.GlobalVars.BGColorDark, activeColor= helpers.GlobalVars.BGColorDark)
+        self.savedLevelsBtnImage = tk.PhotoImage(file="images/UI/hearted.png")
+        self.SavedLevelsButton.configure(height = 28, width = 120, image= self.savedLevelsBtnImage, command = self.openSavedLevels)
+        self.SavedLevelsButton.grid(columnspan=3, column=0, row=1, pady=10, padx= (130,0))
         # ____ 
         searchLabel = tk.Label(text  = "The Search will look for level name, creator ID or any keyword in the level Description",
                                bg    = helpers.GlobalVars.BGColorDark,
@@ -84,15 +87,16 @@ class LittleBigSearchGUI():
         searchTextField = tk.Entry(bd= 0, font=15, bg="black", fg="white")
         searchTextField.grid(columnspan=3, row=3, column=0, ipadx= 250)
 
-        searchButton = helpers.Utilities.makeButton(text="Search", buttonColor= helpers.GlobalVars.logoBlue)
-        searchButton.configure(height = 1, width = 20, command = lambda: threading.Thread(target= self.LBSsearch, args= (searchTextField.get(), self.archivePath)).start())
-        searchButton.grid(column=1, row=4, pady=10)
-
+        searchButton = helpers.Utilities.makeButton(text="Search", buttonColor= helpers.GlobalVars.BGColorDark, activeColor= helpers.GlobalVars.BGColorDark)
+        self.searchBtnImage = tk.PhotoImage(file="images/UI/search.png")
+        searchButton.configure(height = 28, width = 120, image= self.searchBtnImage, 
+                               command = lambda: threading.Thread(target= self.LBSsearch, args= (searchTextField.get(), self.options.archivePath)).start())
+        searchButton.grid(column=1, row=4, pady=(13,13))
 
         self.errorText  = tk.StringVar()
         self.errorLabel = helpers.Utilities.makeLabel(self.errorText)
         self.errorText.set("")
-        self.errorLabel.grid(column=1, row=5, ipadx=30, pady=(0,10))
+        self.errorLabel.grid(column=1, row=5, ipadx=30, pady=(0,3))
 
         #--- Pagination
         
@@ -108,39 +112,60 @@ class LittleBigSearchGUI():
         self.levelCounterTxt  = tk.StringVar()
         self.levelCounter     = helpers.Utilities.makeLabel(self.levelCounterTxt)
         #____________________________
+        self.configureGif()
+        self.earthGif = tk.Label(bg= helpers.GlobalVars.BGColorDark)
+        self.earthGif.grid(column=1, row=4, padx= (200, 0) ,pady=(5,0))
+        self.options.fetchSettings()
         
-        self.fetchSettingsFromJSON()
-        
-    # settings __________________________________________________________________________________________________________________________________________
-    
-    def fetchSettingCallBack(self, archive, RPCS3, dupsStatus, includeDescription):
-        self.archivePath = archive
-        self.RPCS3Path   = RPCS3
-        self.isDuplicatesAllowed = dupsStatus
-        self.includeDescription = includeDescription
-    
-    def fetchSettingsFromJSON(self):
-        if path.exists("SavedSettings.json"):
-            Options.getSettingsFromJSON(self.fetchSettingCallBack)
-        else:
-            print("No saved settings.")
 
     # search method _____________________________________________________________________________________________________________________________________
+
+    def configureGif(self):
+        for i in range(32): #theres 32 frame to the globe animation.
+            try:
+                frame = Image.open(f'images/animation/earth{i + 1}.png')
+                frameResized = frame.resize(( 45, 45 ))
+                frame = ImageTk.PhotoImage(image= frameResized)
+                self.framelist.append(frame)
+                 
+            except:
+                break
+    
+    def animate(self, frameNumber):
+        if self.isSearching == False:
+            self.earthGif.config(image="")# remove the image
+            return
+
+        if frameNumber == 32: # Loops the animation when it hits the last frame.
+            frameNumber = 0
+        
+        try:
+            self.earthGif.config(image=self.framelist[frameNumber]) 
+            self.master.after(50, self.animate, frameNumber+1)
+        except:
+            pass
+
+    def startWaiter(self):
+        if self.isSearching == True:
+            threading.Timer(10.0, self.startWaiter).start()
+            self.sendError("First run takes longer time")
 
     def LBSsearch(self, term, path):
         if self.isSearching:
             return
-        if self.RPCS3Path.__contains__("/") == False:
+        if self.options.RPCS3Path.__contains__("/") == False:
             self.sendError("Please select a destination folder", "red")
             return
-        self.startTimer = time.time()
         
+        self.startTimer = time.time()
+        self.startWaiter()
         self.currentPage = 0
-        self.sendError("Searching...")
         self.isSearching = True
+        self.animate(0)
+        
         # this event will be called from background thread to use the main thread.
         self.master.bind("<<event1>>", self.updatePage)
-        self.levelParser.search(self.searchCallBack, term, path, includeDescription= self.includeDescription)
+        self.levelParser.search(self.searchCallBack, path, term, includeDescription= self.options.includeDescription)
         
     def searchCallBack(self, response):
         if response == ParserReturns.noResult:
@@ -150,10 +175,10 @@ class LittleBigSearchGUI():
             self.sendError("Please select a levels directory from the settings", "red")
         
         elif response == ParserReturns.wrongPath:
-            self.sendError("Couldn't find the level archive directory", "red")
+            self.sendError("Can't find any level archive directory", "red")
         
         else: #if levels were found.
-            levels = response if self.isDuplicatesAllowed == True else set(response)
+            levels = response if self.options.includeDups == True else set(response)
             self.matchedLevels = helpers.Utilities.splitLevelsToLists(levels = levels) if len(levels) > 50 else levels
             self.endTimer = time.time()
             print(f"{self.endTimer - self.startTimer},")
@@ -163,53 +188,27 @@ class LittleBigSearchGUI():
             self.master.event_generate("<<event1>>")
         self.isSearching = False
 
-    # PROTOCOLS _________________________________________________________________________________________________________________________________________
-
-    def toggleDuplicatesProtocol(self):
-        self.isDuplicatesAllowed = True if self.isDuplicatesAllowed == False else False
-
-    def toggleIncludeDescriptionProtocol(self):
-        self.includeDescription = True if self.includeDescription == False else False
-
-    def archivePathProtocol(self, path):
-        self.archivePath = path
-    
-    def RPCS3PathProtocol(self, path):
-        self.RPCS3Path = path
-
     # Saved levels _______________________________________________________________________________________________________________________________________
 
     def openSavedLevels(self):
-        if self.RPCS3Path == '':
+        if self.options.RPCS3Path == '':
             self.sendError("Please select a destination folder", "red")
             return
         try:
             self.savedLevels.window.lift()
         except:
             self.savedLevels = SavedLevels(master        = self.master, 
-                                           RPCS3Path     = self.RPCS3Path)
+                                           RPCS3Path     = self.options.RPCS3Path)
 
     # Settings ____________________________________________________________________________________________________________________________________________
 
     def openSettings(self):
-        try:
-            self.settings.window.lift()
-        except: 
-            self.settings = Options(includeDescriptionDelegate = self.toggleIncludeDescriptionProtocol,
-                                    duplicatesDelegate         = self.toggleDuplicatesProtocol,
-                                    archiveDelegate            = self.archivePathProtocol,
-                                    RPCS3Delegate              = self.RPCS3PathProtocol,
-                                    currentArchivePath         = self.archivePath,
-                                    currentRPCS3Path           = self.RPCS3Path,
-                                    includeDescriptionStatus   = self.includeDescription,  
-                                    duplicatesStatus           = self.isDuplicatesAllowed,
-                                    master=self.master)
-            
-            
+        self.options.openSettings(master= self.master)
+                        
     # Helper methods _____________________________________________________________________________________________________________________________________
 
     def moveFolder(self, source):
-        destination = self.RPCS3Path
+        destination = self.options.RPCS3Path
         destDir = os.path.join(destination,os.path.basename(source))
         if exists(destDir) == False:
             self.sendError("Level folder was copied to the destination folder.", "green")

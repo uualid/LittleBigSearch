@@ -72,7 +72,7 @@ class LevelParser:
 
         return False
     
-    def search(self, callBack, term: str, path, includeDescription):
+    def search(self, callBack, path, term: str = "", includeDescription: bool = True):
             # Empty the array for the next search.
         matchedLevels = []
         matchedLeveAppend = matchedLevels.append 
@@ -109,43 +109,4 @@ class LevelParser:
                           
         
         callBack(LevelParser.checkIfThereIsNoMatch(matchedLevels))
-    
-    #__________________________________________________________________________________________________________
-
-    # Fetches anything that resemble a level module.
-
-    ###############################################
-    ### Only used to fetch RPCS3 stored levels  ###
-    ###############################################
-
-    def fetchLevelsFrom(self, path, callBack):
-        levels = []
-        
-        if exists(path) == False:
-            callable(ParserReturns.wrongPath)
-            return
-
-        if path.__contains__("/") == False:
-            callBack(ParserReturns.noPath)
-            return
-        
-        for levelFolder in os.listdir(path):
-            if levelFolder.__contains__("."):
-                    #Skips files, only folders.
-                continue
-            
-            for levelfile in os.listdir(path + "/" + levelFolder):
-                    if levelfile.endswith(".SFO"):
-
-                        openSFO = open(path + "/" + levelFolder + "/" + levelfile, 'r', encoding="utf-8", errors="ignore")
-                        SFOContent = openSFO.read()
-
-                        title = LevelParser.getLevelTitle(SFOContent, levelFolder)
-
-                        newLevel = Level(title = title,
-                                        path  = f'{path}/{levelFolder}',
-                                        image = f'{path}/{levelFolder}/ICON0.PNG')
-                        levels.append(newLevel)
-        callBack(LevelParser.checkIfThereIsNoMatch(levels))
-
     

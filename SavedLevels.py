@@ -58,7 +58,7 @@ class SavedLevels():
     def fetchSavedLevels(self):
         # this event will be called from background thread to use the main thread.
         self.window.bind("<<event1>>", self.showResult)
-        self.LevelParser.fetchLevelsFrom(path=self.RPCS3Path, callBack= self.fetchCallBack)
+        self.LevelParser.search(path= self.RPCS3Path, callBack= self.fetchCallBack)
     
     def fetchCallBack(self, response):
         if response == ParserReturns.noResult:

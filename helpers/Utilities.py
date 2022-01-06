@@ -45,7 +45,7 @@ class Utilities:
         return label
     
     @staticmethod
-    def makeButton(text, command = 0, buttonColor = GlobalVars.BGColorLight, master = 0):
+    def makeButton(text, command = 0, buttonColor = GlobalVars.BGColorLight, activeColor = GlobalVars.logoBlue, master = 0):
         if master != 0:
             btn = tk.Button(master,
                         text             = text,
@@ -53,14 +53,14 @@ class Utilities:
                         fg               = "white",
                         cursor           = "hand2",
                         bg               = buttonColor,
-                        activebackground = GlobalVars.logoBlue)
+                        activebackground = activeColor)
         else:
             btn = tk.Button(text             = text,
                             bd               = 0,
                             fg               = "white",
                             cursor           = "hand2",
                             bg               = buttonColor,
-                            activebackground = GlobalVars.logoBlue)
+                            activebackground = activeColor)
         if command != 0:
             btn.config(command= lambda: command())
         return btn

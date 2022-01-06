@@ -1,4 +1,4 @@
-![](images/LBSearch.png)
+![](images/UI/LB_Search.png)
 
 A tool to search LittleBigArchive levels.
 
@@ -26,7 +26,7 @@ if you don't have any level archive you can get the one you like from [LittleBig
 
 `• The application and images folder needs to be on the same directory. create a shortcut for the exe if you need a fast access to it.`
 
-![](images/LBS1.1.3.2.gif)
+![](images/LBS_1.1.3.2.gif)
 
 
 

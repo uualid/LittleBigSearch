@@ -146,9 +146,12 @@ class LittleBigSearchGUI():
             pass
 
     def startWaiter(self):
+        
         if self.isSearching == True:
-            threading.Timer(10.0, self.startWaiter).start()
             self.sendError("First run takes longer time")
+            return
+        
+        threading.Timer(10.0, self.startWaiter).start()
 
     def LBSsearch(self, term, path):
         if self.isSearching:

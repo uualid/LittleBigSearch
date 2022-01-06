@@ -34,19 +34,30 @@ class SavedLevels():
         self.canvas.grid(columnspan=3)
 
         #____
-        self.refreshButton = helpers.Utilities.makeButton(master= self.window, 
-                                                          text= "Refresh", 
-                                                          command= lambda: self.refresh(), 
-                                                          buttonColor= helpers.GlobalVars.logoBlue)
-        self.refreshButton.configure(height=1, width=13)
-        self.refreshButton.grid(column=1, row=0, padx= (140, 0))
+        self.removeBtnImage = tk.PhotoImage(file="images/UI/remove.png")
 
-        self.openDestFolder = helpers.Utilities.makeButton(master= self.window, 
-                                                          text= "Open folder", 
-                                                          command= lambda: helpers.Utilities.openFile(self.RPCS3Path), 
-                                                          buttonColor= helpers.GlobalVars.logoBlue)
-        self.openDestFolder.configure(height=1, width=13)
-        self.openDestFolder.grid(column=1, row=0, padx= (0, 70))
+        self.refreshButton = helpers.Utilities.makeButton(master = self.window, 
+                                                             text="Refresh", 
+                                                             buttonColor= helpers.GlobalVars.BGColorLight,
+                                                             activeColor= helpers.GlobalVars.BGColorLight)
+        self.refreshBtnImage = tk.PhotoImage(file="images/UI/refresh.png")
+        self.refreshButton.configure(height = 28, width = 160, image= self.refreshBtnImage, 
+                                      command = lambda: self.refresh())
+        self.refreshButton.grid(column=1, row=0, padx= (180, 0))
+
+
+        self.openDestFolder = helpers.Utilities.makeButton(master = self.window, 
+                                                             text="Refresh", 
+                                                             buttonColor= helpers.GlobalVars.BGColorLight,
+                                                             activeColor= helpers.GlobalVars.BGColorLight)
+        self.openFolderBtnImage = tk.PhotoImage(file="images/UI/openFolder.png")
+        self.openDestFolder.configure(height = 28, width = 160, image= self.openFolderBtnImage, 
+                                      command = lambda: helpers.Utilities.openFile(self.RPCS3Path))
+        self.openDestFolder.grid(column=1, row=0, padx= (0, 110))
+
+
+
+
 
         self.window.protocol("WM_DELETE_WINDOW", self.onClose)
         threadWork = threading.Thread(target= self.fetchSavedLevels, args= ()) 
@@ -84,7 +95,9 @@ class SavedLevels():
         self.scrollerCanvas.unbind_all("<MouseWheel>")
 
     def _on_mouse_wheel(self, event):
+        self.window.update()
         self.scrollerCanvas.yview_scroll(-1 * int((event.delta / 120)), "units")
+        
 
     # level managing _______________________________________________________________________
     
@@ -168,14 +181,13 @@ class SavedLevels():
             levelInfoButton = helpers.Utilities.makeButton(master= scrollFrame2, text= labelText + "\n" + levelPath, command= partial(helpers.Utilities.openFile, level.path))
             levelInfoButton.configure(bg= helpers.GlobalVars.BGColorDark, width= 92)
             levelInfoButton.grid(row = index, column=1 , padx= 20, pady=(0, 20))
-
-            removeLevelButton = tk.Button(scrollFrame2,
-                                         text             ="Remove",
-                                         command          = partial(self.removeFolder, level.path),
-                                         bg               = "red",
-                                         activebackground = helpers.GlobalVars.logoBlue,
-                                         fg               = "white",
-                                         height           = 1,
-                                         width            = 13,
-                                         bd               = 0)
+            
+            removeLevelButton = helpers.Utilities.makeButton(master = scrollFrame2, 
+                                                             text="remove", 
+                                                             buttonColor= helpers.GlobalVars.BGColorDark,
+                                                             activeColor= helpers.GlobalVars.BGColorDark)
+            
+            removeLevelButton.configure(height = 28, width = 120, image= self.removeBtnImage, 
+                                        command = partial(self.removeFolder, level.path))
             removeLevelButton.grid(row = index, column=1, pady=(50, 0))
+

@@ -39,13 +39,20 @@ class Options():
 
         self.archiveLabel.grid(columnspan=1, column=1, row=0, pady=(20, 0))
 
-        self.archiveBrowseBtn = helpers.Utilities.makeButton(master = self.window, text="Browse Archive", buttonColor= helpers.GlobalVars.logoBlue)
-        self.archiveBrowseBtn.configure(activebackground= helpers.GlobalVars.logoBlue, 
-                                        height   = 1, width=20,
-                                        command  = lambda: self.openFileBrowser(self.archiveLabelStr, 
-                                                                                title    = "Select LittleBigPlanet level archive", 
-                                                                                delegate = self.archiveDelegate))
+
+
+        self.archiveBrowseBtn = helpers.Utilities.makeButton(master = self.window, 
+                                                             text="Browse Archive", 
+                                                             buttonColor= helpers.GlobalVars.BGColorLight,
+                                                             activeColor= helpers.GlobalVars.BGColorLight)
+        self.archiveBrowseBtnImage = tk.PhotoImage(file="images/UI/selectArchive.png")
+        self.archiveBrowseBtn.configure(height = 28, width = 200, image= self.archiveBrowseBtnImage, 
+                                      command = lambda: self.openFileBrowser(self.archiveLabelStr, 
+                                                                            title    = "Select LittleBigPlanet level archive", 
+                                                                            delegate = self.archiveDelegate))
         self.archiveBrowseBtn.grid(columnspan=1, column=0, row=0, pady=(20, 0))
+
+
         #________
         
         self.RPCSLabelStr = tk.StringVar()
@@ -55,12 +62,25 @@ class Options():
         self.RPCSLabel.grid(columnspan=1, column=1, row=1, sticky= "we", pady=(20, 0))
 
 
-        self.RPCSBrowseBtn = helpers.Utilities.makeButton(master= self.window, text= "Select Destination", buttonColor= helpers.GlobalVars.logoBlue,
-                                                          command= lambda: self.openFileBrowser(self.RPCSLabelStr, 
-                                                                                                title="Select destination folder. e.g. RPCS3 savedata",
-                                                                                                delegate= self.RPCS3Delegate))
-        self.RPCSBrowseBtn.configure(height=1, width=20)
+
+        self.RPCSBrowseBtn = helpers.Utilities.makeButton(master = self.window, 
+                                                          text="Browse Archive", 
+                                                          buttonColor= helpers.GlobalVars.BGColorLight,
+                                                          activeColor= helpers.GlobalVars.BGColorLight)
+        self.RPCS3BrowseBtnImage = tk.PhotoImage(file="images/UI/selcetDestination.png")
+        self.RPCSBrowseBtn.configure(height = 28, width = 200, image= self.RPCS3BrowseBtnImage, 
+                                      command = lambda: self.openFileBrowser(self.RPCSLabelStr, 
+                                                                            title="Select destination folder. e.g. RPCS3 savedata",
+                                                                            delegate= self.RPCS3Delegate))
         self.RPCSBrowseBtn.grid(column=0, row=1, pady=(20, 0))
+
+
+        # self.RPCSBrowseBtn = helpers.Utilities.makeButton(master= self.window, text= "Select Destination", buttonColor= helpers.GlobalVars.logoBlue,
+        #                                                   command= lambda: self.openFileBrowser(self.RPCSLabelStr, 
+        #                                                                                         title="Select destination folder. e.g. RPCS3 savedata",
+        #                                                                                         delegate= self.RPCS3Delegate))
+        # self.RPCSBrowseBtn.configure(height=1, width=20)
+        # self.RPCSBrowseBtn.grid(column=0, row=1, pady=(20, 0))
         #_______
         self.dupStatus = tk.BooleanVar()
         self.dupStatus.set(True if duplicatesStatus == False else False)
@@ -92,12 +112,21 @@ class Options():
         self.onlySearchTitleChkBox.grid(column=1, row=2, pady=20)
         #______
 
-        self.saveSettings = tk.Button(self.window,
-                                    text             = "Save",
-                                    command          = lambda: self.saveSettingsAsJSON(),
-                                    bg               = helpers.GlobalVars.logoBlue, 
-                                    fg = "white", height=1, width= 20, bd=0)
+        self.saveSettings = helpers.Utilities.makeButton(master = self.window, 
+                                                          text="save", 
+                                                          buttonColor= helpers.GlobalVars.BGColorLight,
+                                                          activeColor= helpers.GlobalVars.BGColorLight)
+        self.saveBtnImage = tk.PhotoImage(file="images/UI/save.png")
+        self.saveSettings.configure(height = 28, width = 200, image= self.saveBtnImage, 
+                                      command = lambda: self.saveSettingsAsJSON())
         self.saveSettings.grid(column=0, row=3)
+
+        # self.saveSettings = tk.Button(self.window,
+        #                             text             = "Save",
+        #                             command          = lambda: self.saveSettingsAsJSON(),
+        #                             bg               = helpers.GlobalVars.logoBlue, 
+        #                             fg = "white", height=1, width= 20, bd=0)
+        # self.saveSettings.grid(column=0, row=3)
 
         self.saveSettingsTxt = tk.StringVar()
         self.saveSettingsLabel = helpers.Utilities.makeLabel(master= self.window, textVar= self.saveSettingsTxt, backgroundColor= helpers.GlobalVars.BGColorLight)

@@ -74,13 +74,6 @@ class Options():
                                                                             delegate= self.RPCS3Delegate))
         self.RPCSBrowseBtn.grid(column=0, row=1, pady=(20, 0))
 
-
-        # self.RPCSBrowseBtn = helpers.Utilities.makeButton(master= self.window, text= "Select Destination", buttonColor= helpers.GlobalVars.logoBlue,
-        #                                                   command= lambda: self.openFileBrowser(self.RPCSLabelStr, 
-        #                                                                                         title="Select destination folder. e.g. RPCS3 savedata",
-        #                                                                                         delegate= self.RPCS3Delegate))
-        # self.RPCSBrowseBtn.configure(height=1, width=20)
-        # self.RPCSBrowseBtn.grid(column=0, row=1, pady=(20, 0))
         #_______
         self.dupStatus = tk.BooleanVar()
         self.dupStatus.set(True if duplicatesStatus == False else False)
@@ -120,13 +113,6 @@ class Options():
         self.saveSettings.configure(height = 28, width = 200, image= self.saveBtnImage, 
                                       command = lambda: self.saveSettingsAsJSON())
         self.saveSettings.grid(column=0, row=3)
-
-        # self.saveSettings = tk.Button(self.window,
-        #                             text             = "Save",
-        #                             command          = lambda: self.saveSettingsAsJSON(),
-        #                             bg               = helpers.GlobalVars.logoBlue, 
-        #                             fg = "white", height=1, width= 20, bd=0)
-        # self.saveSettings.grid(column=0, row=3)
 
         self.saveSettingsTxt = tk.StringVar()
         self.saveSettingsLabel = helpers.Utilities.makeLabel(master= self.window, textVar= self.saveSettingsTxt, backgroundColor= helpers.GlobalVars.BGColorLight)

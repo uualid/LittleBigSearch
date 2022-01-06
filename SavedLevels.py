@@ -33,6 +33,9 @@ class SavedLevels():
                                 highlightthickness=0)
         self.canvas.grid(columnspan=3)
 
+        tk.Grid.columnconfigure(self.window, (0,1,2), weight = 1)
+        
+
         #____
         self.removeBtnImage = tk.PhotoImage(file="images/UI/remove.png")
 
@@ -127,15 +130,16 @@ class SavedLevels():
         # build new one
         self.scrollFrame1 = Frame(self.window,
                                   highlightbackground = helpers.GlobalVars.BGColorDark,
-                                  highlightcolor      = helpers.GlobalVars.BGColorDark)
+                                  highlightcolor      = helpers.GlobalVars.BGColorDark, 
+                                  bg                  = helpers.GlobalVars.BGColorDark)
 
-        self.scrollFrame1.grid(columnspan=3, column=0)
+        self.scrollFrame1.grid(columnspan=3, column=0, sticky= "ew")
+        tk.Grid.columnconfigure(self.scrollFrame1, 0, weight = 1)
 
         self.scrollerCanvas = tk.Canvas(self.scrollFrame1,
                                         bg=helpers.GlobalVars.BGColorDark,
                                         borderwidth=0,
                                         highlightthickness=0)
-
         self.scrollerCanvas.grid(row=0, column=0, ipadx= 250, ipady=150)
 
         myScrollBar = ttk.Scrollbar(self.scrollFrame1, 

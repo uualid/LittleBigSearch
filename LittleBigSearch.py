@@ -26,6 +26,7 @@ class LittleBigSearchGUI():
         self.matchedLevels   = matchedLevels
         self.currentPage     = 0
         self.hasMoreThanOnePage = False
+        self.isFirstRun = True
         
         self.startTimer = 0
         self.endTimer = 0
@@ -146,12 +147,13 @@ class LittleBigSearchGUI():
             pass
 
     def startWaiter(self):
-        
         if self.isSearching == True:
             self.sendError("First run takes longer time")
             return
-        
-        threading.Timer(10.0, self.startWaiter).start()
+
+        elif self.isFirstRun == True:
+            threading.Timer(10.0, self.startWaiter).start()
+            
 
     def LBSsearch(self, term, path):
         if self.isSearching:
@@ -171,6 +173,7 @@ class LittleBigSearchGUI():
         self.levelParser.search(self.searchCallBack, path, term, includeDescription= self.options.includeDescription)
         
     def searchCallBack(self, response):
+        self.isFirstRun = False
         if response == ParserReturns.noResult:
             self.sendError("No result", "red")
 

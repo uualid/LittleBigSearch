@@ -1,6 +1,6 @@
 ![](images/UI/LB_Search.png)
 
-A tool to search LittleBigArchive levels.
+A search tool for [LittleBigArchive](http://littlebigarchive.com/)
 
 # How do I use this?
 

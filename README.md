@@ -8,7 +8,7 @@ if you don't have any level archive you can get the one you like from [LittleBig
 
 `IMPORTANT:` 
 
-`• Make sure to install` [python](https://www.python.org/downloads/) `3.8.0 or later to be able to use the app.`
+`• Make sure to install python 3.8.0 or later to be able to use the app. You can get it from` [here](https://www.python.org/downloads/) 
 
 **when you open LittleBigSearch**
 

@@ -33,6 +33,8 @@ class Utilities:
             label = tk.Button(master,
                             textvariable  = textVar,
                             bd            = 0,
+                            highlightthickness= 0,
+                            borderwidth      = 0,
                             bg            = backgroundColor,
                             fg            = "White",
                             font          = ('Helvatical bold',10))
@@ -40,6 +42,8 @@ class Utilities:
             label = tk.Button(textvariable  = textVar,
                             bd            = 0,
                             bg            = GlobalVars.BGColorDark,
+                            highlightthickness= 0,
+                            borderwidth      = 0,
                             fg            = "White",
                             font          = ('Helvatical bold',10))
         return label
@@ -51,6 +55,8 @@ class Utilities:
                         text             = text,
                         bd               = 0,
                         fg               = "white",
+                        highlightthickness= 0,
+                        borderwidth      = 0, 
                         cursor           = "hand2",
                         bg               = buttonColor,
                         activebackground = activeColor)
@@ -58,6 +64,8 @@ class Utilities:
             btn = tk.Button(text             = text,
                             bd               = 0,
                             fg               = "white",
+                            highlightthickness= 0,
+                            borderwidth      = 0,
                             cursor           = "hand2",
                             bg               = buttonColor,
                             activebackground = activeColor)

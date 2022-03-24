@@ -85,28 +85,29 @@ class LevelParser:
             if "." in levelFolder:
                     #Skips files, only folders.
                 continue
-        
-            for levelfile in os.listdir(path + "/" + levelFolder):
-                if levelfile.endswith(".SFO"):
-                    
-                    openSFO = open(path + "/" + levelFolder + "/" + levelfile, 'r', encoding="utf-8", errors="ignore")
-                    SFOContent = openSFO.read()
-                    
-                    title = LevelParser.getLevelTitle(SFOContent, levelFolder)
+            try:
+                for levelfile in os.listdir(path + "/" + levelFolder):
+                    if levelfile.endswith(".SFO"):
+                        
+                        openSFO = open(path + "/" + levelFolder + "/" + levelfile, 'r', encoding="utf-8", errors="ignore")
+                        SFOContent = openSFO.read()
+                        
+                        title = LevelParser.getLevelTitle(SFOContent, levelFolder)
 
-                    if includeDescription == False:
-                        if term in title.lower():
+                        if includeDescription == False:
+                            if term in title.lower():
+                                newMatchLevel = Level(title = title,
+                                                path  = f'{path}/{levelFolder}',
+                                                image = f'{path}/{levelFolder}/ICON0.PNG')
+                                matchedLeveAppend(newMatchLevel)
+                                
+                        elif term in SFOContent.lower():
                             newMatchLevel = Level(title = title,
-                                              path  = f'{path}/{levelFolder}',
-                                              image = f'{path}/{levelFolder}/ICON0.PNG')
+                                                path  = f'{path}/{levelFolder}',
+                                                image = f'{path}/{levelFolder}/ICON0.PNG')
                             matchedLeveAppend(newMatchLevel)
-                            
-                    elif term in SFOContent.lower():
-                        newMatchLevel = Level(title = title,
-                                              path  = f'{path}/{levelFolder}',
-                                              image = f'{path}/{levelFolder}/ICON0.PNG')
-                        matchedLeveAppend(newMatchLevel)
-                          
-        
+            except:
+                continue                
+            
         callBack(LevelParser.checkIfThereIsNoMatch(matchedLevels))
     

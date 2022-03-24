@@ -37,7 +37,7 @@ class LittleBigSearchGUI():
         
         self.master = master
         self.master.title("By @SackBiscuit v1.1.3.2")
-        self.master.iconbitmap(default="images/icon.ico")
+        #self.master.iconbitmap(default="images/icon.ico")
         self.master.configure(bg= helpers.GlobalVars.BGColorDark)
 
         ttkthemes.themed_style.ThemedStyle(theme="adapta")
@@ -75,7 +75,7 @@ class LittleBigSearchGUI():
 
 
         self.SavedLevelsButton = helpers.Utilities.makeButton(text = "Saved Levels", buttonColor= helpers.GlobalVars.BGColorDark, activeColor= helpers.GlobalVars.BGColorDark)
-        self.savedLevelsBtnImage = tk.PhotoImage(file="images/UI/hearted.png")
+        self.savedLevelsBtnImage = tk.PhotoImage(file="images/UI/Hearted.png")
         self.SavedLevelsButton.configure(height = 28, width = 120, image= self.savedLevelsBtnImage, command = self.openSavedLevels)
         self.SavedLevelsButton.grid(columnspan=3, column=0, row=1, pady=10, padx= (130,0))
         # ____ 
@@ -85,7 +85,7 @@ class LittleBigSearchGUI():
                                font  = ('Helvatical bold',10))
 
         searchLabel.grid(columnspan=3, column=0, row=2)
-        searchTextField = tk.Entry(bd= 0, font=15, bg="black", fg="white")
+        searchTextField = tk.Entry(bd= 0, font=15, bg="black", fg="white", highlightthickness=0, borderwidth = 0,)
         searchTextField.grid(columnspan=3, row=3, column=0, ipadx= 250)
 
         searchButton = helpers.Utilities.makeButton(text="Search", buttonColor= helpers.GlobalVars.BGColorDark, activeColor= helpers.GlobalVars.BGColorDark)

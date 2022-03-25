@@ -13,8 +13,9 @@ class Utilities:
     @staticmethod
     def openFile(path):
         try:
-            path = os.path.realpath(path)
-            os.startfile(path)
+            path = os.path.realpath(path) 
+            os.system('xdg-open "%s"' % path)
+            
         except:
             print("Failed to open folder")
     

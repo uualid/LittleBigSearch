@@ -2,7 +2,7 @@
 
 A search tool for [LittleBigArchive](http://littlebigarchive.com/)
 
-Theres a **MacOS** and **Linux** version of this app. you can find in the [release](https://github.com/WaleedAlassaf/LittleBigSearch/releases/tag/1.1.3.2) section.
+Theres a **MacOS** and **Linux** version of this app. you can find them in the [release](https://github.com/WaleedAlassaf/LittleBigSearch/releases/tag/1.1.3.2) section.
 
 # How do I use this?
 

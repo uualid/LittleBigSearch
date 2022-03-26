@@ -1,3 +1,4 @@
+from doctest import master
 import os, math
 import tkinter as tk
 
@@ -28,40 +29,71 @@ class Utilities:
         return list( (levels[i*k+min(i, m):(i+1)*k+min(i+1, m)] for i in range(x)) )
     
     @staticmethod
-    def makeLabel(textVar, master = 0, backgroundColor = GlobalVars.BGColorDark):
-        if master != 0:
-            label = tk.Button(master,
-                            textvariable  = textVar,
-                            bd            = 0,
-                            bg            = backgroundColor,
-                            fg            = "White",
-                            font          = ('Helvatical bold',10))
-        else:
-            label = tk.Button(textvariable  = textVar,
-                            bd            = 0,
-                            bg            = GlobalVars.BGColorDark,
-                            fg            = "White",
-                            font          = ('Helvatical bold',10))
+    def makeCheckBox(command, 
+                     text, 
+                     variable, 
+                     background= GlobalVars.BGColorDark,
+                     activeColor = GlobalVars.logoBlue,
+                     master = None):
+        
+        chkBox = tk.Checkbutton()
+        if master != None: chkBox = tk.Checkbutton(master= master)
+        
+        chkBox.config(text               = text,
+                      onvalue            = 1,
+                      background         = background,
+                      fg                 = "white",
+                      offvalue           = 0,
+                      activebackground   = activeColor,
+                      selectcolor        = "#000000",
+                      variable           = variable,
+                      command            = command)
+        return chkBox
+        
+    @staticmethod
+    def makeLabel(textVar,
+                  master      = None,
+                  activeColor = None,
+                  cursor      = None,
+                  image       = None,
+                  command     = None,
+                  backgroundColor = GlobalVars.BGColorDark):
+        
+        label = tk.Button()
+        if master  != None: label = tk.Button(master= master)
+        if cursor  != None: label.config(cursor= cursor)
+        if image   != None: label.config(image = image)
+        if command != None: label.config(command= command)
+        if activeColor != None: label.config(activebackground= activeColor)
+        
+        
+        label.config(textvariable  = textVar,
+                    bd             = 0,
+                    bg             = backgroundColor,
+                    fg             = "White",
+                    font           = ('Helvatical bold',10))
         return label
     
     @staticmethod
-    def makeButton(text, command = 0, buttonColor = GlobalVars.BGColorLight, activeColor = GlobalVars.logoBlue, master = 0):
-        if master != 0:
-            btn = tk.Button(master,
-                        text             = text,
-                        bd               = 0,
-                        fg               = "white",
-                        cursor           = "hand2",
-                        bg               = buttonColor,
-                        activebackground = activeColor)
-        else:
-            btn = tk.Button(text             = text,
-                            bd               = 0,
-                            fg               = "white",
-                            cursor           = "hand2",
-                            bg               = buttonColor,
-                            activebackground = activeColor)
-        if command != 0:
-            btn.config(command= lambda: command())
+    def makeButton(text = None,
+                command = None,
+                 master = None,
+                 image  = None,
+                buttonColor = GlobalVars.BGColorLight,
+                activeColor = GlobalVars.logoBlue):
+        
+        btn = tk.Button()
+        if master  != None: btn = tk.Button(master)
+        if command != None: btn.config(command= lambda: command())
+        if text    != None: btn.config(text= text)
+        if image   != None: btn.config(image= image)
+       
+        btn.config(text             = text,
+                    bd               = 0,
+                    fg               = "white",
+                    cursor           = "hand2",
+                    bg               = buttonColor,
+                    activebackground = activeColor)
+            
         return btn
         

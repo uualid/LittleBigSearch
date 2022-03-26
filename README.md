@@ -1,6 +1,7 @@
 ![](images/UI/LB_Search.png)
 
 A search tool for [LittleBigArchive](http://littlebigarchive.com/)
+
 Theres a MacOS and linux version of this app. you can find in the [release](https://github.com/WaleedAlassaf/LittleBigSearch/releases/tag/1.1.3.2) section.
 
 # How do I use this?

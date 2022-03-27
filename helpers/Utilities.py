@@ -1,7 +1,8 @@
-from doctest import master
+import imp
 import os, math
 import tkinter as tk
-
+from tkinter import Frame
+from PIL import ImageTk, Image
 
 class GlobalVars:
     BGColorDark   = "#1e1e1e"
@@ -86,7 +87,7 @@ class Utilities:
         if master  != None: btn = tk.Button(master)
         if command != None: btn.config(command= lambda: command())
         if text    != None: btn.config(text= text)
-        if image   != None: btn.config(image= image)
+        if image   != None: btn.config(image= image); btn.image = image
        
         btn.config(text             = text,
                     bd               = 0,
@@ -96,4 +97,44 @@ class Utilities:
                     activebackground = activeColor)
             
         return btn
+    
+    @staticmethod
+    def makeScrollerFrame(master = None):
+        frame = Frame()
+        if master != None: frame = Frame(master)
+        
+        frame.config(bg                   = GlobalVars.BGColorDark,
+                     highlightbackground  = GlobalVars.BGColorDark,
+                     highlightcolor       = GlobalVars.BGColorDark)
+       
+        tk.Grid.columnconfigure(frame, 0, weight=1)
+        tk.Grid.rowconfigure(frame, 0, weight=1)
+        return frame
+    
+    @staticmethod
+    def makeScrollerCanvas(height = None, width = None, master = None):
+        scrollerCanvas = tk.Canvas()
+        if master != None: scrollerCanvas = tk.Canvas(master)
+        if height != None: scrollerCanvas.config(height= height) 
+        if width  != None: scrollerCanvas.config(width= width) 
+        
+        scrollerCanvas.config(bg = GlobalVars.BGColorDark, 
+                              borderwidth        = 0, 
+                              highlightthickness = 0)
+        return scrollerCanvas
+    
+    @staticmethod
+    def resize(image, height = 120, width = 75):
+        img = Image.open(image)
+        imgResized = img.resize((height, width))
+        finalImage = ImageTk.PhotoImage(imgResized)
+        
+        return finalImage
+    
+    @staticmethod    
+    def addScrollbarTo(canvas, scrollBar, boundToMouseWheel, unboundToMouseWheel):
+        canvas.configure(yscrollcommand=scrollBar.set)
+        canvas.bind('<Configure>', lambda e: canvas.configure(scrollregion= canvas.bbox("all")))
+        canvas.bind('<Enter>', boundToMouseWheel)
+        canvas.bind('<Leave>', unboundToMouseWheel)
         

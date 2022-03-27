@@ -6,7 +6,8 @@ from   PIL               import Image, ImageTk
 from   functools         import partial
 from   SFOParser         import LevelParser, ParserReturns
 from   genericpath       import exists
-import helpers.Utilities as helpers
+from helpers.Utilities import GlobalVars as GB
+from helpers.Utilities import Utilities as util
 
 class SavedLevels():
     def __init__(self,master, RPCS3Path, savedLevels = []):
@@ -21,14 +22,14 @@ class SavedLevels():
         self.LevelParser     = LevelParser()
         #____________________________________
 
-        self.window = tk.Toplevel(background= helpers.GB.BGColorLight)
+        self.window = tk.Toplevel(background= GB.BGColorLight)
         self.window.title("Destination Folder")
         self.window.transient(master)
         
-        self.canvas = tk.Canvas(master= self.window,
+        self.canvas = tk.Canvas(master = self.window,
                                 height = 100,
                                 width  = 900 ,
-                                bg=helpers.GB.BGColorLight, 
+                                bg     = GB.BGColorLight, 
                                 borderwidth=0,
                                 highlightthickness=0)
         self.canvas.grid(columnspan=3)
@@ -39,28 +40,26 @@ class SavedLevels():
         #____
         self.removeBtnImage = tk.PhotoImage(file="images/UI/remove.png")
 
-        self.refreshButton = helpers.util.makeButton(master = self.window, 
-                                                             text="Refresh", 
-                                                             buttonColor= helpers.GB.BGColorLight,
-                                                             activeColor= helpers.GB.BGColorLight)
-        self.refreshBtnImage = tk.PhotoImage(file="images/UI/refresh.png")
-        self.refreshButton.configure(height = 28, width = 160, image= self.refreshBtnImage, 
-                                      command = lambda: self.refresh())
+        refreshImage = tk.PhotoImage(file="images/UI/refresh.png")
+        self.refreshButton   = util.makeButton(master  = self.window, 
+                                               image   = refreshImage,
+                                               command = lambda: self.refresh(),
+                                               buttonColor = GB.BGColorLight,
+                                               activeColor = GB.BGColorLight)
+        
+        self.refreshButton.configure(height = 28, width = 160)
         self.refreshButton.grid(column=1, row=0, padx= (180, 0))
 
 
-        self.openDestFolder = helpers.util.makeButton(master = self.window, 
-                                                             text="Refresh", 
-                                                             buttonColor= helpers.GB.BGColorLight,
-                                                             activeColor= helpers.GB.BGColorLight)
         self.openFolderBtnImage = tk.PhotoImage(file="images/UI/openFolder.png")
-        self.openDestFolder.configure(height = 28, width = 160, image= self.openFolderBtnImage, 
-                                      command = lambda: helpers.util.openFile(self.RPCS3Path))
+        self.openDestFolder = util.makeButton(master   = self.window,
+                                              image    = self.openFolderBtnImage,
+                                              command  = lambda: util.openFile(self.RPCS3Path),
+                                              buttonColor = GB.BGColorLight,
+                                              activeColor = GB.BGColorLight)
+        
+        self.openDestFolder.configure(height = 28, width = 160)
         self.openDestFolder.grid(column=1, row=0, padx= (0, 110))
-
-
-
-
 
         self.window.protocol("WM_DELETE_WINDOW", self.onClose)
         threadWork = threading.Thread(target= self.fetchSavedLevels, args= ()) 
@@ -128,39 +127,29 @@ class SavedLevels():
             return
         
         # build new one
-        self.scrollFrame1 = Frame(self.window,
-                                  highlightbackground = helpers.GB.BGColorDark,
-                                  highlightcolor      = helpers.GB.BGColorDark, 
-                                  bg                  = helpers.GB.BGColorDark)
+        self.baseScrollerFrame = util.makeScrollerFrame(self.window)
 
-        self.scrollFrame1.grid(columnspan=3, column=0, sticky= "ew")
-        tk.Grid.columnconfigure(self.scrollFrame1, 0, weight = 1)
+        self.baseScrollerFrame.grid(columnspan=3, column=0, sticky= "ew")
+        tk.Grid.columnconfigure(self.baseScrollerFrame, 0, weight = 1)
 
-        self.scrollerCanvas = tk.Canvas(self.scrollFrame1,
-                                        bg=helpers.GB.BGColorDark,
-                                        borderwidth=0,
-                                        highlightthickness=0)
+        self.scrollerCanvas = util.makeScrollerCanvas(master = self.baseScrollerFrame)
         self.scrollerCanvas.grid(row=0, column=0, ipadx= 250, ipady=150)
 
-        myScrollBar = ttk.Scrollbar(self.scrollFrame1, 
-                                    orient=VERTICAL,
-                                    command=self.scrollerCanvas.yview)
-
-        myScrollBar.grid(row=0, column=1, sticky='ns')
-        self.scrollerCanvas.configure(yscrollcommand = myScrollBar.set, bg = helpers.GB.BGColorDark)
-
-        self.scrollerCanvas.bind('<Configure>', lambda e: self.scrollerCanvas.configure(scrollregion= self.scrollerCanvas.bbox("all")))
+        scrollBar = ttk.Scrollbar(self.baseScrollerFrame, orient=VERTICAL, command=self.scrollerCanvas.yview)
+        scrollBar.grid(row=0, column=1, sticky='ns')
         
-        self.scrollerCanvas.bind('<Enter>', self._bound_to_mousewheel)
-        self.scrollerCanvas.bind('<Leave>', self._unbound_to_mousewheel)
+        util.addScrollbarTo(canvas    = self.scrollerCanvas,
+                            scrollBar = scrollBar,
+                            boundToMouseWheel   = self._bound_to_mousewheel,
+                            unboundToMouseWheel = self._unbound_to_mousewheel)
+        
+        scrollFrame = Frame(self.scrollerCanvas, 
+                            background          = GB.BGColorDark,
+                            highlightbackground = GB.BGColorDark,
+                            highlightcolor      = GB.BGColorDark)
 
-        scrollFrame2 = Frame(self.scrollerCanvas, 
-                            background          = helpers.GB.BGColorDark,
-                            highlightbackground = helpers.GB.BGColorDark,
-                            highlightcolor      = helpers.GB.BGColorDark)
-
-        self.scrollerCanvas.create_window((0,0), window=scrollFrame2, anchor="nw")
-        self.scrollerFrame = self.scrollFrame1
+        self.scrollerCanvas.create_window((0,0), window=scrollFrame, anchor="nw")
+        self.scrollerFrame = self.baseScrollerFrame
 
             # Loop and build level cells for the scrollable frame
         savedLevels = self.savedLevels
@@ -168,28 +157,21 @@ class SavedLevels():
         for index, level in enumerate(savedLevels):
 
             labelText = f'{level.title}' 
+            levelImage = util.resize(level.image)
 
-            levellogo = Image.open(level.image)
-
-            levelImage_resize = levellogo.resize(( 120, 75 ))
-            levellogo = ImageTk.PhotoImage(levelImage_resize)
-
-            levelImage_resize = tk.Label(scrollFrame2, 
-                                        image=levellogo,
-                                        bg=helpers.GB.BGColorDark)
-            levelImage_resize.image = levellogo
+            levelImageCell = tk.Label(scrollFrame, image=levelImage, bg=GB.BGColorDark)
+            levelImageCell.image = levelImage
             
             levelPath = f'...{level.path[-80:]}' if len(level.path) > 90 else level.path
-            levelImage_resize.grid(row = index, column=0)
+            levelImageCell.grid(row = index, column=0)
             
-            levelInfoButton = helpers.util.makeButton(master= scrollFrame2, text= labelText + "\n" + levelPath, command= partial(helpers.util.openFile, level.path))
-            levelInfoButton.configure(bg= helpers.GB.BGColorDark, width= 92)
+            levelInfoButton = util.makeButton(master= scrollFrame, text= labelText + "\n" + levelPath, command= partial(util.openFile, level.path))
+            levelInfoButton.configure(bg= GB.BGColorDark, width= 92)
             levelInfoButton.grid(row = index, column=1 , padx= 20, pady=(0, 20))
             
-            removeLevelButton = helpers.util.makeButton(master = scrollFrame2, 
-                                                             text="remove", 
-                                                             buttonColor= helpers.GB.BGColorDark,
-                                                             activeColor= helpers.GB.BGColorDark)
+            removeLevelButton = util.makeButton(master = scrollFrame,  
+                                                buttonColor = GB.BGColorDark,
+                                                activeColor = GB.BGColorDark)
             
             removeLevelButton.configure(height = 28, width = 120, image= self.removeBtnImage, 
                                         command = partial(self.removeFolder, level.path))

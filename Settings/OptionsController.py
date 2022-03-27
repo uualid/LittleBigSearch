@@ -25,13 +25,12 @@ class Options():
         self.window.transient(master)
 
 
-        self.settingsCanvas = tk.Canvas(master= self.window,
-                                height = 20,
-                                width  = 850 ,
-                                bg = GB.BGColorLight, 
-                                borderwidth=0,
-                                highlightthickness=0)
-
+        self.settingsCanvas = tk.Canvas(master = self.window,
+                                        height = 20,
+                                        width  = 850 ,
+                                        bg     = GB.BGColorLight, 
+                                        borderwidth  = 0,
+                                        highlightthickness = 0)
         self.settingsCanvas.grid(columnspan=3, row= 4)
 
         self.archiveLabelStr = tk.StringVar()
@@ -45,18 +44,17 @@ class Options():
         self.archiveLabel.grid(columnspan=1, column=1, row=0, pady=(20, 0))
 
 
-
-        self.archiveBrowseBtn = util.makeButton(master = self.window, 
-                                                buttonColor= GB.BGColorLight,
-                                                activeColor= GB.BGColorLight)
+        self.archiveBrowseBtn = util.makeButton(master      = self.window, 
+                                                buttonColor = GB.BGColorLight,
+                                                activeColor = GB.BGColorLight)
         
         self.archiveBrowseBtnImage = tk.PhotoImage(file="images/UI/selectArchive.png")
         self.archiveBrowseBtn.configure(height  = 28, 
                                         width   = 200,
                                         image   = self.archiveBrowseBtnImage, 
                                         command = lambda: self.openFileBrowser(self.archiveLabelStr, 
-                                                                            title    = "Select LittleBigPlanet level archive", 
-                                                                            delegate = self.archiveDelegate))
+                                                                                title    = "Select LittleBigPlanet level archive", 
+                                                                                delegate = self.archiveDelegate))
         self.archiveBrowseBtn.grid(columnspan=1, column=0, row=0, pady=(20, 0))
 
 
@@ -87,11 +85,10 @@ class Options():
         #_______
         self.dupStatus = tk.BooleanVar()
         self.dupStatus.set(True if duplicatesStatus == False else False)
-        self.allowDuplicateschkBox = util.makeCheckBox(master= self.window,
+        self.allowDuplicateschkBox = util.makeCheckBox(master   = self.window,
                                                        text     = 'Clear duplicate levels',
                                                        variable = self.dupStatus,
                                                        command  = self.toggleDupplicatesCheckBox)
-                
         self.allowDuplicateschkBox.grid(column=0, row=2, pady=20)
         #______
 

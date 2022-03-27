@@ -1,5 +1,3 @@
-
-import imp
 import tkinter           as tk
 import os, shutil,threading, ttkthemes, time
 from   genericpath       import exists
@@ -11,7 +9,7 @@ from   SFOParser         import LevelParser, ParserReturns
 
 from helpers.Utilities import GlobalVars as GB
 from helpers.Utilities import Utilities as util
-from   SavedLevels       import SavedLevels
+from SavedLevels       import SavedLevels
 from Settings.OptionsManager import OptionsManager
 
 class LittleBigSearchGUI():
@@ -20,7 +18,7 @@ class LittleBigSearchGUI():
         self.options = OptionsManager()
 
         self.scrollerCanvas  = tk.Canvas()
-        self.levelScroller   = Frame()
+        self.scrollerFrame   = Frame()
         
         self.levelParser     = LevelParser()
         self.isSearching     = False 
@@ -32,7 +30,6 @@ class LittleBigSearchGUI():
         self.startTimer = 0
         self.endTimer = 0
 
-        self.last_frame = 0
         self.framelist = []     
         self.frame_index = 0 
         
@@ -66,33 +63,43 @@ class LittleBigSearchGUI():
         self.logoLabel.grid(column=1, row=0)
         
         # ____ 
+        settingsBtnImage = tk.PhotoImage(file="images/UI/settings.png")
+        self.settingsButton = util.makeButton(buttonColor = GB.BGColorDark, 
+                                              activeColor = GB.BGColorDark,
+                                              image       = settingsBtnImage,
+                                              command     = self.openSettings)
         
-        self.settingsButton = util.makeButton(text="Settings", buttonColor= GB.BGColorDark, activeColor= GB.BGColorDark)
-        self.settingsBtnImage = tk.PhotoImage(file="images/UI/settings.png")
-        self.settingsButton.configure(height = 28, width = 120, image= self.settingsBtnImage, command = self.openSettings)
+        self.settingsButton.configure(height = 28, width = 120)
         self.settingsButton.grid(columnspan=3, column=0, row=1, pady=10, padx= (0,130))
         
         # ____
-
-
-        self.SavedLevelsButton = util.makeButton(text = "Saved Levels", buttonColor= GB.BGColorDark, activeColor= GB.BGColorDark)
-        self.savedLevelsBtnImage = tk.PhotoImage(file="images/UI/hearted.png")
-        self.SavedLevelsButton.configure(height = 28, width = 120, image= self.savedLevelsBtnImage, command = self.openSavedLevels)
+        
+        heartedImage = tk.PhotoImage(file="images/UI/hearted.png")
+        self.SavedLevelsButton = util.makeButton(buttonColor = GB.BGColorDark, 
+                                                 activeColor = GB.BGColorDark,
+                                                 image       = heartedImage,
+                                                 command     = self.openSavedLevels)
+        
+        self.SavedLevelsButton.configure(height = 28, width = 120)
         self.SavedLevelsButton.grid(columnspan=3, column=0, row=1, pady=10, padx= (130,0))
         # ____ 
+        
         searchLabel = tk.Label(text  = "The Search will look for level name, creator ID or any keyword in the level Description",
                                bg    = GB.BGColorDark,
                                fg    = "White",
                                font  = ('Helvatical bold',10))
-
         searchLabel.grid(columnspan=3, column=0, row=2)
+        
         searchTextField = tk.Entry(bd= 0, font=15, bg="black", fg="white")
         searchTextField.grid(columnspan=3, row=3, column=0, ipadx= 250)
 
-        searchButton = util.makeButton(text="Search", buttonColor= GB.BGColorDark, activeColor= GB.BGColorDark)
-        self.searchBtnImage = tk.PhotoImage(file="images/UI/search.png")
-        searchButton.configure(height = 28, width = 120, image= self.searchBtnImage, 
-                               command = lambda: threading.Thread(target= self.LBSsearch, args= (searchTextField.get(), self.options.archivePath)).start())
+        searchBtnImage = tk.PhotoImage(file="images/UI/search.png")
+        searchButton = util.makeButton(buttonColor = GB.BGColorDark,
+                                       activeColor = GB.BGColorDark,
+                                       image       = searchBtnImage,
+                                       command = lambda: threading.Thread(target = self.LBSsearch, 
+                                                                          args   = (searchTextField.get(), self.options.archivePath)).start())
+        searchButton.configure(height = 28, width = 120)
         searchButton.grid(column=1, row=4, pady=(13,13))
 
         self.errorText  = tk.StringVar()
@@ -102,9 +109,9 @@ class LittleBigSearchGUI():
 
         #--- Pagination
         
-        self.pageLeft     = util.makeButton(text="<", command= self.nextLeftPage)
+        self.pageLeft     = util.makeButton(text="<",  command= self.nextLeftPage)
         self.pageFarLeft  = util.makeButton(text="<<", command= self.farLeftPage)        
-        self.pageRight    = util.makeButton(text=">", command= self.nextRightPage)
+        self.pageRight    = util.makeButton(text=">",  command= self.nextRightPage)
         self.pageFarRight = util.makeButton(text=">>", command= self.farRightPage)
         
         # _________
@@ -114,6 +121,7 @@ class LittleBigSearchGUI():
         self.levelCounterTxt  = tk.StringVar()
         self.levelCounter     = util.makeLabel(self.levelCounterTxt)
         #____________________________
+        
         self.configureGif()
         self.earthGif = tk.Label(bg= GB.BGColorDark)
         self.earthGif.grid(column=1, row=4, padx= (200, 0) ,pady=(5,0))
@@ -204,8 +212,8 @@ class LittleBigSearchGUI():
         try:
             self.savedLevels.window.lift()
         except:
-            self.savedLevels = SavedLevels(master        = self.master, 
-                                           RPCS3Path     = self.options.RPCS3Path)
+            self.savedLevels = SavedLevels(master     = self.master, 
+                                           RPCS3Path  = self.options.RPCS3Path)
 
     # Settings ____________________________________________________________________________________________________________________________________________
 
@@ -247,36 +255,32 @@ class LittleBigSearchGUI():
     
     # Pagination __________________________________________________________________________________________________________________________________________________
     
-    def nextRightPage(self):
-        if self.hasMoreThanOnePage == False: return
-        if self.currentPage == len(self.matchedLevels) - 1: return
+    def nextPage(self, pageLimit, moveNear = None, moveFar = None):
+        if self.hasMoreThanOnePage == False     : return
+        if self.currentPage        == pageLimit : return
         
-        self.currentPage += 1
-        self.updatePage(evt="")
-
-    def nextLeftPage(self):
-        if self.hasMoreThanOnePage == False: return
-        if self.currentPage == 0: return
-        
-        self.currentPage -= 1
-        self.updatePage(evt="")
-
-    def farRightPage(self):
-        if self.hasMoreThanOnePage == False: return
-        if self.currentPage == len(self.matchedLevels) -1: return
-        
-        self.currentPage = len(self.matchedLevels) -1
-        self.updatePage(evt="")
-
-    def farLeftPage(self):
-        if self.hasMoreThanOnePage == False: return
-        if self.currentPage == 0: return
-        
-        self.currentPage = 0
+        if moveNear != None: self.currentPage += moveNear
+        if moveFar  != None: self.currentPage = moveFar
         self.updatePage(evt="")
     
-    def updatePage(self, evt):
+    def nextRightPage(self):
+        self.nextPage(moveNear  = 1, 
+                      pageLimit = len(self.matchedLevels) - 1)
         
+    def nextLeftPage(self):
+        self.nextPage(moveNear  =-1,
+                      pageLimit = 0)
+        
+    def farRightPage(self):
+        self.nextPage(moveFar   = len(self.matchedLevels) -1,
+                      pageLimit = len(self.matchedLevels) -1)
+    
+    def farLeftPage(self):
+        self.nextPage(moveFar   = 0,
+                      pageLimit = 0)
+        
+    
+    def updatePage(self, evt):
         try: # if there is a 2D list
             levelsCount = sum(len(levels) for levels in self.matchedLevels)
             self.pageNumText.set(f'{self.currentPage + 1} of {len(self.matchedLevels)}')
@@ -301,71 +305,54 @@ class LittleBigSearchGUI():
         self.pageNumbers.grid(column=1, row=6, ipadx=20, pady=(0, 10))
         
    # builds result scroller view _______________________________________________________________________________________________________________________________
-   
+     
     def showResult(self, isAfterSearch: bool= True):
         self.sendError("")
         # destroy the old scroll view
-        self.levelScroller.destroy()
+        self.scrollerFrame.destroy()
+                
+        # # build new one        
+        baseScrollerFrame = util.makeScrollerFrame(self.master)
+        baseScrollerFrame.grid(columnspan=3, sticky="nsew")
         
-        # build new one
-        mainFrame = Frame(self.master, bg= GB.BGColorDark,
-                          highlightbackground  = GB.BGColorDark,
-                          highlightcolor       = GB.BGColorDark)
-        
-        tk.Grid.columnconfigure(mainFrame, 0, weight=1)
-        tk.Grid.rowconfigure(mainFrame, 0, weight=1)
-        # tk.Grid.columnconfigure(mainFrame, 1, weight=1)
-
-        mainFrame.grid(columnspan=3, sticky="nsew")
-        
-        
-        self.scrollerCanvas = tk.Canvas(mainFrame,bg= GB.BGColorDark, borderwidth=0, highlightthickness=0, height=600, width=880)
+        self.scrollerCanvas = util.makeScrollerCanvas(master= baseScrollerFrame, height= 600, width= 800)
         self.scrollerCanvas.grid(row=0, column=0, sticky= "ns")
-
-
-        ScrollBar = ttk.Scrollbar(mainFrame, orient=VERTICAL, command=self.scrollerCanvas.yview)
-        ScrollBar.grid(row=0, column=3, sticky='ns')
         
-
-        self.scrollerCanvas.configure(yscrollcommand=ScrollBar.set)
-        self.scrollerCanvas.bind('<Configure>', lambda e: self.scrollerCanvas.configure(scrollregion= self.scrollerCanvas.bbox("all")))
+        scrollBar = ttk.Scrollbar(baseScrollerFrame, orient=VERTICAL, command=self.scrollerCanvas.yview)
+        scrollBar.grid(row=0, column=3, sticky='ns')
         
-        self.scrollerCanvas.bind('<Enter>', self._bound_to_mousewheel)
-        self.scrollerCanvas.bind('<Leave>', self._unbound_to_mousewheel)
-    
+        util.addScrollbarTo(canvas= self.scrollerCanvas, 
+                            scrollBar= scrollBar, 
+                            boundToMouseWheel = self._bound_to_mousewheel, 
+                            unboundToMouseWheel = self._unbound_to_mousewheel)
+            
         scrollerFrame = Canvas(self.scrollerCanvas, 
-                            background          = GB.BGColorDark,
-                            highlightbackground = GB.BGColorDark,
-                            highlightcolor      = GB.BGColorDark)
+                               background          = GB.BGColorDark,
+                               highlightbackground = GB.BGColorDark,
+                               highlightcolor      = GB.BGColorDark)
         
         scrollerFrame.grid(columnspan=3, sticky= "nsew")
         self.scrollerCanvas.create_window((0,0), window=scrollerFrame, anchor="nw")
         
-        self.levelScroller = mainFrame
-        
+        self.scrollerFrame = baseScrollerFrame
         
         matchedLevelsWithPage = self.matchedLevels[self.currentPage] if self.hasMoreThanOnePage == True else self.matchedLevels
         
             # Loop and build level cells for the scrollable frame
         for index, level in enumerate(matchedLevelsWithPage):
 
-            labelText = f'{level.title}'
+            labelText = f'{level.title}'            
+            levelImage = util.resize(level.image)
 
-            levellogo = Image.open(level.image)
-
-            levelImage_resize = levellogo.resize(( 120, 75 ))
-            levellogo = ImageTk.PhotoImage(levelImage_resize)
-
-            levelImage_resize = tk.Label(scrollerFrame, image=levellogo, bg=GB.BGColorDark)
-            levelImage_resize.image = levellogo
+            levelImageCell = tk.Label(scrollerFrame, image=levelImage, bg=GB.BGColorDark)
+            levelImageCell.image = levelImage
 
             #if the path for the folder is long take only part of it.
             levelPath = f'...{level.path[-80:]}' if len(level.path) > 90 else level.path  
-            levelImage_resize.grid(row = index, column=0, padx= (30,0))
+            levelImageCell.grid(row = index, column=0, padx= (30,0))
             
             levelInfoButton = util.makeButton(master= scrollerFrame, text= labelText + "\n" + levelPath, command= partial(self.moveFolder, level.path))
             levelInfoButton.configure(bg= GB.BGColorDark, width= 84)
-            
             levelInfoButton.grid(row = index, column=1, columnspan= 2, sticky="ew")
         
         # reset to page one after searching

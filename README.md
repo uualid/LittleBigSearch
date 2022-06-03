@@ -28,8 +28,6 @@ if you don't have any level archive you can get the one you like from [LittleBig
 
 ![](images/LBS_1.1.3.2.gif)
 
-
-
 # How can I trust this
 
 This app was originally a command line tool created to find my own LBP2 levels in LittleBigArchive, because it was quite impossible to search through 7000 folder just to find one level. I thought it would be cool to build a GUI and share it with LBP community. 

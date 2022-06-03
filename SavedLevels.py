@@ -38,9 +38,9 @@ class SavedLevels():
         
 
         #____
-        self.removeBtnImage = tk.PhotoImage(file="images/UI/remove.png")
+        self.removeBtnImage = tk.PhotoImage(file=util.resourcePath("images\\UI\\remove.png"))
 
-        refreshImage = tk.PhotoImage(file="images/UI/refresh.png")
+        refreshImage = tk.PhotoImage(file=util.resourcePath("images\\UI\\refresh.png"))
         self.refreshButton   = util.makeButton(master  = self.window, 
                                                image   = refreshImage,
                                                command = lambda: self.refresh(),
@@ -51,7 +51,7 @@ class SavedLevels():
         self.refreshButton.grid(column=1, row=0, padx= (180, 0))
 
 
-        self.openFolderBtnImage = tk.PhotoImage(file="images/UI/openFolder.png")
+        self.openFolderBtnImage = tk.PhotoImage(file=util.resourcePath("images\\UI\\openFolder.png"))
         self.openDestFolder = util.makeButton(master   = self.window,
                                               image    = self.openFolderBtnImage,
                                               command  = lambda: util.openFile(self.RPCS3Path),

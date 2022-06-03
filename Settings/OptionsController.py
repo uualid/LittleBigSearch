@@ -48,7 +48,7 @@ class Options():
                                                 buttonColor = GB.BGColorLight,
                                                 activeColor = GB.BGColorLight)
         
-        self.archiveBrowseBtnImage = tk.PhotoImage(file="images/UI/selectArchive.png")
+        self.archiveBrowseBtnImage = tk.PhotoImage(file=util.resourcePath("images\\UI\\selectArchive.png"))
         self.archiveBrowseBtn.configure(height  = 28, 
                                         width   = 200,
                                         image   = self.archiveBrowseBtnImage, 
@@ -70,7 +70,7 @@ class Options():
                                         command = lambda: util.openFile(self.RPCSLabelStr.get()) )
         self.RPCSLabel.grid(columnspan=1, column=1, row=1, sticky= "we", pady=(20, 0))
         
-        self.RPCS3BrowseBtnImage = tk.PhotoImage(file="images/UI/selcetDestination.png")
+        self.RPCS3BrowseBtnImage = tk.PhotoImage(file=util.resourcePath("images\\UI\\selcetDestination.png"))
         self.RPCSBrowseBtn = util.makeButton(master     = self.window,  
                                             buttonColor = GB.BGColorLight,
                                             activeColor = GB.BGColorLight,
@@ -106,7 +106,7 @@ class Options():
                                             buttonColor= GB.BGColorLight,
                                             activeColor= GB.BGColorLight)
         
-        self.saveBtnImage = tk.PhotoImage(file="images/UI/save.png")
+        self.saveBtnImage = tk.PhotoImage(file=util.resourcePath("images\\UI\\save.png"))
         self.saveSettings.configure(height = 28, width = 200, image= self.saveBtnImage, 
                                       command = lambda: self.saveSettingsAsJSON())
         self.saveSettings.grid(column=0, row=3)

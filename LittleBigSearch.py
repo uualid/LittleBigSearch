@@ -1,5 +1,5 @@
 import tkinter           as tk
-import os, shutil,threading, ttkthemes, time
+import os, shutil,threading, ttkthemes, time,sys
 from   genericpath       import exists
 from   tkinter           import Canvas, Frame, ttk
 from   tkinter.constants import VERTICAL
@@ -35,7 +35,7 @@ class LittleBigSearchGUI():
         
         self.master = master
         self.master.title("By @SackBiscuit v1.1.3.2")
-        self.master.iconbitmap(default="images/icon.ico")
+        self.master.iconbitmap(default=util.resourcePath("images\\icon.ico"))
         self.master.configure(bg= GB.BGColorDark)
 
         ttkthemes.themed_style.ThemedStyle(theme="adapta")
@@ -54,7 +54,7 @@ class LittleBigSearchGUI():
         tk.Grid.columnconfigure(master, (0,1,2) , weight = 1)
         tk.Grid.rowconfigure(master, 7, weight = 1)
 
-        self.logo = Image.open('images/UI/LB_Search.png')
+        self.logo = Image.open(util.resourcePath('images\\UI\\LB_Search.png'))
         self.logoResize = self.logo.resize(( 500, 122 ))
         self.logo = ImageTk.PhotoImage(image= self.logoResize)
 
@@ -63,7 +63,7 @@ class LittleBigSearchGUI():
         self.logoLabel.grid(column=1, row=0)
         
         # ____ 
-        settingsBtnImage = tk.PhotoImage(file="images/UI/settings.png")
+        settingsBtnImage = tk.PhotoImage(file=util.resourcePath("images\\UI\\settings.png"))
         self.settingsButton = util.makeButton(buttonColor = GB.BGColorDark, 
                                               activeColor = GB.BGColorDark,
                                               image       = settingsBtnImage,
@@ -74,7 +74,7 @@ class LittleBigSearchGUI():
         
         # ____
         
-        heartedImage = tk.PhotoImage(file="images/UI/hearted.png")
+        heartedImage = tk.PhotoImage(file=util.resourcePath("images\\UI\\hearted.png"))
         self.SavedLevelsButton = util.makeButton(buttonColor = GB.BGColorDark, 
                                                  activeColor = GB.BGColorDark,
                                                  image       = heartedImage,
@@ -93,7 +93,7 @@ class LittleBigSearchGUI():
         searchTextField = tk.Entry(bd= 0, font=15, bg="black", fg="white")
         searchTextField.grid(columnspan=3, row=3, column=0, ipadx= 250)
 
-        searchBtnImage = tk.PhotoImage(file="images/UI/search.png")
+        searchBtnImage = tk.PhotoImage(file=util.resourcePath("images/UI/search.png"))
         searchButton = util.makeButton(buttonColor = GB.BGColorDark,
                                        activeColor = GB.BGColorDark,
                                        image       = searchBtnImage,
@@ -133,7 +133,7 @@ class LittleBigSearchGUI():
     def configureGif(self):
         for i in range(32): #theres 32 frame to the globe animation.
             try:
-                frame = Image.open(f'images/animation/earth{i + 1}.png')
+                frame = Image.open(util.resourcePath(f'images/animation/earth{i + 1}.png'))
                 frameResized = frame.resize(( 45, 45 ))
                 frame = ImageTk.PhotoImage(image= frameResized)
                 self.framelist.append(frame)

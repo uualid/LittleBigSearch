@@ -8,10 +8,6 @@ Theres a **MacOS** and **Linux** version of this app. you can find them in the [
 
 if you don't have any level archive you can get the one you like from [LittleBigArchive](http://littlebigarchive.com/)
 
-`IMPORTANT:` 
-
-`• Make sure to install python 3.8.0 or later to be able to use the app. You can get it from` [here](https://www.python.org/downloads/) 
-
 **when you open LittleBigSearch**
 
 1. Press the settings button.

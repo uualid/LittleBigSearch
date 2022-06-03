@@ -26,8 +26,6 @@ if you don't have any level archive you can get the one you like from [LittleBig
 
 `• The first search will take longer time`
 
-`• The application and images folder needs to be on the same directory. create a shortcut for the exe if you need a fast access to it.`
-
 ![](images/LBS_1.1.3.2.gif)
 
 

@@ -104,14 +104,16 @@ class LevelParser:
                             newMatchLevel = Level(title = title,
                                                 description = description,
                                                 path  = f'{path}/{levelFolder}',
-                                                image = f'{path}/{levelFolder}/ICON0.PNG')
+                                                image = f'{path}/{levelFolder}/ICON0.PNG',
+                                                folderName= levelFolder)
                             matchedLeveAppend(newMatchLevel)
                             
                     elif term in cleanSFPContent.lower():
                         newMatchLevel = Level(title = title,
                                               description = description,
                                               path  = f'{path}/{levelFolder}',
-                                              image = f'{path}/{levelFolder}/ICON0.PNG')
+                                              image = f'{path}/{levelFolder}/ICON0.PNG',
+                                              folderName= levelFolder)
                         matchedLeveAppend(newMatchLevel)                   
         
         callBack(LevelParser.checkIfThereIsNoMatch(matchedLevels))

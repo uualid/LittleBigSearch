@@ -1,3 +1,4 @@
+from optparse import OptionContainer
 from os import path
 from Settings.OptionsController import Options
 
@@ -8,6 +9,8 @@ class OptionsManager():
         self.RPCS3Path   = ""
         self.includeDups = False
         self.includeDescription = True
+        self.heartedLevelPaths = []
+        
 
     
     # protocols ________________________________
@@ -25,9 +28,26 @@ class OptionsManager():
         self.RPCS3Path   = RPCS3
         self.includeDups = dupsStatus
         self.includeDescription = includeDescription
+        self.fetchHeatedPaths(RPCS3)
     
     # __________________________________________
-
+    
+    def fetchHeatedPaths(self, path):
+        self.heartedLevelPaths = Options.getHeartedLevels(path)
+    
+    def addHeartedLevel(self, path, clearPath = False):
+        folderName = path
+        if clearPath:
+            folderName = path[len(self.RPCS3Path) + 1:]
+        self.heartedLevelPaths.append(folderName)
+        
+    def removeHeartedLevel(self, path, clearPath = False):
+        folderName = path
+        if clearPath:
+            folderName = path[len(self.RPCS3Path) + 1:]
+        self.heartedLevelPaths.remove(folderName)
+        
+    
     def fetchSettings(self):
         if path.exists("SavedSettings.json"):
             Options.getSettingsFromJSON(self.fetchSettingCallBack)

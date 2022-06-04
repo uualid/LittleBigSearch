@@ -1,3 +1,4 @@
+from email.mime import image
 import tkinter           as tk
 import os, shutil,threading, ttkthemes, time
 from   genericpath       import exists
@@ -131,6 +132,7 @@ class LittleBigSearchGUI():
         self.options.fetchSettings()
         
         
+        
         self.dragId = ''
         master.bind('<Configure>', self.dragging)
         #___________________________________
@@ -246,9 +248,11 @@ class LittleBigSearchGUI():
         destDir = os.path.join(destination,os.path.basename(source))
         if exists(destDir) == False:
             self.sendError("Level folder was copied to the destination folder.", "green")
+            self.options.addHeartedLevel(destDir, clearPath= True)
             shutil.copytree(source, destDir)
         else:
             self.sendError("Level folder was removed from the destination folder")
+            self.options.removeHeartedLevel(destDir, clearPath= True)
             shutil.rmtree(destDir)
         
         # refresh Saved levels automatically
@@ -315,17 +319,16 @@ class LittleBigSearchGUI():
     
     def showPagingButtons(self):
         self.pageLeft.grid(column=1, row=6, ipadx=15, pady=(0, 10), padx= (0, 150))
-        self.pageFarLeft.grid(column=1, row=6, ipadx=10, pady=(0, 10), padx= (0, 250))
+        self.pageFarLeft.grid(column=1, row=6, ipadx=10, pady=(0, 10), padx= (0, 260))
         
         self.pageRight.grid(column=1, row=6, ipadx=15, pady=(0, 10), padx= (150, 0))
-        self.pageFarRight.grid(column=1, row=6, ipadx=10, pady=(0, 10), padx= (250, 0))
+        self.pageFarRight.grid(column=1, row=6, ipadx=10, pady=(0, 10), padx= (260, 0))
 
-        self.levelCounter.grid(column=1, row=6, ipadx=10, pady=(0, 10), padx= (400, 0))
+        self.levelCounter.grid(column=1, row=6, ipadx=10, pady=(0, 10), padx= (420, 0))
         self.pageNumbers.grid(column=1, row=6, ipadx=20, pady=(0, 10))
         
    # builds result scroller view _______________________________________________________________________________________________________________________________
      
-
      
     def showResult(self, isAfterSearch: bool= True):
         refreshWindow = False
@@ -372,19 +375,27 @@ class LittleBigSearchGUI():
                 labelText = level.title[:breakLineIndex] + "\n" + level.title[breakLineIndex:]
             else:
                 labelText = f'{level.title}'            
-                
+            
+            levelImageCanvas = Canvas(scrollerFrame, height=100, width=100, bg= GB.BGColorDark, bd=0, highlightthickness = 0)
+            levelImageCanvas.grid(row = index, column=0)
+            
             levelImage = util.resize(level.image)
-
+            
+            levelImageCanvas.create_image(50, 50, image = levelImage)
             levelImageCell = tk.Label(scrollerFrame, image=levelImage, bg=GB.BGColorDark)
             levelImageCell.image = levelImage
-
-            #if the path for the folder is long take only part of it.
-            # levelPath = f'...{level.path[-80:]}' if len(level.path) > 90 else level.path  
             
-            levelImageCell.grid(row = index, column=0, padx= (0,0))
+            if level.folderName in self.options.heartedLevelPaths:
+                levelHeart = util.resize(image = util.resourcePath("images\\UI\\lbpLevelHeart.png"), height=30, width=30)
+                levelImageCanvas.create_image(20, 60, image = levelHeart)
+                levelImageCell2 = tk.Label(scrollerFrame, image=levelHeart, bg=GB.BGColorDark)
+                levelImageCell2.image = levelHeart
+                
+            
+            # levelImageCell.grid(row = index, column=0, padx= (0,0))
             
             levelInfoButton = util.makeButton(master= scrollerFrame, text= labelText , command= partial(self.moveFolder, level.path))
-            levelInfoButton.configure(bg= GB.BGColorDark, width= 58)
+            levelInfoButton.configure(bg= GB.BGColorDark, width= 63)
             levelInfoButton.grid(row = index, column=1, columnspan= 2, sticky="ew")
 
             levelDescription = "No description" if level.description == "" else level.description

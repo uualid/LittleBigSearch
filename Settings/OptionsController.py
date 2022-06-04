@@ -1,5 +1,4 @@
-import json
-from time import sleep
+import json, os
 import tkinter    as tk
 import helpers.Utilities as helpers
 from   tkinter    import filedialog
@@ -23,7 +22,6 @@ class Options():
         self.window = tk.Toplevel(background= GB.BGColorLight)
         self.window.title("Settings")
         self.window.transient(master)
-
 
         self.settingsCanvas = tk.Canvas(master = self.window,
                                         height = 20,
@@ -147,6 +145,17 @@ class Options():
         if selectedFolder:
             labelStr.set(selectedFolder)
             delegate(path = selectedFolder)
+    
+    @staticmethod
+    def getHeartedLevels(path):
+        heartedLevelFolderPaths = []
+        for levelFolder in os.listdir(path):
+            if levelFolder.__contains__("."):
+                continue
+            heartedLevelFolderPaths.append(levelFolder)
+        
+        return heartedLevelFolderPaths
+        
             
     # save setting to json file _________________________________________________________________________________________________ 
 

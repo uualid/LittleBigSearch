@@ -70,9 +70,12 @@ class SavedLevels():
     
     def fetchSavedLevels(self):
         # this event will be called from background thread to use the main thread.
-        self.window.bind("<<event1>>", self.showResult)
-        self.LevelParser.search(path= self.RPCS3Path, callBack= self.fetchCallBack)
-    
+        try:
+            self.window.bind("<<event1>>", self.showResult)
+            self.LevelParser.search(path= self.RPCS3Path, callBack= self.fetchCallBack)
+        except:
+            print("?")
+            
     def fetchCallBack(self, response):
         if response == ParserReturns.noResult:
             # self.sendError("No result", "red")
@@ -166,7 +169,7 @@ class SavedLevels():
             levelImageCell.grid(row = index, column=0)
             
             levelInfoButton = util.makeButton(master= scrollFrame, text= labelText + "\n" + levelPath, command= partial(util.openFile, level.path))
-            levelInfoButton.configure(bg= GB.BGColorDark, width= 65)
+            levelInfoButton.configure(bg= GB.BGColorDark, width= 64)
             levelInfoButton.grid(row = index, column=1 , padx= 20, pady=(0, 20))
             
             removeLevelButton = util.makeButton(master = scrollFrame,  

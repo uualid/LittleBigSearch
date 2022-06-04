@@ -1,10 +1,11 @@
 
 class Level:
-    def __init__(self, title, path, image, description) -> None:
+    def __init__(self, title, path, image, description, folderName) -> None:
         self.title = title
         self.description = description
         self.path  = path
         self.image = image
+        self.folderName = folderName
         
 
     def __eq__(self, o) -> bool:

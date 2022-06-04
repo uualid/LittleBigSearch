@@ -125,7 +125,7 @@ class Utilities:
         return scrollerCanvas
     
     @staticmethod
-    def resize(image, height = 120, width = 75):
+    def resize(image, height = 135, width = 80):
         img = Image.open(image)
         imgResized = img.resize((height, width))
         finalImage = ImageTk.PhotoImage(imgResized)

@@ -26,8 +26,6 @@ class LittleBigSearchGUI():
         self.currentPage     = 0
         self.hasMoreThanOnePage = False
         self.isFirstRun         = True
-        self.isAfterSearch      = True
-        self.waitingForDrag     = False
         
         
         self.startTimer = 0

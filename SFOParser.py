@@ -91,6 +91,7 @@ class LevelParser:
                     
                     openSFO = open(path + "/" + levelFolder + "/" + levelfile, 'r', encoding="utf-8", errors="ignore")
                     SFOContent = openSFO.read()
+                    cleanSFPContent = LevelParser.clean(SFOContent)
                     
                     title = LevelParser.getLevelTitle(SFOContent, levelFolder)
 
@@ -101,7 +102,7 @@ class LevelParser:
                                               image = f'{path}/{levelFolder}/ICON0.PNG')
                             matchedLeveAppend(newMatchLevel)
                             
-                    elif term in SFOContent.lower():
+                    elif term in cleanSFPContent.lower():
                         newMatchLevel = Level(title = title,
                                               path  = f'{path}/{levelFolder}',
                                               image = f'{path}/{levelFolder}/ICON0.PNG')

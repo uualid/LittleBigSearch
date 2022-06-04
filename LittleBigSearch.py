@@ -225,7 +225,9 @@ class LittleBigSearchGUI():
         self.isSearching = False
 
     # Saved levels _______________________________________________________________________________________________________________________________________
-
+    def removeLevelCallBack(self, path):
+        self.options.removeHeartedLevel(path= path, clearPath= True)
+        
     def openSavedLevels(self):
         if self.options.RPCS3Path == '':
             self.sendError("Please select a destination folder", "red")
@@ -234,6 +236,7 @@ class LittleBigSearchGUI():
             self.savedLevels.window.lift()
         except:
             self.savedLevels = SavedLevels(master     = self.master, 
+                                           removeLevelCallBack = self.removeLevelCallBack,
                                            RPCS3Path  = self.options.RPCS3Path)
 
     # Settings ____________________________________________________________________________________________________________________________________________

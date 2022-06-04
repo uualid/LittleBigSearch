@@ -10,7 +10,7 @@ from helpers.Utilities import GlobalVars as GB
 from helpers.Utilities import Utilities as util
 
 class SavedLevels():
-    def __init__(self,master, RPCS3Path, savedLevels = []):
+    def __init__(self,master, RPCS3Path,  removeLevelCallBack, savedLevels = []):
         super().__init__()
 
         self.RPCS3Path = RPCS3Path
@@ -21,6 +21,7 @@ class SavedLevels():
         #____________________________________
         self.LevelParser     = LevelParser()
         #____________________________________
+        self.removeLevelCallBack = removeLevelCallBack
 
         self.window = tk.Toplevel(background= GB.BGColorLight)
         self.window.title("Destination Folder")
@@ -112,6 +113,7 @@ class SavedLevels():
         if exists(destDir) == True:
             # self.sendError("The Level folder was removed")
             shutil.rmtree(destDir)
+            self.removeLevelCallBack(destDir)
             self.refresh()
 
     def refresh(self):

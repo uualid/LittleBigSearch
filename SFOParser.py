@@ -1,3 +1,4 @@
+from cgitb import reset
 from genericpath import exists
 from Modules.LevelModule import Level
 import enum, os
@@ -6,7 +7,7 @@ class ParserReturns(enum.Enum):
     noResult   = 1
     noPath     = 2
     wrongPath  = 3
-    
+
 
 #  ______________________ LevelParser _______________________________________________________________________________________________________
 
@@ -16,6 +17,9 @@ class ParserReturns(enum.Enum):
 # number of char of that folder name to remove it from the return.
 # and the same goes for the end index. for lbp1 levels, they always end up with 'LittleBigPlanet' or 'LittleBigPlanet™2' for lbp2. etc...
 # so I choose these to find my end index. It's very basic but it worked very well so far for this project.
+
+machineCode = ['\x01', '\x02', '\x07u', '\x19+0', '\x12', '\x1bq', '\x1f', '\x16', '\n', 
+               '\x07ffffffffffffffff', '\x08u', '\x08ffffffffffffffff', 'uffffffffffffffff']
 
 class LevelParser:
 
@@ -93,21 +97,40 @@ class LevelParser:
                     SFOContent = openSFO.read()
                     cleanSFPContent = LevelParser.clean(SFOContent)
                     
-                    title = LevelParser.getLevelTitle(SFOContent, levelFolder)
+                    title = LevelParser.getLevelTitle(cleanSFPContent, levelFolder)
+                    description = self.getDescription(cleanSFPContent, levelFolder)
 
                     if includeDescription == False:
                         if term in title.lower():
                             newMatchLevel = Level(title = title,
-                                              path  = f'{path}/{levelFolder}',
-                                              image = f'{path}/{levelFolder}/ICON0.PNG')
+                                                description = description,
+                                                path  = f'{path}/{levelFolder}',
+                                                image = f'{path}/{levelFolder}/ICON0.PNG')
                             matchedLeveAppend(newMatchLevel)
                             
                     elif term in cleanSFPContent.lower():
                         newMatchLevel = Level(title = title,
+                                              description = description,
                                               path  = f'{path}/{levelFolder}',
                                               image = f'{path}/{levelFolder}/ICON0.PNG')
-                        matchedLeveAppend(newMatchLevel)
-                          
+                        matchedLeveAppend(newMatchLevel)                   
         
         callBack(LevelParser.checkIfThereIsNoMatch(matchedLevels))
+    
+    def cleanAllMachineCode(self, conten):
+        for code in machineCode:
+            conten = conten.replace(code, '')
+            
+        return conten
+    
+    def getDescription(self, content: str, levelFolder):
+        startIndex = self.SFOStartIndex(content, "SD")
+        endIndex   = content.index(levelFolder)
+        
+        descrition = self.cleanAllMachineCode(f'{content[startIndex : endIndex]}')
+        return descrition
+
+
+        
+        
     

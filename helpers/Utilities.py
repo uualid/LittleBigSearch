@@ -93,6 +93,7 @@ class Utilities:
                     bd               = 0,
                     fg               = "white",
                     cursor           = "hand2",
+                    font= "Helvetica 10 bold",
                     bg               = buttonColor,
                     activebackground = activeColor)
             
@@ -143,4 +144,16 @@ class Utilities:
         if hasattr(sys, '_MEIPASS'):
             return os.path.join(sys._MEIPASS, relative_path)
         return os.path.join(os.path.abspath("."), relative_path)
-        
+    
+    @staticmethod
+    def addBreakLines(content):
+        if len(content) < 50: return content
+        finalContent = content
+        index = 100
+        while True:
+            beginningContent = finalContent[:index]
+            endContent       = finalContent[index:]
+            finalContent = beginningContent + " \n " + endContent
+            index += 100
+            if index > len(content):
+                return finalContent

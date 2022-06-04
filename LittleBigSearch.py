@@ -1,11 +1,13 @@
 import tkinter           as tk
-import os, shutil,threading, ttkthemes, time,sys
+import os, shutil,threading, ttkthemes, time
 from   genericpath       import exists
 from   tkinter           import Canvas, Frame, ttk
 from   tkinter.constants import VERTICAL
 from   functools         import partial
 from   PIL               import Image, ImageTk
 from   SFOParser         import LevelParser, ParserReturns
+
+from idlelib.tooltip import Hovertip
 
 from helpers.Utilities import GlobalVars as GB
 from helpers.Utilities import Utilities as util
@@ -138,7 +140,8 @@ class LittleBigSearchGUI():
             if self.dragId != '':
                 self.master.after_cancel(self.dragId)
             # schedule resetDrag
-            self.dragId = root.after(100, self.resetDrag)
+            self.dragId = root.after(50, self.resetDrag)
+            
 
     def resetDrag(self):
         self.dragId = '' 
@@ -325,6 +328,7 @@ class LittleBigSearchGUI():
 
      
     def showResult(self, isAfterSearch: bool= True):
+        refreshWindow = False
         if self.dragId != "":
             self.master.overrideredirect(True)
             refreshWindow = True
@@ -370,13 +374,19 @@ class LittleBigSearchGUI():
             levelImageCell.image = levelImage
 
             #if the path for the folder is long take only part of it.
-            levelPath = f'...{level.path[-80:]}' if len(level.path) > 90 else level.path  
-            levelImageCell.grid(row = index, column=0, padx= (30,0))
+            # levelPath = f'...{level.path[-80:]}' if len(level.path) > 90 else level.path  
             
-            levelInfoButton = util.makeButton(master= scrollerFrame, text= labelText + "\n" + levelPath, command= partial(self.moveFolder, level.path))
-            levelInfoButton.configure(bg= GB.BGColorDark, width= 84)
+            levelImageCell.grid(row = index, column=0, padx= (0,0))
+            
+            levelInfoButton = util.makeButton(master= scrollerFrame, text= labelText + "\n", command= partial(self.moveFolder, level.path))
+            levelInfoButton.configure(bg= GB.BGColorDark, width= 71)
             levelInfoButton.grid(row = index, column=1, columnspan= 2, sticky="ew")
+
+            levelDescription = "No description" if level.description == "" else level.description
+            Hovertip(levelInfoButton, util.addBreakLines(levelDescription))
+            
         
+            
         if refreshWindow:
             self.master.overrideredirect(False)
             refreshWindow = False

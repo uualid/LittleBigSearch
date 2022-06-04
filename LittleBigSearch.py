@@ -25,7 +25,10 @@ class LittleBigSearchGUI():
         self.matchedLevels   = matchedLevels
         self.currentPage     = 0
         self.hasMoreThanOnePage = False
-        self.isFirstRun = True
+        self.isFirstRun         = True
+        self.isAfterSearch      = True
+        self.waitingForDrag     = False
+        
         
         self.startTimer = 0
         self.endTimer = 0
@@ -127,7 +130,22 @@ class LittleBigSearchGUI():
         self.earthGif.grid(column=1, row=4, padx= (200, 0) ,pady=(5,0))
         self.options.fetchSettings()
         
+        
+        self.dragId = ''
+        master.bind('<Configure>', self.dragging)
+        #___________________________________
+        
+    def dragging(self, event):
+        if event.widget is root: 
+            if self.dragId != '':
+                self.master.after_cancel(self.dragId)
+            # schedule resetDrag
+            self.dragId = root.after(100, self.resetDrag)
 
+    def resetDrag(self):
+        self.dragId = '' 
+        
+            
     # search method _____________________________________________________________________________________________________________________________________
 
     def configureGif(self):
@@ -306,7 +324,13 @@ class LittleBigSearchGUI():
         
    # builds result scroller view _______________________________________________________________________________________________________________________________
      
+
+     
     def showResult(self, isAfterSearch: bool= True):
+        if self.dragId != "":
+            self.master.overrideredirect(True)
+            refreshWindow = True
+        
         self.sendError("")
         # destroy the old scroll view
         self.scrollerFrame.destroy()
@@ -355,7 +379,11 @@ class LittleBigSearchGUI():
             levelInfoButton.configure(bg= GB.BGColorDark, width= 84)
             levelInfoButton.grid(row = index, column=1, columnspan= 2, sticky="ew")
         
+        if refreshWindow:
+            self.master.overrideredirect(False)
+            refreshWindow = False
         # reset to page one after searching
+        
         if isAfterSearch:
             self.currentPage = 0
             

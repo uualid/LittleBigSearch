@@ -166,7 +166,7 @@ class SavedLevels():
             levelImageCell.grid(row = index, column=0)
             
             levelInfoButton = util.makeButton(master= scrollFrame, text= labelText + "\n" + levelPath, command= partial(util.openFile, level.path))
-            levelInfoButton.configure(bg= GB.BGColorDark, width= 92)
+            levelInfoButton.configure(bg= GB.BGColorDark, width= 65)
             levelInfoButton.grid(row = index, column=1 , padx= 20, pady=(0, 20))
             
             removeLevelButton = util.makeButton(master = scrollFrame,  

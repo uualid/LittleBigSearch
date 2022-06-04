@@ -366,8 +366,13 @@ class LittleBigSearchGUI():
         
             # Loop and build level cells for the scrollable frame
         for index, level in enumerate(matchedLevelsWithPage):
-
-            labelText = f'{level.title}'            
+            
+            if len(level.title) > 60:
+                breakLineIndex = level.title.index("by")
+                labelText = level.title[:breakLineIndex] + "\n" + level.title[breakLineIndex:]
+            else:
+                labelText = f'{level.title}'            
+                
             levelImage = util.resize(level.image)
 
             levelImageCell = tk.Label(scrollerFrame, image=levelImage, bg=GB.BGColorDark)
@@ -378,8 +383,8 @@ class LittleBigSearchGUI():
             
             levelImageCell.grid(row = index, column=0, padx= (0,0))
             
-            levelInfoButton = util.makeButton(master= scrollerFrame, text= labelText + "\n", command= partial(self.moveFolder, level.path))
-            levelInfoButton.configure(bg= GB.BGColorDark, width= 71)
+            levelInfoButton = util.makeButton(master= scrollerFrame, text= labelText , command= partial(self.moveFolder, level.path))
+            levelInfoButton.configure(bg= GB.BGColorDark, width= 58)
             levelInfoButton.grid(row = index, column=1, columnspan= 2, sticky="ew")
 
             levelDescription = "No description" if level.description == "" else level.description

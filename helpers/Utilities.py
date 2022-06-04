@@ -93,7 +93,7 @@ class Utilities:
                     bd               = 0,
                     fg               = "white",
                     cursor           = "hand2",
-                    font= "Helvetica 10 bold",
+                    font= "Helvetica 12 bold",
                     bg               = buttonColor,
                     activebackground = activeColor)
             

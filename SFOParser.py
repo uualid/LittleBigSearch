@@ -1,4 +1,3 @@
-from cgitb import reset
 from genericpath import exists
 from Modules.LevelModule import Level
 import enum, os

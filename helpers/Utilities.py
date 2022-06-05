@@ -31,7 +31,8 @@ class Utilities:
     
     @staticmethod
     def addBreakLine(text, strIndex):
-
+        if text == "":
+            return text
         breakLineIndex = text.index(strIndex)
         return text[:breakLineIndex] + "\n" + text[breakLineIndex:]
    

@@ -9,7 +9,7 @@ class OptionsManager():
         self.RPCS3Path   = ""
         self.includeDups = False
         self.includeDescription = True
-        self.heartedLevelPaths = []
+        self.heartedLevelPaths = [] # this is used to know what level is hearted so it can show or hide the heart png when it loads
         
 
     

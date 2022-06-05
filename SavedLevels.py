@@ -75,7 +75,7 @@ class SavedLevels():
             self.window.bind("<<event1>>", self.showResult)
             self.LevelParser.search(path= self.RPCS3Path, callBack= self.fetchCallBack)
         except:
-            print("?")
+            print("DEBUG: Hearted levels window is not available.")
             
     def fetchCallBack(self, response):
         if response == ParserReturns.noResult:
@@ -107,15 +107,15 @@ class SavedLevels():
 
     # level managing _______________________________________________________________________
     
-    def removeFolder(self, source):
+    def removeFolder(self, source, levelFolderName):
         destination = self.RPCS3Path
         destDir = os.path.join(destination,os.path.basename(source))
         if exists(destDir) == True:
             # self.sendError("The Level folder was removed")
             shutil.rmtree(destDir)
-            self.removeLevelCallBack(destDir)
+            self.removeLevelCallBack(path = destDir, removedLevelFolderName = levelFolderName)
             self.refresh()
-
+    
     def refresh(self):
         threading.Thread(target= self.fetchSavedLevels, args= ()).start()
 
@@ -179,6 +179,6 @@ class SavedLevels():
                                                 activeColor = GB.BGColorDark)
             
             removeLevelButton.configure(height = 28, width = 120, image= self.removeBtnImage, 
-                                        command = partial(self.removeFolder, level.path))
+                                        command = partial(self.removeFolder, level.path, level.folderName))
             removeLevelButton.grid(row = index, column=1, pady=(50, 0))
 

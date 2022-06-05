@@ -1,4 +1,3 @@
-from email.mime import image
 import tkinter           as tk
 import os, shutil,threading, ttkthemes, time
 from   genericpath       import exists
@@ -7,8 +6,7 @@ from   tkinter.constants import VERTICAL
 from   functools         import partial
 from   PIL               import Image, ImageTk
 from   SFOParser         import LevelParser, ParserReturns
-
-from idlelib.tooltip import Hovertip
+from idlelib.tooltip     import Hovertip
 
 from helpers.Utilities import GlobalVars as GB
 from helpers.Utilities import Utilities as util
@@ -29,6 +27,7 @@ class LittleBigSearchGUI():
         self.currentPage     = 0
         self.hasMoreThanOnePage = False
         self.isFirstRun         = True
+        self.currentPageLevels       = []
         
         
         self.startTimer = 0
@@ -45,6 +44,7 @@ class LittleBigSearchGUI():
         ttkthemes.themed_style.ThemedStyle(theme="adapta")
 
         self.levelHeart = util.resize(image = util.resourcePath("images\\UI\\lbpLevelHeart.png"), height=30, width=30)
+        
         # _ UI _______________________
 
         self.canvas = tk.Canvas(master,
@@ -133,7 +133,6 @@ class LittleBigSearchGUI():
         self.options.fetchSettings()
         
         
-        
         self.dragId = ''
         master.bind('<Configure>', self.dragging)
         #___________________________________
@@ -143,7 +142,7 @@ class LittleBigSearchGUI():
             if self.dragId != '':
                 self.master.after_cancel(self.dragId)
             # schedule resetDrag
-            self.dragId = root.after(50, self.resetDrag)
+            self.dragId = root.after(100, self.resetDrag)
             
 
     def resetDrag(self):
@@ -192,7 +191,7 @@ class LittleBigSearchGUI():
         if self.options.RPCS3Path.__contains__("/") == False:
             self.sendError("Please select a destination folder", "red")
             return
-        
+ 
         self.startTimer = time.time()
         self.startWaiter()
         self.currentPage = 0
@@ -225,9 +224,24 @@ class LittleBigSearchGUI():
             self.master.event_generate("<<event1>>")
         self.isSearching = False
 
-    # Saved levels _______________________________________________________________________________________________________________________________________
-    def removeLevelCallBack(self, path):
-        self.options.removeHeartedLevel(path= path, clearPath= True)
+    # Hearted levels _______________________________________________________________________________________________________________________________________
+    
+    def removeLevelCallBack(self, path, removedLevelFolderName):
+        try: # it will check if the removed level is in the current page, if so it will update the heart image in the ui
+            tuple =  [tuple for tuple in self.currentPageLevels if tuple[0] == removedLevelFolderName][0]
+            levelFolderName = tuple[0]
+            levelCanvas     = tuple[1]
+            self.toggleHeartImage(levelFolderName, levelCanvas)
+            self.clearNotification()
+            return
+        except: # other wise it wil just remove the level from the hearted list
+            print("DEBUG: Level cell is not on the current page")
+        self.toggleLevelHeart(levelFolder= removedLevelFolderName, remove= True)
+        
+    
+    def currentLevels(self):
+        if self.hasMoreThanOnePage == False: return self.matchedLevels
+        
         
     def openSavedLevels(self):
         if self.options.RPCS3Path == '':
@@ -245,18 +259,27 @@ class LittleBigSearchGUI():
     def openSettings(self):
         self.options.openSettings(master= self.master)
                         
-    # Helper methods _____________________________________________________________________________________________________________________________________
-
-    def manageLevel(self, source, levelFolder, levelImageCanvas):
-        self.moveFolder(source=source)
+    # Level Helpers _______________________________________________________________________________________________________________________________________
+    
+    def toggleLevelHeart(self, levelFolder, remove: bool):
+        if remove: 
+            self.options.removeHeartedLevel(levelFolder)
+        else:
+            self.options.addHeartedLevel(levelFolder)
+    
+    def toggleHeartImage(self, levelFolder, levelImageCanvas):
         if levelFolder in self.options.heartedLevelPaths:
             levelImageCanvas.itemconfig(2, state='hidden')
-            self.options.removeHeartedLevel(levelFolder)
-            
+            self.toggleLevelHeart(levelFolder, remove= True)
         else:
             levelImageCanvas.itemconfig(2, state='normal')
-            self.options.addHeartedLevel(levelFolder)
+            self.toggleLevelHeart(levelFolder, remove= False)
             
+    
+    def manageLevel(self, source, levelFolder, levelImageCanvas):
+        self.moveFolder(source=source)
+        self.toggleHeartImage(levelFolder, levelImageCanvas)
+    
     
     def moveFolder(self, source):
         destination = self.options.RPCS3Path
@@ -273,7 +296,9 @@ class LittleBigSearchGUI():
             self.savedLevels.refresh()
         except:
             print("DEBUG: Cant refresh. No window on the screen")
-
+    
+    # Curser helpers __________________________________________________________________________________________________________________________________________________
+    
     def _bound_to_mousewheel(self, event):
         self.scrollerCanvas.bind_all("<MouseWheel>", self._on_mouse_wheel)
 
@@ -281,7 +306,7 @@ class LittleBigSearchGUI():
         self.scrollerCanvas.unbind_all("<MouseWheel>")
 
     def _on_mouse_wheel(self, event):
-        self.sendError("")
+        self.clearNotification()
         self.master.update()
         self.scrollerCanvas.yview_scroll(-1 * int((event.delta / 120)), "units")
 
@@ -289,6 +314,8 @@ class LittleBigSearchGUI():
         self.errorLabel.configure(fg=color)
         self.errorText.set(message)        
     
+    def clearNotification(self):
+        self.sendError("")
     # Pagination __________________________________________________________________________________________________________________________________________________
     
     def nextPage(self, pageLimit, moveNear = None, moveFar = None):
@@ -349,7 +376,9 @@ class LittleBigSearchGUI():
             self.master.overrideredirect(True)
             refreshWindow = True
         
-        self.sendError("")
+        self.clearNotification()
+        self.currentPageLevels = []
+        
         # destroy the old scroll view
         self.scrollerFrame.destroy()
                 
@@ -394,15 +423,12 @@ class LittleBigSearchGUI():
             levelImageCell = tk.Label(scrollerFrame, image=levelImage, bg=GB.BGColorDark)
             levelImageCell.image = levelImage
             
-            
             levelImageCanvas.create_image(20, 60, image = self.levelHeart)
             
-            if level.folderName in self.options.heartedLevelPaths:
-                levelImageCanvas.itemconfig(2, state='normal') # the number 2 item is the heart png.
-            else:
-                levelImageCanvas.itemconfig(2, state='hidden')
-                
+            heartState = "normal" if level.folderName in self.options.heartedLevelPaths else "hidden"
+            levelImageCanvas.itemconfig(2, state=heartState) # the number 2 item is the heart png.
             
+            self.currentPageLevels.append((level.folderName, levelImageCanvas))
             levelInfoButton = util.makeButton(master= scrollerFrame, text= labelText , command= partial(self.manageLevel, 
                                                                                                         level.path, level.folderName, levelImageCanvas))
             levelInfoButton.configure(bg= GB.BGColorDark, width= 63)
@@ -410,8 +436,6 @@ class LittleBigSearchGUI():
 
             levelDescription = "No description" if level.description == "" else level.description
             Hovertip(levelInfoButton, util.addBreakLines(levelDescription))
-            
-        
             
         if refreshWindow:
             self.master.overrideredirect(False)

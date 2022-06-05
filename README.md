@@ -22,7 +22,7 @@ if you don't have any level archive you can get the one you like from [LittleBig
 
 `• The first search will take longer time`
 
-![](images/LBS1.1.4.gif)
+![](images/LBS_1.1.4.gif)
 
 # How can I trust this
 

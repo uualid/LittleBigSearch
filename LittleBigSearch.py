@@ -38,12 +38,13 @@ class LittleBigSearchGUI():
         self.frame_index = 0 
         
         self.master = master
-        self.master.title("By @SackBiscuit v1.1.3.3")
+        self.master.title("By @SackBiscuit v1.1.4")
         self.master.iconbitmap(default=util.resourcePath("images\\icon.ico"))
         self.master.configure(bg= GB.BGColorDark)
 
         ttkthemes.themed_style.ThemedStyle(theme="adapta")
 
+        self.levelHeart = util.resize(image = util.resourcePath("images\\UI\\lbpLevelHeart.png"), height=30, width=30)
         # _ UI _______________________
 
         self.canvas = tk.Canvas(master,
@@ -246,16 +247,25 @@ class LittleBigSearchGUI():
                         
     # Helper methods _____________________________________________________________________________________________________________________________________
 
+    def manageLevel(self, source, levelFolder, levelImageCanvas):
+        self.moveFolder(source=source)
+        if levelFolder in self.options.heartedLevelPaths:
+            levelImageCanvas.itemconfig(2, state='hidden')
+            self.options.removeHeartedLevel(levelFolder)
+            
+        else:
+            levelImageCanvas.itemconfig(2, state='normal')
+            self.options.addHeartedLevel(levelFolder)
+            
+    
     def moveFolder(self, source):
         destination = self.options.RPCS3Path
         destDir = os.path.join(destination,os.path.basename(source))
         if exists(destDir) == False:
             self.sendError("Level folder was copied to the destination folder.", "green")
-            self.options.addHeartedLevel(destDir, clearPath= True)
             shutil.copytree(source, destDir)
         else:
             self.sendError("Level folder was removed from the destination folder")
-            self.options.removeHeartedLevel(destDir, clearPath= True)
             shutil.rmtree(destDir)
         
         # refresh Saved levels automatically
@@ -373,11 +383,7 @@ class LittleBigSearchGUI():
             # Loop and build level cells for the scrollable frame
         for index, level in enumerate(matchedLevelsWithPage):
             
-            if len(level.title) > 60:
-                breakLineIndex = level.title.index("by")
-                labelText = level.title[:breakLineIndex] + "\n" + level.title[breakLineIndex:]
-            else:
-                labelText = f'{level.title}'            
+            labelText = util.addBreakLineIfNeeded(text= level.title, strIndex= "by")         
             
             levelImageCanvas = Canvas(scrollerFrame, height=100, width=100, bg= GB.BGColorDark, bd=0, highlightthickness = 0)
             levelImageCanvas.grid(row = index, column=0)
@@ -388,16 +394,17 @@ class LittleBigSearchGUI():
             levelImageCell = tk.Label(scrollerFrame, image=levelImage, bg=GB.BGColorDark)
             levelImageCell.image = levelImage
             
+            
+            levelImageCanvas.create_image(20, 60, image = self.levelHeart)
+            
             if level.folderName in self.options.heartedLevelPaths:
-                levelHeart = util.resize(image = util.resourcePath("images\\UI\\lbpLevelHeart.png"), height=30, width=30)
-                levelImageCanvas.create_image(20, 60, image = levelHeart)
-                levelImageCell2 = tk.Label(scrollerFrame, image=levelHeart, bg=GB.BGColorDark)
-                levelImageCell2.image = levelHeart
+                levelImageCanvas.itemconfig(2, state='normal') # the number 2 item is the heart png.
+            else:
+                levelImageCanvas.itemconfig(2, state='hidden')
                 
             
-            # levelImageCell.grid(row = index, column=0, padx= (0,0))
-            
-            levelInfoButton = util.makeButton(master= scrollerFrame, text= labelText , command= partial(self.moveFolder, level.path))
+            levelInfoButton = util.makeButton(master= scrollerFrame, text= labelText , command= partial(self.manageLevel, 
+                                                                                                        level.path, level.folderName, levelImageCanvas))
             levelInfoButton.configure(bg= GB.BGColorDark, width= 63)
             levelInfoButton.grid(row = index, column=1, columnspan= 2, sticky="ew")
 

@@ -16,8 +16,8 @@ from Settings.OptionsManager import OptionsManager
 class LittleBigSearchGUI():
     def __init__(self, master: tk.Tk, matchedLevels = [], settings = 0, savedLevels = 0) -> None:
         
-        self.options = OptionsManager()
-
+        self.options = OptionsManager(self.errorCallback)
+        
         self.scrollerCanvas  = tk.Canvas()
         self.scrollerFrame   = Frame()
         
@@ -204,6 +204,11 @@ class LittleBigSearchGUI():
         
     def searchCallBack(self, response):
         self.isFirstRun = False
+        if self.options.heartedLevelPaths == None:
+            self.sendError("An error occurred when tried to open one of the saved paths. Try selecting paths again.", "red")
+            self.isSearching = False
+            return
+        
         if response == ParserReturns.noResult:
             self.sendError("No result", "red")
 
@@ -255,7 +260,9 @@ class LittleBigSearchGUI():
                                            RPCS3Path  = self.options.RPCS3Path)
 
     # Settings ____________________________________________________________________________________________________________________________________________
-
+    def errorCallback(self, errorText, color = "red"):
+        self.sendError(errorText, color)
+        
     def openSettings(self):
         self.options.openSettings(master= self.master)
                         
@@ -370,7 +377,7 @@ class LittleBigSearchGUI():
    # builds result scroller view _______________________________________________________________________________________________________________________________
      
      
-    def showResult(self, isAfterSearch: bool= True):
+    def showResult(self, isAfterSearch: bool= True):        
         refreshWindow = False
         if self.dragId != "":
             self.master.overrideredirect(True)

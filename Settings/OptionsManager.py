@@ -3,7 +3,9 @@ from os import path
 from Settings.OptionsController import Options
 
 class OptionsManager():
-    def __init__(self) -> None:
+    def __init__(self, errorCallback) -> None:
+        
+        self.errorCallback = errorCallback
         
         self.archivePath = ""
         self.RPCS3Path   = ""
@@ -22,6 +24,7 @@ class OptionsManager():
         self.archivePath = path
     def RPCS3PathProtocol(self, path):
         self.RPCS3Path = path
+        self.fetchHeatedPaths(path)
 
     def fetchSettingCallBack(self, archive, RPCS3, dupsStatus, includeDescription):
         self.archivePath = archive
@@ -33,7 +36,9 @@ class OptionsManager():
     # __________________________________________
     
     def fetchHeatedPaths(self, path):
-        self.heartedLevelPaths = Options.getHeartedLevels(path)
+        self.heartedLevelPaths = Options.getHeartedLevels(self, path)
+        if self.heartedLevelPaths == None:
+            self.errorCallback("An error occurred when tried to open one of the saved paths. Try selecting paths again.")
     
     def addHeartedLevel(self, path, clearPath = False):
         folderName = path

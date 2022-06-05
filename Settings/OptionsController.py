@@ -145,17 +145,21 @@ class Options():
         if selectedFolder:
             labelStr.set(selectedFolder)
             delegate(path = selectedFolder)
+            
     
     @staticmethod
-    def getHeartedLevels(path):
+    def getHeartedLevels(self, path):
         heartedLevelFolderPaths = []
-        for levelFolder in os.listdir(path):
-            if levelFolder.__contains__("."):
-                continue
-            heartedLevelFolderPaths.append(levelFolder)
-        
-        return heartedLevelFolderPaths
-        
+        try:
+            for levelFolder in os.listdir(path):
+                if levelFolder.__contains__("."):
+                    continue
+                heartedLevelFolderPaths.append(levelFolder)
+            
+            return heartedLevelFolderPaths
+        except:
+            print("An error occurred when tried to open one of the saved paths. Try selecting paths again.")
+            
             
     # save setting to json file _________________________________________________________________________________________________ 
 

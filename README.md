@@ -12,9 +12,9 @@ if you don't have any level archive you can get the one you like from [LittleBig
 
 1. Press the settings button.
 
-2. Select your Levels archive from the **Browse Archive** button. ex: C:\Users\<User>\Desktop\LBP2 Levels Archive\PS3\SAVEDATA.
+2. Select your Levels archive from the **Browse Archive** button. ex: C:\Users\\<User>\Desktop\LBP2 Levels Archive\PS3\SAVEDATA.
 
-3. Select your destination folder from **Select Destination** button. ex: C:\Users\<User>\Desktop\RPCS3\dev_hdd0\home\00000001\savedata.
+3. Select your destination folder from **Select Destination** button. ex: C:\Users\\<User>\Desktop\RPCS3\dev_hdd0\home\00000001\savedata.
 
 5. Pick any level you want by pressing on the level cell, the app will move the level folder to your destination folder automatically.
 

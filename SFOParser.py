@@ -133,7 +133,15 @@ class LevelParser:
         startIndex = self.SFOStartIndex(content, "SD")
         endIndex   = content.index(levelFolder)
         
-        descrition = self.cleanAllMachineCode(f'{content[startIndex : endIndex]}')        
+
+        descrition = self.cleanAllMachineCode(f'{content[startIndex : endIndex]}')
+        try:
+            if descrition[-1] == "M":
+                descrition = descrition[:-1]
+        except:
+            # level has no Description.
+            pass
+        
         return descrition
 
 

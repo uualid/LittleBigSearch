@@ -55,7 +55,12 @@ class OptionsManager():
     
     def fetchSettings(self):
         if path.exists("SavedSettings.json"):
-            Options.getSettingsFromJSON(self.fetchSettingCallBack)
+            try:
+                Options.getSettingsFromJSON(self.fetchSettingCallBack)
+            except:
+                print("DEBUG: Error trying to fetch data from JSON file.")
+                self.errorCallback("An error occurred when tried to read data from the saved settings file. try saving paths again.")
+                
         else:
             print("No saved settings.")
 

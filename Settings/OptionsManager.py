@@ -16,6 +16,7 @@ class OptionsManager():
 
     
     # protocols ________________________________
+    
     def toggleDuplicatesProtocol(self):
         self.includeDups = True if self.includeDups == False else False
     def toggleIncludeDescriptionProtocol(self):
@@ -31,7 +32,7 @@ class OptionsManager():
         self.RPCS3Path   = RPCS3
         self.includeDups = dupsStatus
         self.includeDescription = includeDescription
-        self.fetchHeatedPaths(RPCS3)
+        self.fetchHeatedPaths(RPCS3) # When Destination path is updated. it should fetch hearted level from the new hearted list.
     
     # __________________________________________
     

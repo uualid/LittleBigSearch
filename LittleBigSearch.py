@@ -418,7 +418,7 @@ class LittleBigSearchGUI():
             # Loop and build level cells for the scrollable frame
         for index, level in enumerate(matchedLevelsWithPage):
             
-            labelText = util.addBreakLineIfNeeded(text= level.title, strIndex= "by")         
+            labelText = util.addBreakLine(text= level.title, strIndex= "by")         
             
             levelImageCanvas = Canvas(scrollerFrame, height=100, width=100, bg= GB.BGColorDark, bd=0, highlightthickness = 0)
             levelImageCanvas.grid(row = index, column=0)

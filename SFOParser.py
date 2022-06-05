@@ -23,7 +23,7 @@ machineCode = ['\x01', '\x02', '\x07u', '\x19+0', '\x12', '\x1bq', '\x1f', '\x16
                '\x03u', '\x06ffffffffffffffff', '\tXț7ef60160379655bc', '\x03[I+Z', 'x18SD_Gk'
                ,'\x037ef60160379655bc', '\x03',  '\x03M', '\x0eq' , '\x05', '\x14lY',  '\x13', 
                '\x0e=510a61ebfdb8f8c9', '\x0bu', 'x0bffffffffffffffff', '\x18SD_Gk', '\x0bu', 
-               '\x0bffffffffffffffff', ]
+               '\x0bffffffffffffffff', "\'=", "=\'"]
 
 class LevelParser:
 
@@ -133,8 +133,7 @@ class LevelParser:
         startIndex = self.SFOStartIndex(content, "SD")
         endIndex   = content.index(levelFolder)
         
-
-        descrition = self.cleanAllMachineCode(f'{content[startIndex : endIndex]}')
+        descrition = self.cleanAllMachineCode(f'{content[startIndex : endIndex]}')        
         return descrition
 
 

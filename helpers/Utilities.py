@@ -30,12 +30,11 @@ class Utilities:
         return list( (levels[i*k+min(i, m):(i+1)*k+min(i+1, m)] for i in range(x)) )
     
     @staticmethod
-    def addBreakLineIfNeeded(text, strIndex):
-        if len(text) > 60:
-            breakLineIndex = text.index(strIndex)
-            return text[:breakLineIndex] + "\n" + text[breakLineIndex:]
-        else:
-            return f'{text}'  
+    def addBreakLine(text, strIndex):
+
+        breakLineIndex = text.index(strIndex)
+        return text[:breakLineIndex] + "\n" + text[breakLineIndex:]
+   
                 
     @staticmethod
     def makeCheckBox(command, 

@@ -2,7 +2,7 @@
 
 A search tool for [LittleBigArchive](http://littlebigarchive.com/)
 
-Theres a **MacOS** and **Linux** version of this app. you can find them in the [release](https://github.com/WaleedAlassaf/LittleBigSearch/releases/tag/1.1.3.2) section.
+Theres a **MacOS** and **Linux** version of this app. you can find them in the [release](https://github.com/WaleedAlassaf/LittleBigSearch/releases/tag/1.1.4) section.
 
 # How do I use this?
 
@@ -11,9 +11,13 @@ if you don't have any level archive you can get the one you like from [LittleBig
 **when you open LittleBigSearch**
 
 1. Press the settings button.
-2. Select your Levels archive from the **Browse Archive** button. ex: C:\Users\YourUserName\Desktop\LBPLEVELs\LBP2 Levels Archive\PS3\SAVEDATA.
-3. Select your destination folder from **Select Destination** button. ex: C:\Users\YourUserName\Desktop\RPCS3\dev_hdd0\home\00000001\savedata.
+
+2. Select your Levels archive from the **Browse Archive** button. ex: C:\Users\User\Desktop\LBP2 Levels Archive\PS3\SAVEDATA.
+
+3. Select your destination folder from **Select Destination** button. ex: C:\Users\User\Desktop\RPCS3\dev_hdd0\home\00000001\savedata.
+
 5. Pick any level you want by pressing on the level cell, the app will move the level folder to your destination folder automatically.
+
 6. start LBP and go to your moon, press ***Square*** on any empty spot -> ***import***. 
 
 `NOTES:` 

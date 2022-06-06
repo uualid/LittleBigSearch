@@ -1,3 +1,4 @@
+from tabnanny import check
 import tkinter           as tk
 import os, shutil,threading, ttkthemes, time
 from   genericpath       import exists
@@ -235,7 +236,9 @@ class LittleBigSearchGUI():
             tuple =  [tuple for tuple in self.currentPageLevels if tuple[0] == removedLevelFolderName][0]
             levelFolderName = tuple[0]
             levelCanvas     = tuple[1]
-            self.toggleHeartImage(levelFolderName, levelCanvas)
+            self.showHeartImage(check        = levelFolderName is self.options.heartedLevelPaths, 
+                                levelFolder = levelFolderName, 
+                                imageCanvas = levelCanvas)
             self.clearNotification()
             return
         except: # other wise it wil just remove the level from the hearted list
@@ -259,6 +262,7 @@ class LittleBigSearchGUI():
                                            RPCS3Path  = self.options.RPCS3Path)
 
     # Settings ____________________________________________________________________________________________________________________________________________
+    
     def errorCallback(self, errorText, color = "red"):
         self.sendError(errorText, color)
         
@@ -272,31 +276,38 @@ class LittleBigSearchGUI():
             self.options.removeHeartedLevel(levelFolder)
         else:
             self.options.addHeartedLevel(levelFolder)
-    
-    def toggleHeartImage(self, levelFolder, levelImageCanvas):
-        if levelFolder in self.options.heartedLevelPaths:
-            levelImageCanvas.itemconfig(2, state='hidden')
-            self.toggleLevelHeart(levelFolder, remove= True)
-        else:
-            levelImageCanvas.itemconfig(2, state='normal')
+
+    def showHeartImage(self, check, levelFolder, imageCanvas):
+        if check:
+            imageCanvas.itemconfig(2, state='normal')
             self.toggleLevelHeart(levelFolder, remove= False)
+        else:
+            imageCanvas.itemconfig(2, state='hidden')
+            self.toggleLevelHeart(levelFolder, remove= True)
             
-    
+            
     def manageLevel(self, source, levelFolder, levelImageCanvas):
-        self.moveFolder(source=source)
-        self.toggleHeartImage(levelFolder, levelImageCanvas)
-    
+        if self.moveFolder(source=source):
+            self.showHeartImage(True, levelFolder, levelImageCanvas)
+        else:
+            self.showHeartImage(False, levelFolder, levelImageCanvas)
     
     def moveFolder(self, source):
         destination = self.options.RPCS3Path
         destDir = os.path.join(destination,os.path.basename(source))
+        
         if exists(destDir) == False:
             self.sendError("Level folder was copied to the destination folder.", "green")
             shutil.copytree(source, destDir)
+            self.refreshLevels()
+            return True
         else:
-            self.sendError("Level folder was removed from the destination folder")
             shutil.rmtree(destDir)
+            self.sendError("Level folder was removed from the destination folder")
+            self.refreshLevels()
+            return False
         
+    def refreshLevels(self):
         # refresh Saved levels automatically
         try:
             self.savedLevels.refresh()

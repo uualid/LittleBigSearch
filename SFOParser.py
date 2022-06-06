@@ -87,10 +87,11 @@ class LevelParser:
     
     @staticmethod
     def getLevelTitle(SFOContent: str, levelFolder: str):
-        startIndex = LevelParser.SFOStartIndex(SFOContent, levelFolder) 
-        endIndex   = LevelParser.SFOEndIndex(SFOContent)
-        title      = LevelParser.clean( f'{SFOContent[startIndex : endIndex]}')
-        
+        startIndex = LevelParser.SFOStartIndex(SFOContent, levelFolder)
+        tmpTitle = SFOContent[startIndex:]
+        endIndex   = LevelParser.SFOEndIndex(tmpTitle)
+        title      = LevelParser.clean( f'{tmpTitle[:endIndex]}')
+        # title      = f'{tmpTitle[:endIndex]}'
         return title
 
     #__ Main search method __________________________________________________________________________________

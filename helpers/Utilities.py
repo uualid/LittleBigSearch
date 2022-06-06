@@ -1,5 +1,4 @@
-import imp
-import os, math, sys
+import os, math, sys, re
 import tkinter as tk
 from tkinter import Frame
 from PIL import ImageTk, Image
@@ -20,6 +19,15 @@ class Utilities:
         except:
             print("Failed to open folder")
     
+    @staticmethod
+    def detectJPChars(texts):
+        # japanese
+        if re.search("[\u3040-\u30ff]", texts):
+            return True
+        # chinese
+        if re.search("[\u4e00-\u9FFF]", texts):
+            return True
+        return False
     
     @staticmethod
     def splitLevelsToLists(levels, splitSize = 50):
@@ -97,7 +105,6 @@ class Utilities:
         if command != None: btn.config(command= lambda: command())
         if text    != None: btn.config(text= text)
         if image   != None: btn.config(image= image); btn.image = image
-       
         btn.config(text             = text,
                     bd               = 0,
                     fg               = "white",

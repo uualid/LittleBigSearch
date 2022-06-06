@@ -7,7 +7,7 @@ from   functools         import partial
 from   PIL               import Image, ImageTk
 from   SFOParser         import LevelParser, ParserReturns
 from idlelib.tooltip     import Hovertip
-
+import re
 from helpers.Utilities import GlobalVars as GB
 from helpers.Utilities import Utilities as util
 from SavedLevels       import SavedLevels
@@ -420,7 +420,7 @@ class LittleBigSearchGUI():
             
             labelText = util.addBreakLine(text= level.title, strIndex= "by")         
             
-            levelImageCanvas = Canvas(scrollerFrame, height=100, width=100, bg= GB.BGColorDark, bd=0, highlightthickness = 0)
+            levelImageCanvas = Canvas(scrollerFrame, height=100, width=120, bg= GB.BGColorDark, bd=0, highlightthickness = 0)
             levelImageCanvas.grid(row = index, column=0)
             
             levelImage = util.resize(level.image)
@@ -435,9 +435,21 @@ class LittleBigSearchGUI():
             levelImageCanvas.itemconfig(2, state=heartState) # the number 2 item is the heart png.
             
             self.currentPageLevels.append((level.folderName, levelImageCanvas))
+            
             levelInfoButton = util.makeButton(master= scrollerFrame, text= labelText , command= partial(self.manageLevel, 
                                                                                                         level.path, level.folderName, levelImageCanvas))
-            levelInfoButton.configure(bg= GB.BGColorDark, width= 63)
+            levelInfoButton.configure(bg= GB.BGColorDark, width= 57)
+            
+            hasJPNChars = False
+            hasJPNChars = util.detectJPChars(labelText)
+            textLength  = len(labelText)
+            
+            if textLength > 65  and hasJPNChars: levelInfoButton.config(font= "Helvetica 10 bold" )
+            if textLength >= 70 and hasJPNChars: levelInfoButton.config(font= "Helvetica 9 bold" )
+            if textLength > 80: levelInfoButton.config(font= "Helvetica 11 bold" )
+            
+            
+            # print(f'{labelText} >< {len(labelText)}')
             levelInfoButton.grid(row = index, column=1, columnspan= 2, sticky="ew")
 
             levelDescription = "No description" if level.description == "" else level.description

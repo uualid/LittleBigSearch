@@ -52,13 +52,38 @@ class LevelParser:
         elif levelInfo.__contains__("LittleBigPlanet™3"):
             return levelInfo.index("LittleBigPlanet™3")
 
+        elif levelInfo.__contains__("LittleBigPlanet Level Backup"):
+            return levelInfo.index("LittleBigPlanet Level Backup")
         else:
             return levelInfo.index("LittleBigPlanet")
+        
     
     @staticmethod
     def clean(SFOstring: str):
             #For some reason after getting the level string from the SFO, I get alot of machine code with it.
         return SFOstring.replace('\x00', '')
+
+    def cleanAllMachineCode(self, content):
+        for code in machineCode:
+            content = content.replace(code, '')
+            
+        return content
+    
+        
+    def getDescription(self, content: str, levelFolder):
+        startIndex = self.SFOStartIndex(content, "SD")
+        endIndex   = content.index(levelFolder)
+        
+
+        descrition = self.cleanAllMachineCode(f'{content[startIndex : endIndex]}')
+        try:
+            if descrition[-1] == "M":
+                descrition = descrition[:-1]
+        except:
+            # level has no Description.
+            pass
+        
+        return descrition
     
     @staticmethod
     def getLevelTitle(SFOContent: str, levelFolder: str):
@@ -123,26 +148,8 @@ class LevelParser:
         
         callBack(LevelParser.checkIfThereIsNoMatch(matchedLevels))
     
-    def cleanAllMachineCode(self, conten):
-        for code in machineCode:
-            conten = conten.replace(code, '')
-            
-        return conten
-    
-    def getDescription(self, content: str, levelFolder):
-        startIndex = self.SFOStartIndex(content, "SD")
-        endIndex   = content.index(levelFolder)
-        
 
-        descrition = self.cleanAllMachineCode(f'{content[startIndex : endIndex]}')
-        try:
-            if descrition[-1] == "M":
-                descrition = descrition[:-1]
-        except:
-            # level has no Description.
-            pass
-        
-        return descrition
+
 
 
         

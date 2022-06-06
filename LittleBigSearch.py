@@ -446,7 +446,7 @@ class LittleBigSearchGUI():
             
             if textLength > 65  and hasJPNChars: levelInfoButton.config(font= "Helvetica 10 bold" )
             if textLength >= 70 and hasJPNChars: levelInfoButton.config(font= "Helvetica 9 bold" )
-            if textLength > 80: levelInfoButton.config(font= "Helvetica 11 bold" )
+            if textLength > 85: levelInfoButton.config(font= "Helvetica 11 bold" )
             
             
             # print(f'{labelText} >< {len(labelText)}')

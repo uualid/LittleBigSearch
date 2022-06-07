@@ -23,7 +23,9 @@ machineCode = ['\x01', '\x02', '\x07u', '\x19+0', '\x12', '\x1bq', '\x1f', '\x16
                '\x03u', '\x06ffffffffffffffff', '\tXț7ef60160379655bc', '\x03[I+Z', 'x18SD_Gk'
                ,'\x037ef60160379655bc', '\x03',  '\x03M', '\x0eq' , '\x05', '\x14lY',  '\x13', 
                '\x0e=510a61ebfdb8f8c9', '\x0bu', 'x0bffffffffffffffff', '\x18SD_Gk', '\x0bu', 
-               '\x0bffffffffffffffff', "\'=", "=\'"]
+               '\x0bffffffffffffffff', '\x0b', '\u0558C.n~*', '\x04', 
+               '\x04691cd42c870a2933', '\x14', '\x18', '\x1b', '\x1dDƥ6e1719d1ff992661', 
+               "6eea3b23544da9a6", 'eea3b23544da9a6']
 
 class LevelParser:
 
@@ -77,8 +79,8 @@ class LevelParser:
 
         descrition = self.cleanAllMachineCode(f'{content[startIndex : endIndex]}')
         try:
-            if descrition[-1] == "M":
-                descrition = descrition[:-1]
+            if descrition[-1] == "M": descrition = descrition[:-1]
+            if descrition[-1] ==  'ʾ' and descrition[-2] == "=":  descrition = descrition[:-2]
         except:
             # level has no Description.
             pass
@@ -91,7 +93,6 @@ class LevelParser:
         tmpTitle = SFOContent[startIndex:]
         endIndex   = LevelParser.SFOEndIndex(tmpTitle)
         title      = LevelParser.clean( f'{tmpTitle[:endIndex]}')
-        # title      = f'{tmpTitle[:endIndex]}'
         return title
 
     #__ Main search method __________________________________________________________________________________

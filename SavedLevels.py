@@ -2,10 +2,10 @@ import threading, os,shutil
 import tkinter           as tk
 from   tkinter           import Frame, ttk
 from   tkinter.constants import VERTICAL
-from   PIL               import Image, ImageTk
 from   functools         import partial
 from   SFOParser         import LevelParser, ParserReturns
 from   genericpath       import exists
+from idlelib.tooltip     import Hovertip
 from helpers.Utilities import GlobalVars as GB
 from helpers.Utilities import Utilities as util
 
@@ -82,7 +82,6 @@ class SavedLevels():
             # self.sendError("No result", "red")
             # No result = empty levels in RPCS3 so destroy the scroller frame.
             self.scrollerFrame.destroy()
-            pass
 
         elif response == ParserReturns.noPath:
             # self.sendError("Please select a levels directory from the settings", "red")
@@ -111,11 +110,14 @@ class SavedLevels():
         destination = self.RPCS3Path
         destDir = os.path.join(destination,os.path.basename(source))
         if exists(destDir) == True:
-            # self.sendError("The Level folder was removed")
-            shutil.rmtree(destDir)
-            self.removeLevelCallBack(path = destDir, removedLevelFolderName = levelFolderName)
+            try:
+                shutil.rmtree(destDir)
+            except:
+                print("Level folder is busy with other process")
+                
+            self.removeLevelCallBack(destDir, levelFolderName)
             self.refresh()
-    
+        
     def refresh(self):
         threading.Thread(target= self.fetchSavedLevels, args= ()).start()
 
@@ -161,7 +163,7 @@ class SavedLevels():
         
         for index, level in enumerate(savedLevels):
 
-            labelText = f'{level.title}' 
+            labelText = util.addBreakLine(text= level.title, strIndex= "by")  
             levelImage = util.resize(level.image)
 
             levelImageCell = tk.Label(scrollFrame, image=levelImage, bg=GB.BGColorDark)
@@ -172,13 +174,15 @@ class SavedLevels():
             
             levelInfoButton = util.makeButton(master= scrollFrame, text= labelText + "\n" + levelPath, command= partial(util.openFile, level.path))
             levelInfoButton.configure(bg= GB.BGColorDark, width= 64)
-            levelInfoButton.grid(row = index, column=1 , padx= 20, pady=(0, 20))
+            levelInfoButton.grid(row = index, column=1 , padx= 20, pady=(0, 38))
             
+            levelDescription = "No description" if level.description == "" else level.description
+            Hovertip(levelInfoButton, util.addBreakLines(levelDescription))
             removeLevelButton = util.makeButton(master = scrollFrame,  
                                                 buttonColor = GB.BGColorDark,
                                                 activeColor = GB.BGColorDark)
             
             removeLevelButton.configure(height = 28, width = 120, image= self.removeBtnImage, 
                                         command = partial(self.removeFolder, level.path, level.folderName))
-            removeLevelButton.grid(row = index, column=1, pady=(50, 0))
+            removeLevelButton.grid(row = index, column=1, pady=(60, 0))
 

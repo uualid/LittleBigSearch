@@ -154,6 +154,9 @@ class Options():
             for levelFolder in os.listdir(path):
                 if levelFolder.__contains__("."):
                     continue
+                if len(os.listdir(path + '/' + levelFolder)) == 0:
+                    continue
+                
                 heartedLevelFolderPaths.append(levelFolder)
             
             return heartedLevelFolderPaths

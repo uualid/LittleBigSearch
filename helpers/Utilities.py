@@ -163,13 +163,14 @@ class Utilities:
     
     @staticmethod
     def addBreakLines(content):
+        breakLine = 70 if Utilities.detectJPChars(content) == True else 100
         if len(content) < 50: return content
         finalContent = content
-        index = 100
+        index = breakLine
         while True:
             beginningContent = finalContent[:index]
             endContent       = finalContent[index:]
             finalContent = beginningContent + " \n " + endContent
-            index += 100
+            index += breakLine
             if index > len(content):
                 return finalContent

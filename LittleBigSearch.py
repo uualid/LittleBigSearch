@@ -1,3 +1,4 @@
+from cmath import exp
 from tabnanny import check
 import tkinter           as tk
 import os, shutil,threading, ttkthemes, time
@@ -8,7 +9,7 @@ from   functools         import partial
 from   PIL               import Image, ImageTk
 from   SFOParser         import LevelParser, ParserReturns
 from idlelib.tooltip     import Hovertip
-import re
+
 from helpers.Utilities import GlobalVars as GB
 from helpers.Utilities import Utilities as util
 from SavedLevels       import SavedLevels
@@ -191,7 +192,7 @@ class LittleBigSearchGUI():
         if self.options.RPCS3Path.__contains__("/") == False:
             self.sendError("Please select a destination folder", "red")
             return
- 
+        self.clearNotification()
         self.startTimer = time.time()
         self.startWaiter()
         self.currentPage = 0
@@ -236,14 +237,14 @@ class LittleBigSearchGUI():
             tuple =  [tuple for tuple in self.currentPageLevels if tuple[0] == removedLevelFolderName][0]
             levelFolderName = tuple[0]
             levelCanvas     = tuple[1]
-            self.showHeartImage(check        = levelFolderName is self.options.heartedLevelPaths, 
-                                levelFolder = levelFolderName, 
-                                imageCanvas = levelCanvas)
+            self.toggleLevelHeart(check        = levelFolderName is self.options.heartedLevelPaths, 
+                                  levelFolder = levelFolderName, 
+                                  imageCanvas = levelCanvas)
             self.clearNotification()
             return
         except: # other wise it wil just remove the level from the hearted list
             print("DEBUG: Level cell is not on the current page")
-        self.toggleLevelHeart(levelFolder= removedLevelFolderName, remove= True)
+        self.options.removeHeartedLevel(removedLevelFolderName)
         
     
     def currentLevels(self):
@@ -271,34 +272,45 @@ class LittleBigSearchGUI():
                         
     # Level Helpers _______________________________________________________________________________________________________________________________________
     
-    def toggleLevelHeart(self, levelFolder, remove: bool):
-        if remove: 
-            self.options.removeHeartedLevel(levelFolder)
-        else:
-            self.options.addHeartedLevel(levelFolder)
-
-    def showHeartImage(self, check, levelFolder, imageCanvas):
-        if check:
-            imageCanvas.itemconfig(2, state='normal')
-            self.toggleLevelHeart(levelFolder, remove= False)
-        else:
-            imageCanvas.itemconfig(2, state='hidden')
-            self.toggleLevelHeart(levelFolder, remove= True)
-            
-            
     def manageLevel(self, source, levelFolder, levelImageCanvas):
-        if self.moveFolder(source=source):
-            self.showHeartImage(True, levelFolder, levelImageCanvas)
-        else:
-            self.showHeartImage(False, levelFolder, levelImageCanvas)
-    
-    def moveFolder(self, source):
         destination = self.options.RPCS3Path
         destDir = os.path.join(destination,os.path.basename(source))
-        
+        try:
+            if self.moveFolder(source, destDir):
+                self.toggleLevelHeart(True, levelFolder, levelImageCanvas)
+            else:
+                self.toggleLevelHeart(False, levelFolder, levelImageCanvas)
+        except:
+            self.sendError("Could not handle folder properly because it is being used by another process", "red") 
+            self.options.fetchHeatedPaths(destination)
+            self.toggleLevelHeart(check = levelFolder is self.options.heartedLevelPaths, levelFolder = levelFolder, imageCanvas = levelImageCanvas)
+            self.refreshLevels()  
+    
+    
+    def toggleLevelHeart(self, check, levelFolder, imageCanvas):
+        if check:
+            imageCanvas.itemconfig(2, state='normal')
+            self.options.addHeartedLevel(levelFolder)
+        else:
+            imageCanvas.itemconfig(2, state='hidden')
+            try:
+                self.options.removeHeartedLevel(levelFolder)
+            except:
+                print("DEBUG: Level is not in the list")
+            
+    def checkIfFolderIsEmpty(self, pathToCheck):
+        try:
+            if len(os.listdir(pathToCheck)) == 0:
+                shutil.rmtree(pathToCheck)
+                print("DEBUG: removed empty file.")
+        except:
+            print("DEBUG: Folder is not available in destination folder, it is safe to copy it.")  
+                  
+    def moveFolder(self, source, destDir):
+        self.checkIfFolderIsEmpty(destDir)
         if exists(destDir) == False:
-            self.sendError("Level folder was copied to the destination folder.", "green")
             shutil.copytree(source, destDir)
+            self.sendError("Level folder was copied to the destination folder.", "green")
             self.refreshLevels()
             return True
         else:
@@ -431,16 +443,16 @@ class LittleBigSearchGUI():
             
             labelText = util.addBreakLine(text= level.title, strIndex= "by")         
             
-            levelImageCanvas = Canvas(scrollerFrame, height=100, width=120, bg= GB.BGColorDark, bd=0, highlightthickness = 0)
+            levelImageCanvas = Canvas(scrollerFrame, height=100, width=125, bg= GB.BGColorDark, bd=0, highlightthickness = 0)
             levelImageCanvas.grid(row = index, column=0)
             
             levelImage = util.resize(level.image)
             
-            levelImageCanvas.create_image(50, 50, image = levelImage)
+            levelImageCanvas.create_image(55, 50, image = levelImage)
             levelImageCell = tk.Label(scrollerFrame, image=levelImage, bg=GB.BGColorDark)
             levelImageCell.image = levelImage
             
-            levelImageCanvas.create_image(20, 60, image = self.levelHeart)
+            levelImageCanvas.create_image(25, 60, image = self.levelHeart)
             
             heartState = "normal" if level.folderName in self.options.heartedLevelPaths else "hidden"
             levelImageCanvas.itemconfig(2, state=heartState) # the number 2 item is the heart png.
@@ -449,7 +461,7 @@ class LittleBigSearchGUI():
             
             levelInfoButton = util.makeButton(master= scrollerFrame, text= labelText , command= partial(self.manageLevel, 
                                                                                                         level.path, level.folderName, levelImageCanvas))
-            levelInfoButton.configure(bg= GB.BGColorDark, width= 57)
+            levelInfoButton.configure(bg= GB.BGColorDark, width= 56)
             
             hasJPNChars = False
             hasJPNChars = util.detectJPChars(labelText)
@@ -459,8 +471,6 @@ class LittleBigSearchGUI():
             if textLength >= 70 and hasJPNChars: levelInfoButton.config(font= "Helvetica 9 bold" )
             if textLength > 85: levelInfoButton.config(font= "Helvetica 11 bold" )
             
-            
-            # print(f'{labelText} >< {len(labelText)}')
             levelInfoButton.grid(row = index, column=1, columnspan= 2, sticky="ew")
 
             levelDescription = "No description" if level.description == "" else level.description

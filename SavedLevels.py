@@ -87,7 +87,7 @@ class SavedLevels():
             # self.sendError("Please select a levels directory from the settings", "red")
             pass
         else:
-            self.savedLevels = response
+            self.savedLevels = response[::-1] # flipped list to show new added levels on top
             # Calls showResult on the main thread.
             self.window.event_generate("<<event1>>")
     

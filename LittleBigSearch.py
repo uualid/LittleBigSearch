@@ -296,7 +296,7 @@ class LittleBigSearchGUI():
             try:
                 self.options.removeHeartedLevel(levelFolder)
             except:
-                print("DEBUG: Level is not in the list")
+                print("DEBUG: Level is not in the hearted list")
             
     def checkIfFolderIsEmpty(self, pathToCheck):
         try:

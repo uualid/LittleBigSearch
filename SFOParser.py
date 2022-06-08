@@ -1,5 +1,5 @@
 from genericpath import exists
-from Modules.LevelModule import Level
+from Modules.Level import Level
 import enum, os
 
 class ParserReturns(enum.Enum):

@@ -134,7 +134,7 @@ class SavedLevels():
             return
         
         # build new one
-        self.baseScrollerFrame = util.makeScrollerFrame(self.window)
+        self.baseScrollerFrame = util.makeFrame(self.window)
 
         self.baseScrollerFrame.grid(columnspan=3, column=0, sticky= "ew")
         tk.Grid.columnconfigure(self.baseScrollerFrame, 0, weight = 1)

@@ -7,6 +7,11 @@ class GlobalVars:
     BGColorDark   = "#1e1e1e"
     BGColorLight  = "#2f2f2f"
     logoBlue      = "#2cb4e8"
+    
+    GLOBE_GIF_FRAME_COUNT = 32
+    
+    SCROLLER_BASE  = 1
+    SCROLLER_FRAME = 0
 
 
 class Utilities:
@@ -97,6 +102,7 @@ class Utilities:
                 command = None,
                  master = None,
                  image  = None,
+                 font   = "Helvetica 13 bold",
                 buttonColor = GlobalVars.BGColorLight,
                 activeColor = GlobalVars.logoBlue):
         
@@ -109,14 +115,14 @@ class Utilities:
                     bd               = 0,
                     fg               = "white",
                     cursor           = "hand2",
-                    font= "Helvetica 12 bold",
+                    font             = font,
                     bg               = buttonColor,
                     activebackground = activeColor)
             
         return btn
     
     @staticmethod
-    def makeScrollerFrame(master = None):
+    def makeFrame(master = None):
         frame = Frame()
         if master != None: frame = Frame(master)
         
@@ -142,6 +148,7 @@ class Utilities:
     
     @staticmethod
     def resize(image, height = 135, width = 80):
+        '''Resizes image and returns PhotoImage from ImageTK'''
         img = Image.open(image)
         imgResized = img.resize((height, width))
         finalImage = ImageTk.PhotoImage(imgResized)
@@ -157,12 +164,15 @@ class Utilities:
     
     @staticmethod
     def resourcePath(relative_path):
+        '''Returns the path for all the app resources. Images, icon... etc'''
         if hasattr(sys, '_MEIPASS'):
             return os.path.join(sys._MEIPASS, relative_path)
         return os.path.join(os.path.abspath("."), relative_path)
     
     @staticmethod
     def addBreakLines(content):
+        '''Adds a break point every 70 charecter if it has japanese characters (Japanes charecters take larger spaces) 
+        or every 100 for English characters'''
         breakLine = 70 if Utilities.detectJPChars(content) == True else 100
         if len(content) < 50: return content
         finalContent = content
@@ -174,3 +184,29 @@ class Utilities:
             index += breakLine
             if index > len(content):
                 return finalContent
+    @staticmethod
+    def resizeStringToFit(string):
+        '''Resize text according to its length and if it has a Japanes charecters. (Japanes charecters take larger spaces)'''
+        hasJPNChars = Utilities.detectJPChars(string)
+        textLength  = len(string)
+        
+        if textLength > 65  and hasJPNChars: return "Helvetica 10 bold"
+        if textLength >= 70 and hasJPNChars: return "Helvetica 9 bold"
+        if textLength > 85: return "Helvetica 11 bold"
+        return "Helvetica 13 bold"
+    
+    @staticmethod
+    def loadGif(framesCount, gifDir, gifName):
+        '''Loads gif into a list'''
+        frameList = []
+        for i in range(framesCount):
+            try:
+                frame = Image.open(Utilities.resourcePath(gifDir + gifName + f'{i + 1}' + ".png"))
+                frameResized = frame.resize((45, 45))
+                frame = ImageTk.PhotoImage(image= frameResized)
+                frameList.append(frame)
+                 
+            except:
+                break
+        return frameList
+        

@@ -104,9 +104,15 @@ class LevelParser:
         if path.__contains__("/") == False:
             callBack(ParserReturns.noPath)
             return True
-
         return False
     
+    def makeLevelObject(self, title, description, path , levelFolder):
+        return Level(title = title,
+                     description = description,
+                     path  = f'{path}/{levelFolder}',
+                     image = f'{path}/{levelFolder}/ICON0.PNG',
+                     folderName= levelFolder)
+        
     def search(self, callBack, path, term: str = "", includeDescription: bool = True):
             # Empty the array for the next search.
         matchedLevels = []
@@ -133,19 +139,11 @@ class LevelParser:
 
                     if includeDescription == False:
                         if term in title.lower():
-                            newMatchLevel = Level(title = title,
-                                                description = description,
-                                                path  = f'{path}/{levelFolder}',
-                                                image = f'{path}/{levelFolder}/ICON0.PNG',
-                                                folderName= levelFolder)
+                            newMatchLevel = self.makeLevelObject(title, description, path, levelFolder)
                             matchedLeveAppend(newMatchLevel)
-                            
+                                
                     elif term in cleanSFPContent.lower():
-                        newMatchLevel = Level(title = title,
-                                              description = description,
-                                              path  = f'{path}/{levelFolder}',
-                                              image = f'{path}/{levelFolder}/ICON0.PNG',
-                                              folderName= levelFolder)
+                        newMatchLevel = self.makeLevelObject(title, description, path, levelFolder)
                         matchedLeveAppend(newMatchLevel)                   
         
         callBack(LevelParser.checkIfThereIsNoMatch(matchedLevels))

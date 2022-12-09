@@ -1,5 +1,5 @@
 import tkinter           as tk
-import os, shutil,threading, ttkthemes, time
+import os, shutil,threading, ttkthemes, random
 from   genericpath       import exists
 from   tkinter           import Canvas, Frame, ttk
 from   tkinter.constants import VERTICAL
@@ -16,7 +16,7 @@ from Settings.OptionsManager import OptionsManager
 class LittleBigSearchGUI():
     def __init__(self, master: tk.Tk, matchedLevels = [], settings = 0, savedLevels = 0) -> None:
         
-        self.options = OptionsManager(self.errorCallback)
+        self.options = OptionsManager(self.errorCallback, self.clearRandomLevelsPool)
         
         self.scrollerCanvas  = tk.Canvas()
         self.scrollerBase   = Frame()
@@ -31,8 +31,8 @@ class LittleBigSearchGUI():
         self.currentPageLevels  = []
         self.currentPage        = 0
         
-        self.startTimer = 0
-        self.endTimer   = 0
+        self.generateRandomPool = False
+        self.randomLevelsPool   = []
 
         self.globeFrameIndex = 0 
         self.globeFrames   = util.loadGif(framesCount=GB.GLOBE_GIF_FRAME_COUNT,
@@ -80,6 +80,13 @@ class LittleBigSearchGUI():
         self.settingsButton.configure(height = 28, width = 120)
         self.settingsButton.grid(columnspan=3, column=0, row=1, pady=10, padx= (0,130))
         
+        # ____ 
+        
+        self.errorImage = tk.PhotoImage(file=util.resourcePath("images/UI/error.png"))
+        self.errorLabel = tk.Label(bg= GB.BGColorDark)
+        self.errorLabel.grid(column=1, row=1, pady=(0,0), padx=(0, 300))
+        self.errorHover = Hovertip(self.errorLabel, "", 100)
+        
         # ____
         
         heartedImage = tk.PhotoImage(file=util.resourcePath("images\\UI\\hearted.png"))
@@ -106,15 +113,21 @@ class LittleBigSearchGUI():
                                        activeColor = GB.BGColorDark,
                                        image       = searchBtnImage,
                                        command = lambda: threading.Thread(target = self.LBSsearch, 
-                                                                          args   = (searchTextField.get(), self.options.archivePath)).start())
+                                                                          args   = (searchTextField.get(), 
+                                                                                    self.options.archivePath)).start())
         searchButton.configure(height = 28, width = 120)
         searchButton.grid(column=1, row=4, pady=(13,13))
-
-        self.errorText  = tk.StringVar()
-        self.errorLabel = util.makeLabel(self.errorText)
-        self.clearNotification()
-        self.errorLabel.grid(column=1, row=5, ipadx=30, pady=(0,3))
-
+        
+        # ____ 
+        
+        randomizerBtnImage = tk.PhotoImage(file=util.resourcePath("images/UI/randomizer.png"))
+        randomizerButton = util.makeButton(buttonColor = GB.BGColorDark,
+                                           activeColor = GB.BGColorDark,
+                                           image       = randomizerBtnImage, 
+                                           command      = lambda: self.fetchRandomLevels())
+        randomizerButton.configure(height = 32, width = 32)
+        randomizerButton.grid(column=1, row=4, pady=(13,13), padx=(0, 170))
+        
         #--- Pagination
         
         self.pageLeft     = util.makeButton(text="<",  command= self.nextLeftPage)
@@ -131,7 +144,7 @@ class LittleBigSearchGUI():
         #____________________________
         
         self.globeGif = tk.Label(bg= GB.BGColorDark)
-        self.globeGif.grid(column=1, row=4, padx= (200, 0) ,pady=(5,0))
+        self.globeGif.grid(column=1, row=4, padx= (185, 0) ,pady=(0,0))
         self.options.fetchSettings()
         
         
@@ -151,7 +164,7 @@ class LittleBigSearchGUI():
             
     # search method _____________________________________________________________________________________________________________________________________
     
-    def animate(self, frameNumber):
+    def animateGlobe(self, frameNumber = 0):
         if self.isSearching == False:
             self.globeGif.config(image="")# remove the image
             return
@@ -161,62 +174,90 @@ class LittleBigSearchGUI():
         
         try:
             self.globeGif.config(image=self.globeFrames[frameNumber]) 
-            self.master.after(50, self.animate, frameNumber+1)
+            self.master.after(50, self.animateGlobe, frameNumber+1)
         except:
             pass
-
+    
+    
     def startWaiter(self):
         if self.isSearching == True and self.isFirstRun == True:
             self.sendError("First run takes longer time")
             return
-
+        
         elif self.isFirstRun == True:
             threading.Timer(10.0, self.startWaiter).start()
+    
+    def fetchRandomLevels(self):
+        '''Fetches 50 random levels'''
+        self.clearNotification()
+        if self.randomLevelsPool == []:
+            self.generateRandomPool = True
+            threading.Thread(target = self.LBSsearch, args = ("", self.options.archivePath)).start()
+            self.animateGlobe()
+        else:
+            
+            poolPopulation = len(self.randomLevelsPool) if len(self.randomLevelsPool) < 50 else 50
+            random50 = random.sample(self.randomLevelsPool, poolPopulation)
+            self.showResult(random50)
+            self.updatePagination(levelList= random50, random= True)
             
 
-    def LBSsearch(self, term, path):
+    
+    def guardSearch(self):
         if self.isSearching: return
         if self.options.RPCS3Path.__contains__("/") == False:
-            self.sendError("Please select a destination folder", "red")
+            self.sendError("Please select a destination folder")
             return
+        
+    def LBSsearch(self, term, path):
+        self.guardSearch()
         self.clearNotification()
-        self.startTimer = time.time()
         self.startWaiter()
         self.currentPage = 0
         self.isSearching = True
-        self.animate(0)
+        self.animateGlobe()
         
         # this event will be called from background thread to use the main thread.
-        self.master.bind("<<event1>>", self.updatePage)
+        self.master.bind("<<event1>>", self.updateSearchResult)
+        self.master.bind("<<event2>>", self.updateRandom)
         self.levelParser.search(self.searchCallBack, path, term, includeDescription= self.options.includeDescription)
-        
+    
     def searchCallBack(self, response):
-        self.isFirstRun = False
-        if self.options.heartedLevelPaths == None:
-            self.sendError("An error occurred when tried to open one of the saved paths. Try selecting paths again.", "red")
-            self.isSearching = False
+        self.isSearching = False
+        if self.guard(response):
             return
         
+        if self.generateRandomPool == False:
+            levels = response if self.options.includeDups == True else set(response)                
+            self.matchedLevels = util.splitLevelsToLists(levels = levels) if len(levels) > 50 else levels
+        else:
+            self.randomLevelsPool = response
+            
+        self.showPagingButtons()
+        # Calls showResult on the main thread.
+        self.master.event_generate("<<event1>>")
+        self.master.event_generate("<<event2>>")
+        
+    def guard(self, response):
+        self.isFirstRun = False
+        if self.options.heartedLevelPaths == None:
+            self.sendError("An error occurred when tried to open one of the saved paths."+ "\n"+ "Try selecting paths again.")
+            return True
+        
         if response == ParserReturns.noResult:
-            self.sendError("No result", "red")
+            self.sendError("No result")
+            return True
 
         elif response == ParserReturns.noPath:
-            self.sendError("Please select a levels directory from the settings", "red")
+            self.sendError("Please select a levels directory from the settings")
+            return True
         
         elif response == ParserReturns.wrongPath:
-            self.sendError("Can't find any level archive directory", "red")
+            self.sendError("Can't find any level archive directory")
+            return True    
         
-        else: #if levels were found.
-            levels = response if self.options.includeDups == True else set(response)
-            self.matchedLevels = util.splitLevelsToLists(levels = levels) if len(levels) > 50 else levels
-            self.endTimer = time.time()
-            print(f"{self.endTimer - self.startTimer},")
-            
-            self.showPagingButtons()
-            # Calls showResult on the main thread.
-            self.master.event_generate("<<event1>>")
-        self.isSearching = False
-
+        return False
+        
     # Hearted levels _______________________________________________________________________________________________________________________________________
     
     def removeLevelCallBack(self, path, removedLevelFolderName):
@@ -238,7 +279,7 @@ class LittleBigSearchGUI():
         
     def openSavedLevels(self):
         if self.options.RPCS3Path == '':
-            self.sendError("Please select a destination folder", "red")
+            self.sendError("Please select a destination folder")
             return
         try:
             self.savedLevels.window.lift()
@@ -249,8 +290,8 @@ class LittleBigSearchGUI():
 
     # Settings ____________________________________________________________________________________________________________________________________________
     
-    def errorCallback(self, errorText, color = "red"):
-        self.sendError(errorText, color)
+    def errorCallback(self, errorText):
+        self.sendError(errorText)
         
     def openSettings(self):
         self.options.openSettings(master= self.master)
@@ -266,7 +307,7 @@ class LittleBigSearchGUI():
             else:
                 self.toggleLevelHeart(False, levelFolder, levelImageCanvas)
         except:
-            self.sendError("Could not handle folder properly because it is being used by another process", "red") 
+            self.sendError("Could not handle folder properly because it is being used by another process") 
             self.options.fetchHeatedPaths(destination)
             self.toggleLevelHeart(check = levelFolder is self.options.heartedLevelPaths, levelFolder = levelFolder, imageCanvas = levelImageCanvas)
             self.refreshLevels()  
@@ -295,12 +336,10 @@ class LittleBigSearchGUI():
         self.checkIfFolderIsEmpty(destDir)
         if exists(destDir) == False:
             shutil.copytree(source, destDir)
-            self.sendError("Level folder was copied to the destination folder.", "green")
             self.refreshLevels()
             return True
         else:
             shutil.rmtree(destDir)
-            self.sendError("Level folder was removed from the destination folder")
             self.refreshLevels()
             return False
         
@@ -324,13 +363,21 @@ class LittleBigSearchGUI():
         self.master.update()
         self.scrollerCanvas.yview_scroll(-1 * int((event.delta / 120)), "units")
 
-    def sendError(self, message = "", color = "white"):
-        self.errorLabel.configure(fg=color)
-        self.errorText.set(message)        
+    def sendError(self, message = ""):
+        self.errorLabel.config(image =self.errorImage)
+        Hovertip(self.errorLabel, message, 100)
     
     def clearNotification(self):
         '''Clear current error message shown to the user.'''
-        self.sendError("")
+        self.errorLabel.config(image="")
+        self.errorHover.unschedule()
+    
+    def clearMatchedLevels(self):
+        self.matchedLevels = []
+        
+    def clearRandomLevelsPool(self):
+        self.randomLevelsPool = []
+    
     # Pagination __________________________________________________________________________________________________________________________________________________
     
     def nextPage(self, pageLimit, moveNear = None, moveFar = None):
@@ -339,7 +386,7 @@ class LittleBigSearchGUI():
         
         if moveNear != None: self.currentPage += moveNear
         if moveFar  != None: self.currentPage = moveFar
-        self.updatePage(evt="")
+        self.updateSearchResult(evt="")
     
     def nextRightPage(self):
         self.nextPage(moveNear  = 1, 
@@ -358,29 +405,46 @@ class LittleBigSearchGUI():
                       pageLimit = 0)
         
     
-    def updatePage(self, evt):
+    def updatePagination(self, levelList, random = False):
         try: # if there is a 2D list
-            levelsCount = sum(len(levels) for levels in self.matchedLevels)
-            self.pageNumText.set(f'{self.currentPage + 1} of {len(self.matchedLevels)}')
+            levelsCount = sum(len(levels) for levels in levelList)
+            self.pageNumText.set(f'{self.currentPage + 1} of {len(levelList)}')
             self.hasMoreThanOnePage = True
         except: # else if there's only one list
-            levelsCount = len(self.matchedLevels)
+            levelsCount = len(levelList)
             self.pageNumText.set('1')
             self.hasMoreThanOnePage = False
-
+            
         levelsFound = "Levels" if levelsCount > 1 else "Level"
-        self.levelCounterTxt.set(f'{levelsCount} {levelsFound}')
-        self.showResult(isAfterSearch= False)
+        if random:
+            self.levelCounterTxt.set(f'Random {levelsCount} {levelsFound}')
+        else:
+            self.levelCounterTxt.set(f'{levelsCount} {levelsFound}')
+    
+    def updateRandom(self, evt):
+        if self.generateRandomPool == False: return
+        self.generateRandomPool = False
+        self.fetchRandomLevels()
+        self.clearMatchedLevels()
+
+    def updateSearchResult(self, evt):
+        if self.generateRandomPool == True: return
+        
+        self.updatePagination(levelList=self.matchedLevels)
+        self.currentPageLevels = []
+        matchedLevelsWithPage = self.matchedLevels[self.currentPage] if self.hasMoreThanOnePage == True else self.matchedLevels
+        self.showResult(levels = matchedLevelsWithPage, isAfterSearch= False)
     
     def showPagingButtons(self):
-        self.pageLeft.grid(column=1, row=6, ipadx=15, pady=(0, 10), padx= (0, 150))
-        self.pageFarLeft.grid(column=1, row=6, ipadx=10, pady=(0, 10), padx= (0, 260))
         
-        self.pageRight.grid(column=1, row=6, ipadx=15, pady=(0, 10), padx= (150, 0))
-        self.pageFarRight.grid(column=1, row=6, ipadx=10, pady=(0, 10), padx= (260, 0))
+        self.pageLeft.grid(column=1, row=5, ipadx=15, pady=(0, 0), padx= (0, 160))
+        self.pageFarLeft.grid(column=1, row=5, ipadx=10, pady=(0, 0), padx= (0, 270))
+        
+        self.pageRight.grid(column=1, row=5, ipadx=15, pady=(0, 0), padx= (160, 0))
+        self.pageFarRight.grid(column=1, row=5, ipadx=10, pady=(0, 0), padx= (270, 0))
 
-        self.levelCounter.grid(column=1, row=6, ipadx=10, pady=(0, 10), padx= (420, 0))
-        self.pageNumbers.grid(column=1, row=6, ipadx=20, pady=(0, 10))
+        self.levelCounter.grid(column=1, row=5, ipadx=10, pady=(0, 0), padx= (470, 0))
+        self.pageNumbers.grid(column=1, row=5, ipadx=20, pady=(0, 0))
         
    # builds result scroller view _______________________________________________________________________________________________________________________________
     
@@ -415,7 +479,7 @@ class LittleBigSearchGUI():
         
         return (scrollerFrame, scrollerBase)
         
-    def showResult(self, isAfterSearch: bool= True):        
+    def showResult(self,levels, isAfterSearch: bool= True):        
         self.scrollerBase.destroy()    
         newScrollerUI = self.createScrollerUI()
         
@@ -423,16 +487,12 @@ class LittleBigSearchGUI():
         self.scrollerBase = newScrollerUI[GB.SCROLLER_BASE]
         
         refreshWindow = self.guardResult()
-        self.clearNotification()
-        self.currentPageLevels = []
         
         scrollerFrame.grid(columnspan=3, sticky= "nsew")
         self.scrollerCanvas.create_window((0,0), window=scrollerFrame, anchor="nw")
         
-        matchedLevelsWithPage = self.matchedLevels[self.currentPage] if self.hasMoreThanOnePage == True else self.matchedLevels
-        
-            # Loop and build level cells for the scrollable frame
-        for index, level in enumerate(matchedLevelsWithPage):
+        # Loop and build level cells for the scrollable frame
+        for index, level in enumerate(levels):
             
             labelText = util.addBreakLine(text= level.title, strIndex= "by")         
             

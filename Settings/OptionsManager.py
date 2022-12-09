@@ -3,9 +3,10 @@ from os import path
 from Settings.OptionsController import Options
 
 class OptionsManager():
-    def __init__(self, errorCallback) -> None:
+    def __init__(self, errorCallback, clearRandomLevelsCallback) -> None:
         
         self.errorCallback = errorCallback
+        self.clearRandomLevels = clearRandomLevelsCallback
         
         self.archivePath = ""
         self.RPCS3Path   = ""
@@ -23,6 +24,8 @@ class OptionsManager():
         self.includeDescription = True if self.includeDescription == False else False
     def archivePathProtocol(self, path):
         self.archivePath = path
+        self.clearRandomLevels()
+        
     def RPCS3PathProtocol(self, path):
         self.RPCS3Path = path
         self.fetchHeatedPaths(path)
@@ -39,7 +42,7 @@ class OptionsManager():
     def fetchHeatedPaths(self, path):
         self.heartedLevelPaths = Options.getHeartedLevels(self, path)
         if self.heartedLevelPaths == None:
-            self.errorCallback("An error occurred when tried to open one of the saved paths. Try selecting paths again.")
+            self.errorCallback("An error occurred when tried to open one of the saved paths."+ "\n" + "Try selecting paths again.")
     
     def addHeartedLevel(self, path, clearPath = False):
         folderName = path

@@ -40,7 +40,7 @@ class LittleBigSearchGUI():
         
         
         self.master = master
-        self.master.title("By @SackBiscuit v1.1.4")
+        self.master.title("By @SackBiscuit v1.1.4.1")
         self.master.iconbitmap(default=util.resourcePath("images\\icon.ico"))
         self.master.configure(bg= GB.BGColorDark)
 

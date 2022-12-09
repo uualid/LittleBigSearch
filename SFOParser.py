@@ -73,10 +73,14 @@ class LevelParser:
     
         
     def getDescription(self, content: str, levelFolder):
-        startIndex = self.SFOStartIndex(content, "SD")
-        endIndex   = content.index(levelFolder)
         
-
+        try:
+            startIndex = self.SFOStartIndex(content, "SD")
+            endIndex   = content.index(levelFolder)
+        except:
+            print("DEBUG: Potentially unrelated game content \n")
+            return 0
+        
         descrition = self.cleanAllMachineCode(f'{content[startIndex : endIndex]}')
         try:
             if descrition[-1] == "M": descrition = descrition[:-1]
@@ -89,11 +93,16 @@ class LevelParser:
     
     @staticmethod
     def getLevelTitle(SFOContent: str, levelFolder: str):
-        startIndex = LevelParser.SFOStartIndex(SFOContent, levelFolder)
-        tmpTitle = SFOContent[startIndex:]
-        endIndex   = LevelParser.SFOEndIndex(tmpTitle)
-        title      = LevelParser.clean( f'{tmpTitle[:endIndex]}')
-        return title
+        try:
+            startIndex = LevelParser.SFOStartIndex(SFOContent, levelFolder)
+            tmpTitle = SFOContent[startIndex:]
+            endIndex   = LevelParser.SFOEndIndex(tmpTitle)
+            title      = LevelParser.clean( f'{tmpTitle[:endIndex]}')
+            return title
+        except:
+            print("DEBUG: Potentially unrelated game content \n")
+            return 0
+            
 
     #__ Main search method __________________________________________________________________________________
     def guard(self, path: str, callBack):
@@ -112,7 +121,8 @@ class LevelParser:
                      path  = f'{path}/{levelFolder}',
                      image = f'{path}/{levelFolder}/ICON0.PNG',
                      folderName= levelFolder)
-        
+    
+    
     def search(self, callBack, path, term: str = "", includeDescription: bool = True):
             # Empty the array for the next search.
         matchedLevels = []
@@ -132,11 +142,14 @@ class LevelParser:
                     
                     openSFO = open(path + "/" + levelFolder + "/" + levelfile, 'r', encoding="utf-8", errors="ignore")
                     SFOContent = openSFO.read()
+                    if SFOContent.__contains__("LittleBigPlanet") == False: continue
                     cleanSFPContent = LevelParser.clean(SFOContent)
                     
                     title = LevelParser.getLevelTitle(cleanSFPContent, levelFolder)
                     description = self.getDescription(cleanSFPContent, levelFolder)
-
+                    if title == 0: continue
+                    if description == 0: continue
+                    
                     if includeDescription == False:
                         if term in title.lower():
                             newMatchLevel = self.makeLevelObject(title, description, path, levelFolder)

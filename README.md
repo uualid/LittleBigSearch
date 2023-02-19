@@ -1,6 +1,6 @@
 ![](images/UI/LB_Search.png)
 
-A search tool for [LittleBigArchive](http://littlebigarchive.com/)
+A search tool for [LittleBigArchive](https://archive.org/download/LBP-main-community-archive/Little%20Big%20Planet%20Community%20Archive/)
 
 Theres a **MacOS** and **Linux** version of this app. you can find them in the [release](https://github.com/WaleedAlassaf/LittleBigSearch/releases/tag/1.1.4) section.
 

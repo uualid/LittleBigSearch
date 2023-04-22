@@ -33,7 +33,7 @@ This app was originally a command line tool created to find my own LittleBigPlan
 
 **But windows defender is telling me this app is dangerous**
 
-Windows Defender has flagged this app as potentially dangerous. The app used to bind the enter key with the search button for added convenience, but Windows Defender mistakenly identified it as a [keylogger](https://en.wikipedia.org/wiki/Keystroke_logging), which prompted me to remove the binding functionality. This issue should no longer occur, but I am currently struggling to understand Windows Defender/Anti virus alerts. If you encounter a notification saying the app has a virus please post about it in the issues tap and please mention the anti virus you're using. 
+The app used to bind the enter key with the search button for added convenience, but Windows Defender mistakenly identified it as a [keylogger](https://en.wikipedia.org/wiki/Keystroke_logging), which prompted me to remove the binding functionality. This issue should no longer occur, but I am currently struggling to understand Windows Defender/Anti virus alerts. If you encounter a notification saying the app has a virus please post about it in the issues tap and please mention the anti virus you're using. 
 
 Windows will tell you that the app is from an unknown publisher, you can click on "Show more details" and then proceed to "Run anyway" to use the app without any issues. I apologize for any confusion caused by Windows Defender's warnings.
 

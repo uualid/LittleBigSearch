@@ -2,7 +2,7 @@
 
 Theres a **MacOS** and **Linux** version of this app. you can find them in the [release](https://github.com/WaleedAlassaf/LittleBigSearch/releases/tag/1.1.4) section.
 
-![](https://img.shields.io/badge/stars%20⭐-34-yellow)
+![](https://img.shields.io/badge/stars%20⭐-11-yellow)
 
 # How do I use this?
 

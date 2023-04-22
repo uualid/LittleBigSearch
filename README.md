@@ -2,6 +2,8 @@
 
 Theres a **MacOS** and **Linux** version of this app. you can find them in the [release](https://github.com/WaleedAlassaf/LittleBigSearch/releases/tag/1.1.4) section.
 
+![](https://img.shields.io/badge/stars%20⭐-34-yellow)
+
 # How do I use this?
 
 if you don't have any level archive you can get the one you like from [LittleBigArchive](https://archive.org/download/LBP-main-community-archive/Little%20Big%20Planet%20Community%20Archive/)

@@ -2,7 +2,6 @@
 
 Theres a **MacOS** and **Linux** version of this app. you can find them in the [release](https://github.com/WaleedAlassaf/LittleBigSearch/releases/tag/1.1.4) section.
 
-![](https://img.shields.io/badge/stars%20⭐-11-yellow)
 
 # How do I use this?
 
@@ -30,8 +29,10 @@ if you don't have any level archive you can get the one you like from [LittleBig
 
 # How can I trust this
 
-This app was originally a command line tool created to find my own LBP2 levels in LittleBigArchive, because it was quite impossible to search through 7000 folder just to find one level. I thought it would be cool to build a GUI and share it with LBP community. 
+This app was originally a command line tool created to find my own LittleBigPlanet 2 levels in LittleBigArchive, as searching through 7000 folders just to locate one level was near impossible. I then decided to develop a graphical user interface to make it more user-friendly and share it with the LBP community.
 
 **But windows defender is telling me this app is dangerous**
 
-The app used to bind enter key with the search button so its more convenient to search.. and that was a dangerous crime according to windows defender. Windows defender though I used this app as a [Keylogger](https://en.wikipedia.org/wiki/Keystroke_logging) so I had to remove the bind. It shouldn't tell you about it now, this is just in case someone is having it. I'm actully struggling to understand Windows defender. if Windows told you this app is from an unknonw publisher you can just press ***show more details*** than press run anyways.
+Windows Defender has flagged this app as potentially dangerous. The app used to bind the enter key with the search button for added convenience, but Windows Defender mistakenly identified it as a [keylogger](https://en.wikipedia.org/wiki/Keystroke_logging), which prompted me to remove the binding functionality. This issue should no longer occur, but I am currently struggling to understand Windows Defender/Anti virus alerts. If you encounter a notification saying the app has a virus please post about it in the issues tap and please mestion the anti virus you're using. Windows will tell you that the app is from an unknown publisher, you can click on "Show more details" and then proceed to "Run anyway" to use the app without any issues. I apologize for any confusion caused by Windows Defender's warnings.
+
+![](https://img.shields.io/badge/stars%20⭐-11-yellow)

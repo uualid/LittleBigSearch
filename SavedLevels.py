@@ -39,27 +39,27 @@ class SavedLevels():
         
 
         #____
-        self.removeBtnImage = tk.PhotoImage(file=util.resourcePath("images\\UI\\remove.png"))
+        self.removeBtnImage = tk.PhotoImage(file=GB.CURRENT_MACOS_PATH +("/images/UI/remove.png"))
 
-        refreshImage = tk.PhotoImage(file=util.resourcePath("images\\UI\\refresh.png"))
+        refreshImage = tk.PhotoImage(file=GB.CURRENT_MACOS_PATH +("/images/UI/refresh.png"))
         self.refreshButton   = util.makeButton(master  = self.window, 
                                                image   = refreshImage,
                                                command = lambda: self.refresh(),
                                                buttonColor = GB.BGColorLight,
                                                activeColor = GB.BGColorLight)
         
-        self.refreshButton.configure(height = 28, width = 160)
+        self.refreshButton.configure(height = 34, width = 125)
         self.refreshButton.grid(column=1, row=0, padx= (180, 0))
 
 
-        self.openFolderBtnImage = tk.PhotoImage(file=util.resourcePath("images\\UI\\openFolder.png"))
+        self.openFolderBtnImage = tk.PhotoImage(file=GB.CURRENT_MACOS_PATH +("/images/UI/openFolder.png"))
         self.openDestFolder = util.makeButton(master   = self.window,
                                               image    = self.openFolderBtnImage,
                                               command  = lambda: util.openFile(self.RPCS3Path),
                                               buttonColor = GB.BGColorLight,
                                               activeColor = GB.BGColorLight)
         
-        self.openDestFolder.configure(height = 28, width = 160)
+        self.openDestFolder.configure(height = 34, width = 155)
         self.openDestFolder.grid(column=1, row=0, padx= (0, 110))
 
         self.window.protocol("WM_DELETE_WINDOW", self.onClose)
@@ -173,7 +173,7 @@ class SavedLevels():
             levelImageCell.grid(row = index, column=0)
             
             levelInfoButton = util.makeButton(master= scrollFrame, text= labelText + "\n" + levelPath, command= partial(util.openFile, level.path))
-            levelInfoButton.configure(bg= GB.BGColorDark, width= 64)
+            levelInfoButton.configure(bg= GB.BGColorDark, width= 564)
             levelInfoButton.grid(row = index, column=1 , padx= 20, pady=(0, 38))
             
             levelDescription = "No description" if level.description == "" else level.description
@@ -182,7 +182,7 @@ class SavedLevels():
                                                 buttonColor = GB.BGColorDark,
                                                 activeColor = GB.BGColorDark)
             
-            removeLevelButton.configure(height = 28, width = 120, image= self.removeBtnImage, 
+            removeLevelButton.configure(height = 34, width = 125, image= self.removeBtnImage, 
                                         command = partial(self.removeFolder, level.path, level.folderName))
             removeLevelButton.grid(row = index, column=1, pady=(60, 0))
 

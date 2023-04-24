@@ -39,16 +39,16 @@ class Options():
         self.archiveLabel.configure(cursor           = "hand2",
                                     activebackground = GB.logoBlue, 
                                     command          = lambda: util.openFile(self.archiveLabelStr.get()))
-        self.archiveLabel.grid(columnspan=1, column=1, row=0, pady=(20, 0))
+        self.archiveLabel.grid(columnspan=1, column=1, row=0, pady=(20, 0), sticky= "we")
 
 
         self.archiveBrowseBtn = util.makeButton(master      = self.window, 
                                                 buttonColor = GB.BGColorLight,
                                                 activeColor = GB.BGColorLight)
         
-        self.archiveBrowseBtnImage = tk.PhotoImage(file=util.resourcePath("images\\UI\\selectArchive.png"))
-        self.archiveBrowseBtn.configure(height  = 28, 
-                                        width   = 200,
+        self.archiveBrowseBtnImage = tk.PhotoImage(file=GB.CURRENT_MACOS_PATH +("/images/UI/selectArchive.png"))
+        self.archiveBrowseBtn.configure(height  = 34, 
+                                        width   = 175,
                                         image   = self.archiveBrowseBtnImage, 
                                         command = lambda: self.openFileBrowser(self.archiveLabelStr, 
                                                                                 title    = "Select LittleBigPlanet level archive", 
@@ -68,7 +68,7 @@ class Options():
                                         command = lambda: util.openFile(self.RPCSLabelStr.get()) )
         self.RPCSLabel.grid(columnspan=1, column=1, row=1, sticky= "we", pady=(20, 0))
         
-        self.RPCS3BrowseBtnImage = tk.PhotoImage(file=util.resourcePath("images\\UI\\selcetDestination.png"))
+        self.RPCS3BrowseBtnImage = tk.PhotoImage(file=GB.CURRENT_MACOS_PATH +("/images/UI/selcetDestination.png"))
         self.RPCSBrowseBtn = util.makeButton(master     = self.window,  
                                             buttonColor = GB.BGColorLight,
                                             activeColor = GB.BGColorLight,
@@ -77,7 +77,7 @@ class Options():
                                                                                     title="Select destination folder. e.g. RPCS3 savedata",
                                                                                     delegate= self.RPCS3Delegate))
         
-        self.RPCSBrowseBtn.configure(height = 28, width = 200, )
+        self.RPCSBrowseBtn.configure(height = 34, width = 211)
         self.RPCSBrowseBtn.grid(column=0, row=1, pady=(20, 0))
 
         #_______
@@ -104,13 +104,13 @@ class Options():
                                             buttonColor= GB.BGColorLight,
                                             activeColor= GB.BGColorLight)
         
-        self.saveBtnImage = tk.PhotoImage(file=util.resourcePath("images\\UI\\save.png"))
-        self.saveSettings.configure(height = 28, width = 200, image= self.saveBtnImage, 
+        self.saveBtnImage = tk.PhotoImage(file=GB.CURRENT_MACOS_PATH +("/images/UI/save.png"))
+        self.saveSettings.configure(height = 34, width = 125, image= self.saveBtnImage, 
                                       command = lambda: self.saveSettingsAsJSON())
         self.saveSettings.grid(column=0, row=3)
 
         self.saveSettingsTxt = tk.StringVar()
-        self.saveSettingsLabel = util.makeLabel(master= self.window, textVar= self.saveSettingsTxt, backgroundColor= GB.BGColorLight)
+        self.saveSettingsLabel = util.makeMacLabel(master= self.window, textVar= self.saveSettingsTxt, backgroundColor= GB.BGColorLight)
         self.saveSettingsLabel.configure(fg= "green")
         self.saveSettingsLabel.grid(column=1, row=3)
         

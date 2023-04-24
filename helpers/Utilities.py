@@ -1,7 +1,9 @@
 import os, math, sys, re
 import tkinter as tk
 from tkinter import Frame
+from tkmacosx import Button
 from PIL import ImageTk, Image
+import subprocess
 
 class GlobalVars:
     BGColorDark   = "#1e1e1e"
@@ -13,14 +15,15 @@ class GlobalVars:
     SCROLLER_BASE  = 1
     SCROLLER_FRAME = 0
 
+    CURRENT_MACOS_PATH = os.path.sep.join(sys.argv[0].split(os.path.sep)[:-1])
+
 
 class Utilities:
     
     @staticmethod
     def openFile(path):
         try:
-            path = os.path.realpath(path)
-            os.startfile(path)
+            subprocess.call(["open", "-R", path])
         except:
             print("Failed to open folder")
     
@@ -93,33 +96,62 @@ class Utilities:
         label.config(textvariable  = textVar,
                     bd             = 0,
                     bg             = backgroundColor,
-                    fg             = "White",
-                    font           = ('Helvatical bold',10))
+                    fg             = "black",
+                    font           = ('Helvatical bold',13))
         return label
     
     @staticmethod
-    def makeButton(text = None,
-                command = None,
-                 master = None,
-                 image  = None,
-                 font   = "Helvetica 13 bold",
-                buttonColor = GlobalVars.BGColorLight,
-                activeColor = GlobalVars.logoBlue):
+    def makeMacLabel(textVar,
+                  master      = None,
+                  activeColor = None,
+                  cursor      = None,
+                  image       = None,
+                  command     = None,
+                  backgroundColor = GlobalVars.BGColorDark):
         
-        btn = tk.Button()
-        if master  != None: btn = tk.Button(master)
+        label = tk.Button()
+        if master  != None: label = tk.Button(master= master)
+        if cursor  != None: label.config(cursor= cursor)
+        if image   != None: label.config(image = image)
+        if command != None: label.config(command= command)
+        if activeColor != None: label.config(activebackground= activeColor)
+        
+        
+        label.config(textvariable  = textVar,
+                    bd             = 0,
+                    background     = "black",
+                    bg             = "black",
+                    fg             = "black",
+                    font           = ('Helvatical bold',13))
+        return label
+        
+    @staticmethod
+    def makeButton(master     = None, 
+                  text        = None,
+                  command     = None,
+                  image       = None,
+                  font   = "Helvetica 13 bold",
+                  buttonColor = GlobalVars.BGColorLight,
+                  activeColor = GlobalVars.logoBlue):
+
+        btn = Button()
+        if master  != None: btn = Button(master= master)
         if command != None: btn.config(command= lambda: command())
-        if text    != None: btn.config(text= text)
+        if text    != None: btn.config(text = text)
         if image   != None: btn.config(image= image); btn.image = image
-        btn.config(text             = text,
-                    bd               = 0,
-                    fg               = "white",
-                    cursor           = "hand2",
-                    font             = font,
-                    bg               = buttonColor,
-                    activebackground = activeColor)
-            
-        return btn
+        
+        btn.config( bd                  = 0,
+                    borderless          = 1,
+                    focuscolor          = '',
+                    bordercolor         = 'blue',
+                    fg                  = "white",
+                    cursor              = "hand2",
+                    font                = font,
+                    highlightbackground = GlobalVars.BGColorDark,
+                    bg                  = buttonColor,
+                    activebackground    = activeColor)
+        
+        return btn   
     
     @staticmethod
     def makeFrame(master = None):
@@ -162,12 +194,13 @@ class Utilities:
         canvas.bind('<Enter>', boundToMouseWheel)
         canvas.bind('<Leave>', unboundToMouseWheel)
     
-    @staticmethod
-    def resourcePath(relative_path):
-        '''Returns the path for all the app resources. Images, icon... etc'''
-        if hasattr(sys, '_MEIPASS'):
-            return os.path.join(sys._MEIPASS, relative_path)
-        return os.path.join(os.path.abspath("."), relative_path)
+    # @staticmethod
+    # def resourcePath(relative_path):
+    #     '''Returns the path for all the app resources. Images, icon... etc 
+    #     For Windows only'''
+    #     if hasattr(sys, '_MEIPASS'):
+    #         return os.path.join(sys._MEIPASS, relative_path)
+    #     return os.path.join(os.path.abspath("."), relative_path)
     
     @staticmethod
     def addBreakLines(content):
@@ -201,7 +234,7 @@ class Utilities:
         frameList = []
         for i in range(framesCount):
             try:
-                frame = Image.open(Utilities.resourcePath(gifDir + gifName + f'{i + 1}' + ".png"))
+                frame = Image.open(gifDir + gifName + f'{i + 1}' + ".png")
                 frameResized = frame.resize((45, 45))
                 frame = ImageTk.PhotoImage(image= frameResized)
                 frameList.append(frame)

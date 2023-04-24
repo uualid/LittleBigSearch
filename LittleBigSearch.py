@@ -18,6 +18,8 @@ class LittleBigSearchGUI():
         
         self.options = OptionsManager(self.errorCallback, self.clearRandomLevelsPool)
         
+        
+
         self.scrollerCanvas  = tk.Canvas()
         self.scrollerBase   = Frame()
         
@@ -36,17 +38,18 @@ class LittleBigSearchGUI():
 
         self.globeFrameIndex = 0 
         self.globeFrames   = util.loadGif(framesCount=GB.GLOBE_GIF_FRAME_COUNT,
-                                               gifDir= "images/animation/", gifName= "earth")     
+                                               gifDir= GB.CURRENT_MACOS_PATH + "/images/animation/", gifName= "earth")     
         
         
         self.master = master
         self.master.title("By @SackBiscuit v1.1.4.1")
-        self.master.iconbitmap(default=util.resourcePath("images\\icon.ico"))
+        
+
         self.master.configure(bg= GB.BGColorDark)
 
         ttkthemes.themed_style.ThemedStyle(theme="adapta")
 
-        self.levelHeart = util.resize(image = util.resourcePath("images\\UI\\lbpLevelHeart.png"), height=30, width=30)
+        self.levelHeart = util.resize(image = GB.CURRENT_MACOS_PATH+("/images/UI/lbpLevelHeart.png"), height=30, width=30)
         
         # _ UI _______________________
 
@@ -62,7 +65,7 @@ class LittleBigSearchGUI():
         tk.Grid.columnconfigure(master, (0,1,2) , weight = 1)
         tk.Grid.rowconfigure(master, 7, weight = 1)
 
-        self.LBSLogo = Image.open(util.resourcePath('images\\UI\\LB_Search.png'))
+        self.LBSLogo = Image.open(GB.CURRENT_MACOS_PATH+'/images/UI/LB_Search.png')
         self.LBSLogoResized = self.LBSLogo.resize(( 500, 122 ))
         self.LBSLogo = ImageTk.PhotoImage(image= self.LBSLogoResized)
 
@@ -71,31 +74,31 @@ class LittleBigSearchGUI():
         self.LBSLabel.grid(column=1, row=0)
         
         # ____ 
-        settingsImage = tk.PhotoImage(file=util.resourcePath("images\\UI\\settings.png"))
+        settingsImage = tk.PhotoImage(file= GB.CURRENT_MACOS_PATH + "/images/UI/settings.png")
         self.settingsButton = util.makeButton(buttonColor = GB.BGColorDark, 
                                               activeColor = GB.BGColorDark,
                                               image       = settingsImage,
                                               command     = self.openSettings)
         
-        self.settingsButton.configure(height = 28, width = 120)
+        self.settingsButton.configure(height = 33, width = 127)
         self.settingsButton.grid(columnspan=3, column=0, row=1, pady=10, padx= (0,130))
         
         # ____ 
         
-        self.errorImage = tk.PhotoImage(file=util.resourcePath("images/UI/error.png"))
+        self.errorImage = tk.PhotoImage(file=GB.CURRENT_MACOS_PATH+ "/images/UI/error.png")
         self.errorLabel = tk.Label(bg= GB.BGColorDark)
-        self.errorLabel.grid(column=1, row=1, pady=(0,0), padx=(0, 300))
+        self.errorLabel.grid(column=1, row=1, pady=(2,0), padx=(0, 300))
         self.errorHover = Hovertip(self.errorLabel, "", 100)
         
         # ____
         
-        heartedImage = tk.PhotoImage(file=util.resourcePath("images\\UI\\hearted.png"))
+        heartedImage = tk.PhotoImage(file=GB.CURRENT_MACOS_PATH+("/images/UI/hearted.png"))
         self.SavedLevelsButton = util.makeButton(buttonColor = GB.BGColorDark, 
                                                  activeColor = GB.BGColorDark,
                                                  image       = heartedImage,
                                                  command     = self.openSavedLevels)
         
-        self.SavedLevelsButton.configure(height = 28, width = 120)
+        self.SavedLevelsButton.configure(height = 33, width = 127)
         self.SavedLevelsButton.grid(columnspan=3, column=0, row=1, pady=10, padx= (130,0))
         # ____ 
         
@@ -108,24 +111,24 @@ class LittleBigSearchGUI():
         searchTextField = tk.Entry(bd= 0, font=15, bg="black", fg="white")
         searchTextField.grid(columnspan=3, row=3, column=0, ipadx= 250)
 
-        searchBtnImage = tk.PhotoImage(file=util.resourcePath("images/UI/search.png"))
+        searchBtnImage = tk.PhotoImage(file=GB.CURRENT_MACOS_PATH+ "/images/UI/search.png")
         searchButton = util.makeButton(buttonColor = GB.BGColorDark,
                                        activeColor = GB.BGColorDark,
                                        image       = searchBtnImage,
                                        command = lambda: threading.Thread(target = self.LBSsearch, 
                                                                           args   = (searchTextField.get(), 
                                                                                     self.options.archivePath)).start())
-        searchButton.configure(height = 28, width = 120)
+        searchButton.configure(height = 33, width = 127)
         searchButton.grid(column=1, row=4, pady=(13,13))
         
         # ____ 
         
-        randomizerBtnImage = tk.PhotoImage(file=util.resourcePath("images/UI/randomizer.png"))
+        randomizerBtnImage = tk.PhotoImage(file=GB.CURRENT_MACOS_PATH +("/images/UI/randomizer.png"))
         randomizerButton = util.makeButton(buttonColor = GB.BGColorDark,
                                            activeColor = GB.BGColorDark,
                                            image       = randomizerBtnImage, 
                                            command      = lambda: self.fetchRandomLevels())
-        randomizerButton.configure(height = 32, width = 32)
+        randomizerButton.configure(height = 39, width = 39)
         randomizerButton.grid(column=1, row=4, pady=(13,13), padx=(0, 170))
         
         #--- Pagination
@@ -134,6 +137,11 @@ class LittleBigSearchGUI():
         self.pageFarLeft  = util.makeButton(text="<<", command= self.farLeftPage)        
         self.pageRight    = util.makeButton(text=">",  command= self.nextRightPage)
         self.pageFarRight = util.makeButton(text=">>", command= self.farRightPage)
+        
+        self.pageRight.config(height = 30, width = 60)
+        self.pageFarRight.config(height = 30, width = 60)        
+        self.pageLeft.config(height = 30, width = 60)
+        self.pageFarLeft.config(height = 30, width = 60)
         
         # _________
         self.pageNumText  = tk.StringVar()
@@ -163,8 +171,11 @@ class LittleBigSearchGUI():
         self.dragId = '' 
             
     # search method _____________________________________________________________________________________________________________________________________
-    
+   
+
     def animateGlobe(self, frameNumber = 0):
+        print(frameNumber)
+
         if self.isSearching == False:
             self.globeGif.config(image="")# remove the image
             return
@@ -173,9 +184,11 @@ class LittleBigSearchGUI():
             frameNumber = 0
         
         try:
-            self.globeGif.config(image=self.globeFrames[frameNumber]) 
+            self.globeGif.config(image=self.globeFrames[frameNumber])
+            # self.globeGif.image = self.globeFrames[frameNumber] #prevent garbage collection
             self.master.after(50, self.animateGlobe, frameNumber+1)
         except:
+            print("DEBUG: animation error")
             pass
     
     
@@ -192,10 +205,10 @@ class LittleBigSearchGUI():
         self.clearNotification()
         if self.randomLevelsPool == []:
             self.generateRandomPool = True
-            threading.Thread(target = self.LBSsearch, args = ("", self.options.archivePath)).start()
             self.animateGlobe()
-        else:
+            threading.Thread(target = self.LBSsearch, args = ("", self.options.archivePath)).start()
             
+        else:
             poolPopulation = len(self.randomLevelsPool) if len(self.randomLevelsPool) < 50 else 50
             random50 = random.sample(self.randomLevelsPool, poolPopulation)
             self.showResult(random50)
@@ -217,9 +230,11 @@ class LittleBigSearchGUI():
         self.isSearching = True
         self.animateGlobe()
         
+        
         # this event will be called from background thread to use the main thread.
         self.master.bind("<<event1>>", self.updateSearchResult)
         self.master.bind("<<event2>>", self.updateRandom)
+        
         self.levelParser.search(self.searchCallBack, path, term, includeDescription= self.options.includeDescription)
     
     def searchCallBack(self, response):
@@ -361,7 +376,9 @@ class LittleBigSearchGUI():
     def _on_mouse_wheel(self, event):
         self.clearNotification()
         self.master.update()
-        self.scrollerCanvas.yview_scroll(-1 * int((event.delta / 120)), "units")
+        self.scrollerCanvas.yview_scroll(-1 * int((event.delta)), "units")
+
+
 
     def sendError(self, message = ""):
         self.errorLabel.config(image =self.errorImage)
@@ -437,14 +454,14 @@ class LittleBigSearchGUI():
     
     def showPagingButtons(self):
         
-        self.pageLeft.grid(column=1, row=5, ipadx=15, pady=(0, 0), padx= (0, 160))
-        self.pageFarLeft.grid(column=1, row=5, ipadx=10, pady=(0, 0), padx= (0, 270))
+        self.pageLeft.grid(column=1, row=5, ipadx=1, pady=(0, 10), padx= (0, 160))
+        self.pageFarLeft.grid(column=1, row=5, ipadx=1, pady=(0, 10), padx= (0, 280))
         
-        self.pageRight.grid(column=1, row=5, ipadx=15, pady=(0, 0), padx= (160, 0))
-        self.pageFarRight.grid(column=1, row=5, ipadx=10, pady=(0, 0), padx= (270, 0))
+        self.pageRight.grid(column=1, row=5, ipadx=1, pady=(0, 10), padx= (160, 0))
+        self.pageFarRight.grid(column=1, row=5, ipadx=1, pady=(0, 10), padx= (280, 0))
 
-        self.levelCounter.grid(column=1, row=5, ipadx=10, pady=(0, 0), padx= (470, 0))
-        self.pageNumbers.grid(column=1, row=5, ipadx=20, pady=(0, 0))
+        self.levelCounter.grid(column=1, row=5, ipadx=1, pady=(0, 10), padx= (540, 0))
+        self.pageNumbers.grid(column=1, row=5, ipadx=2, pady=(0, 10))
         
    # builds result scroller view _______________________________________________________________________________________________________________________________
     
@@ -515,7 +532,7 @@ class LittleBigSearchGUI():
             levelInfoButton = util.makeButton(master= scrollerFrame, text= labelText, font= util.resizeStringToFit(labelText),
                                               command= partial(self.manageLevel, level.path, level.folderName, levelImageCanvas))
             
-            levelInfoButton.configure(bg= GB.BGColorDark, width= 57)
+            levelInfoButton.configure(bg= GB.BGColorDark, width= 580)
             
             levelInfoButton.grid(row = index, column=1, columnspan= 2, sticky="ew")
 

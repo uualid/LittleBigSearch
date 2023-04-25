@@ -101,7 +101,7 @@ class SavedLevels():
 
     def _on_mouse_wheel(self, event):
         self.window.update()
-        self.scrollerCanvas.yview_scroll(-1 * int((event.delta / 120)), "units")
+        self.scrollerCanvas.yview_scroll(-1 * event.delta, "units")
         
 
     # level managing _______________________________________________________________________
@@ -173,7 +173,7 @@ class SavedLevels():
             levelImageCell.grid(row = index, column=0)
             
             levelInfoButton = util.makeButton(master= scrollFrame, text= labelText + "\n" + levelPath, command= partial(util.openFile, level.path))
-            levelInfoButton.configure(bg= GB.BGColorDark, width= 564)
+            levelInfoButton.configure(bg= GB.BGColorDark, width= 540)
             levelInfoButton.grid(row = index, column=1 , padx= 20, pady=(0, 38))
             
             levelDescription = "No description" if level.description == "" else level.description

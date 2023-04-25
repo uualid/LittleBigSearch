@@ -1,5 +1,5 @@
 import tkinter           as tk
-import os, shutil,threading, ttkthemes, random
+import os, shutil,threading, ttkthemes, random, multiprocessing
 from   genericpath       import exists
 from   tkinter           import Canvas, Frame, ttk
 from   tkinter.constants import VERTICAL
@@ -15,7 +15,6 @@ from Settings.OptionsManager import OptionsManager
 
 class LittleBigSearchGUI():
     def __init__(self, master: tk.Tk, matchedLevels = [], settings = 0, savedLevels = 0) -> None:
-        
         self.options = OptionsManager(self.errorCallback, self.clearRandomLevelsPool)
 
         self.scrollerCanvas  = tk.Canvas()
@@ -100,7 +99,7 @@ class LittleBigSearchGUI():
         self.SavedLevelsButton.grid(columnspan=3, column=0, row=1, pady=10, padx= (130,0))
         # ____ 
         
-        searchLabel = tk.Label(text  = "The Search will look for level name, creator ID or any keyword in the level Description",
+        searchLabel = tk.Label(text  = "The Search will look for level name, creator ID or any keyword in the level description",
                                bg    = GB.BGColorDark,
                                fg    = "White",
                                font  = ('Helvatical bold',10))
@@ -113,9 +112,8 @@ class LittleBigSearchGUI():
         searchButton = util.makeButton(buttonColor = GB.BGColorDark,
                                        activeColor = GB.BGColorDark,
                                        image       = searchBtnImage,
-                                       command = lambda: threading.Thread(target = self.LBSsearch, 
-                                                                          args   = (searchTextField.get(), 
-                                                                                    self.options.archivePath)).start())
+                                       command     = lambda: threading.Thread(target = self.LBSsearch, 
+                                                                            args   = (searchTextField.get(), self.options.archivePath)).start())
         searchButton.configure(height = 33, width = 127)
         searchButton.grid(column=1, row=4, pady=(13,13))
         
@@ -169,10 +167,8 @@ class LittleBigSearchGUI():
         self.dragId = '' 
             
     # search method _____________________________________________________________________________________________________________________________________
-   
-
+    
     def animateGlobe(self, frameNumber = 0):
-        print(frameNumber)
 
         if self.isSearching == False:
             self.globeGif.config(image="")# remove the image
@@ -227,7 +223,7 @@ class LittleBigSearchGUI():
         self.currentPage = 0
         self.isSearching = True
         self.animateGlobe()
-        
+
         
         # this event will be called from background thread to use the main thread.
         self.master.bind("<<event1>>", self.updateSearchResult)
@@ -432,7 +428,7 @@ class LittleBigSearchGUI():
             
         levelsFound = "Levels" if levelsCount > 1 else "Level"
         if random:
-            self.levelCounterTxt.set(f'Random {levelsCount} {levelsFound}')
+            self.levelCounterTxt.set(f'{levelsCount} Random {levelsFound}')
         else:
             self.levelCounterTxt.set(f'{levelsCount} {levelsFound}')
     
@@ -546,8 +542,7 @@ class LittleBigSearchGUI():
             self.currentPage = 0
             
 #___________________________________________________________________________________________________________________________________________________________
-    
-print(GB.CURRENT_MACOS_PATH + "aboga aboga")
+
 root   = tk.Tk()
 LBSGUI = LittleBigSearchGUI(master= root)
 root.mainloop()

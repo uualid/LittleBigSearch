@@ -1,6 +1,6 @@
 ![](images/UI/LB_Search.png)
 
-Theres a **MacOS** and **Linux** version of this app. you can find them in the [release](https://github.com/WaleedAlassaf/LittleBigSearch/releases/tag/1.1.4.1) section.
+There's a **MacOS** and **Linux** version of this app. you can find them in the [release](https://github.com/WaleedAlassaf/LittleBigSearch/releases/tag/1.1.4.1) section.
 
 
 # How do I use this?

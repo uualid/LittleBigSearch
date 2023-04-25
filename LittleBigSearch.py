@@ -17,8 +17,6 @@ class LittleBigSearchGUI():
     def __init__(self, master: tk.Tk, matchedLevels = [], settings = 0, savedLevels = 0) -> None:
         
         self.options = OptionsManager(self.errorCallback, self.clearRandomLevelsPool)
-        
-        
 
         self.scrollerCanvas  = tk.Canvas()
         self.scrollerBase   = Frame()
@@ -48,8 +46,8 @@ class LittleBigSearchGUI():
         self.master.configure(bg= GB.BGColorDark)
 
         ttkthemes.themed_style.ThemedStyle(theme="adapta")
-
-        self.levelHeart = util.resize(image = GB.CURRENT_MACOS_PATH+("/images/UI/lbpLevelHeart.png"), height=30, width=30)
+        print(GB.CURRENT_MACOS_PATH + ("/images/UI/lbpLevelHeart.png"))
+        self.levelHeart = util.resize(image = GB.CURRENT_MACOS_PATH + "/images/UI/lbpLevelHeart.png", height=30, width=30)
         
         # _ UI _______________________
 
@@ -549,6 +547,7 @@ class LittleBigSearchGUI():
             
 #___________________________________________________________________________________________________________________________________________________________
     
+print(GB.CURRENT_MACOS_PATH + "aboga aboga")
 root   = tk.Tk()
 LBSGUI = LittleBigSearchGUI(master= root)
 root.mainloop()

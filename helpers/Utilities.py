@@ -15,7 +15,7 @@ class GlobalVars:
     SCROLLER_BASE  = 1
     SCROLLER_FRAME = 0
 
-    CURRENT_MACOS_PATH = os.path.sep.join(sys.argv[0].split(os.path.sep)[:-1])
+    CURRENT_MACOS_PATH = os.getcwd()
 
 
 class Utilities:

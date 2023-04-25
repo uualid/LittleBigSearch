@@ -33,9 +33,12 @@ if you don't have any level archive you can get the one you like from [LittleBig
 
 This app was originally a command line tool created to find my own LittleBigPlanet 2 levels in LittleBigArchive, as searching through 7000 folders just to locate one level was near impossible. I then decided to develop a graphical user interface to make it more user-friendly and share it with the LBP community.
 
-**But windows defender is telling me this app is dangerous**
+# I can't start LittleBigSearch on my Mac
 
-The app used to bind the enter key with the search button for added convenience, but Windows Defender mistakenly identified it as a [keylogger](https://en.wikipedia.org/wiki/Keystroke_logging), which prompted me to remove the binding functionality. This issue should no longer occur, but I am currently struggling to understand Windows Defender/Anti virus alerts. If you encounter a notification saying the app has a virus please post about it in the issues tap and please mention the anti virus you're using. 
+MacOS will tell you that this app is from an unidentified developer and it will prompt you to delete it. inorder to tag my name as an identified developer I would need to pay 99$ annually for Apple which isn't feasible for me. You can start the app anyway by going to: System Preferences > Security & privacy > General and than you can press "Open Anyways".
 
-Windows will tell you that the app is from an unknown publisher, you can click on "Show more details" and then proceed to "Run anyway" to use the app without any issues. I apologize for any confusion caused by Windows Defender's warnings.
+# I can't start LittleBigSearch on my ARM based Mac
+
+I don't have an arm based Mac to test this but I'm pretty sure [Rosetta](https://support.apple.com/en-us/HT211861) will make it start just as good as x86.
+
 

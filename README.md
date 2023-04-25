@@ -27,7 +27,7 @@ if you don't have any level archive you can get the one you like from [LittleBig
 
 
 
-![](images/LittleBigSearch__1.1.4.1.gif)
+![](images/LBSMac1.1.4.1.gif)
 
 # How can I trust this
 

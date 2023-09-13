@@ -2,6 +2,7 @@
 
 There's a **MacOS** and **Linux** version of this app. you can find them in the [release](https://github.com/WaleedAlassaf/LittleBigSearch/releases/tag/1.1.4.1) section.
 
+<a href='https://ko-fi.com/uualid' target='_blank'><img height='35' style='border:0px;height:25px;' src='https://uploads-ssl.webflow.com/5c14e387dab576fe667689cf/61e11d503cc13747866d338b_Button-2.png' border='0' alt='Buy Me a Coffee at ko-fi.com' />
 
 # How do I use this?
 

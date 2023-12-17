@@ -6,7 +6,7 @@ from   tkinter.constants import VERTICAL
 from   functools         import partial
 from   PIL               import Image, ImageTk
 from   SFOParser         import LevelParser, ParserReturns
-from idlelib.tooltip     import Hovertip
+from   idlelib.tooltip     import Hovertip
 
 from helpers.Utilities import GlobalVars as GB
 from helpers.Utilities import Utilities as util
@@ -45,7 +45,7 @@ class LittleBigSearchGUI():
         self.master.configure(bg= GB.BGColorDark)
 
         ttkthemes.themed_style.ThemedStyle(theme="adapta")
-        print(GB.CURRENT_MACOS_PATH + ("/images/UI/lbpLevelHeart.png"))
+        # print(GB.CURRENT_MACOS_PATH + ("/images/UI/lbpLevelHeart.png"))
         self.levelHeart = util.resize(image = GB.CURRENT_MACOS_PATH + "/images/UI/lbpLevelHeart.png", height=30, width=30)
         
         # _ UI _______________________
@@ -102,7 +102,7 @@ class LittleBigSearchGUI():
         searchLabel = tk.Label(text  = "The Search will look for level name, creator ID or any keyword in the level description",
                                bg    = GB.BGColorDark,
                                fg    = "White",
-                               font  = ('Helvatical bold',10))
+                               font  = ('Helvatical bold',14))
         searchLabel.grid(columnspan=3, column=0, row=2)
         
         searchTextField = tk.Entry(bd= 0, font=15, bg="black", fg="white")
@@ -182,7 +182,7 @@ class LittleBigSearchGUI():
             # self.globeGif.image = self.globeFrames[frameNumber] #prevent garbage collection
             self.master.after(50, self.animateGlobe, frameNumber+1)
         except:
-            print("DEBUG: animation error")
+            # print("DEBUG: animation error")
             pass
     
     
@@ -280,7 +280,8 @@ class LittleBigSearchGUI():
             self.clearNotification()
             return
         except: # other wise it wil just remove the level from the hearted list
-            print("DEBUG: Level cell is not on the current page")
+            # print("DEBUG: Level cell is not on the current page")
+            pass
         self.options.removeHeartedLevel(removedLevelFolderName)
         
     def currentLevels(self):
@@ -331,15 +332,17 @@ class LittleBigSearchGUI():
             try:
                 self.options.removeHeartedLevel(levelFolder)
             except:
-                print("DEBUG: Level is not in the hearted list")
+                # print("DEBUG: Level is not in the hearted list")
+                pass
             
     def checkIfFolderIsEmpty(self, pathToCheck):
         try:
             if len(os.listdir(pathToCheck)) == 0:
                 shutil.rmtree(pathToCheck)
-                print("DEBUG: removed empty file.")
+                # print("DEBUG: removed empty file.")
         except:
-            print("DEBUG: Folder is not available in destination folder, it is safe to copy it.")  
+            # print("DEBUG: Folder is not available in destination folder, it is safe to copy it.")  
+            pass
                   
     def moveFolder(self, source, destDir):
         self.checkIfFolderIsEmpty(destDir)
@@ -357,7 +360,8 @@ class LittleBigSearchGUI():
         try:
             self.savedLevels.refresh()
         except:
-            print("DEBUG: Cant refresh. No window on the screen")
+            # print("DEBUG: Cant refresh. No window on the screen")
+            pass
     
     # Curser helpers __________________________________________________________________________________________________________________________________________________
     

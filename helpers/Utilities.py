@@ -25,7 +25,8 @@ class Utilities:
         try:
             subprocess.call(["open", "-R", path])
         except:
-            print("Failed to open folder")
+            # print("Failed to open folder")
+            pass
     
     @staticmethod
     def detectJPChars(texts):
@@ -223,10 +224,10 @@ class Utilities:
         hasJPNChars = Utilities.detectJPChars(string)
         textLength  = len(string)
         
-        if textLength > 65  and hasJPNChars: return "Helvetica 10 bold"
-        if textLength >= 70 and hasJPNChars: return "Helvetica 9 bold"
-        if textLength > 85: return "Helvetica 11 bold"
-        return "Helvetica 13 bold"
+        if textLength > 65  and hasJPNChars: return "Helvetica 13 bold"
+        if textLength >= 70 and hasJPNChars: return "Helvetica 12 bold"
+        if textLength > 85: return "Helvetica 14 bold"
+        return "Helvetica 16 bold"
     
     @staticmethod
     def loadGif(framesCount, gifDir, gifName):

@@ -78,7 +78,7 @@ class LevelParser:
             startIndex = self.SFOStartIndex(content, "SD")
             endIndex   = content.index(levelFolder)
         except:
-            print("DEBUG: Potentially unrelated game content \n")
+            # print("DEBUG: Potentially unrelated game content \n")
             return 0
         
         descrition = self.cleanAllMachineCode(f'{content[startIndex : endIndex]}')
@@ -100,7 +100,7 @@ class LevelParser:
             title      = LevelParser.clean( f'{tmpTitle[:endIndex]}')
             return title
         except:
-            print("DEBUG: Potentially unrelated game content \n")
+            # print("DEBUG: Potentially unrelated game content \n")
             return 0
             
 

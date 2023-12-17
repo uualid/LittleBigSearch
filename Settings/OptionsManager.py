@@ -62,11 +62,12 @@ class OptionsManager():
             try:
                 Options.getSettingsFromJSON(self.fetchSettingCallBack)
             except:
-                print("DEBUG: Error trying to fetch data from JSON file.")
+                # print("DEBUG: Error trying to fetch data from JSON file.")
                 self.errorCallback("An error occurred when tried to read data from the saved settings file. try saving paths again.")
                 
         else:
-            print("No saved settings.")
+            # print("No saved settings.")
+            pass
 
     # _____________________________________________
     def openSettings(self, master):

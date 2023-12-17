@@ -75,7 +75,8 @@ class SavedLevels():
             self.window.bind("<<event1>>", self.showResult)
             self.LevelParser.search(path= self.RPCS3Path, callBack= self.fetchCallBack)
         except:
-            print("DEBUG: Hearted levels window is not available.")
+            # print("DEBUG: Hearted levels window is not available.")
+            pass
             
     def fetchCallBack(self, response):
         if response == ParserReturns.noResult:
@@ -113,7 +114,8 @@ class SavedLevels():
             try:
                 shutil.rmtree(destDir)
             except:
-                print("Level folder is busy with other process")
+                # print("Level folder is busy with other process")
+                pass
                 
             self.removeLevelCallBack(destDir, levelFolderName)
             self.refresh()

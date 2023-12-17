@@ -161,7 +161,8 @@ class Options():
             
             return heartedLevelFolderPaths
         except:
-            print("An error occurred when tried to open one of the saved paths. Try selecting paths again.")
+            # print("An error occurred when tried to open one of the saved paths. Try selecting paths again.")
+            pass
             
             
     # save setting to json file _________________________________________________________________________________________________ 

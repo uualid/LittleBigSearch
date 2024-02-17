@@ -16,7 +16,7 @@ if you don't have any level archive you can get the one you like from [LittleBig
 
 3. Select your destination folder from **Select Destination** button. ex: C:\Users\User\Desktop\RPCS3\dev_hdd0\home\00000001\savedata.
 
-5. Pick any level you want by pressing on the level cell, the app will move the level folder to your destination folder automatically.
+5. Pick any level you want by pressing on the level cell, the app will copy the level folder to your destination folder automatically.
 
 6. start LBP and go to your moon, press ***Square*** on any empty spot -> ***import***. 
 

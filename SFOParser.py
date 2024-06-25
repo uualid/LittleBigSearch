@@ -151,7 +151,7 @@ class LevelParser:
                     if description == 0: continue
                     
                     if includeDescription == False:
-                        if term in title.lower():
+                        if term.strip() in title.lower():
                             newMatchLevel = self.makeLevelObject(title, description, path, levelFolder)
                             matchedLeveAppend(newMatchLevel)
                                 

@@ -155,7 +155,7 @@ class LevelParser:
                             newMatchLevel = self.makeLevelObject(title, description, path, levelFolder)
                             matchedLeveAppend(newMatchLevel)
                                 
-                    elif term in cleanSFPContent.lower():
+                    elif term.strip() in cleanSFPContent.lower():
                         newMatchLevel = self.makeLevelObject(title, description, path, levelFolder)
                         matchedLeveAppend(newMatchLevel)                   
         
